@@ -1877,9 +1877,8 @@ the data. The easiest is to run this code:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>form_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;https://anna-neufeld.github.io/stat202_tutorials/Week1/form_data_anonymous.csv&quot;</span>)</span></code></pre></div>
 <p>The slightly more cumbersome (but useful!) way involves downloading
 the .csv document from GLOW and importing it using the
-<code>import dataset</code> button. We will go over this way later in
-the semester, as storing a file locally can lead to come more cumbersome
-knitting issues.</p>
+<code>import dataset</code> button. We will go over this later in the
+semester.</p>
 <p>Copy the code above into your RMarkdown document. Run the code, such
 that you have an object called <code>form_data</code> in your
 environment? What happens if you click on this dataset?</p>
@@ -1935,9 +1934,9 @@ below.</p>
 </div>
 <div id="one-quantitative-variable" class="section level3">
 <h3>One quantitative variable</h3>
-<p>Let’s use <code>pets</code> which stores the recorded answers to the
+<p>Let’s use <code>pets,</code> which stores the recorded answers to the
 question “How many pets have you had or have you lived with in your
-life?” as our first example of a quantitative variable.</p>
+life?”.</p>
 <p>As a first step, we should always <strong>look</strong> at the data.
 Run the following command in your console to view this variable. What do
 you notice?</p>
@@ -1956,11 +1955,11 @@ variable.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">as.numeric</span>(form_data<span class="sc">$</span>pets)</span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="fu">is.na</span>(<span class="fu">as.numeric</span>(form_data<span class="sc">$</span>pets))</span>
 <span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="sc">!</span><span class="fu">is.na</span>(<span class="fu">as.numeric</span>(form_data<span class="sc">$</span>pets))</span></code></pre></div>
-<p>The following code first <em>mutates</em> our dataset, meaning that
-it adds a new variable. This new variable is named
+<p>The following code first <strong>mutates</strong> our dataset,
+meaning that it adds a new variable. This new variable is named
 <code>pets_numeric</code> and stores the output of
-<code>as.numeric(pets)</code>. The code then <em>filters</em> our
-dataset so that it only contains observations whose values of
+<code>as.numeric(pets)</code>. The code then <strong>filters</strong>
+our dataset so that it only contains observations whose values of
 <code>pets_numeric</code> are not <code>NA</code>. Copy this code into
 your RMarkdown document.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>form_data_clean <span class="ot">&lt;-</span> form_data <span class="sc">%&gt;%</span> </span>
@@ -1971,12 +1970,12 @@ your RMarkdown document.</p>
 with.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>form_data_clean<span class="sc">$</span>pets_numeric</span></code></pre></div>
 <p>The <em>summarize()</em> function is a nice way to view a numeric
-summary such as the mean or the median of a variable.</p>
+summary such as the mean or the median of a variable. What do you notice
+about the mean as compared to the median?</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>form_data_clean <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="fu">mean</span>(pets_numeric), <span class="fu">median</span>(pets_numeric))</span></code></pre></div>
 <p>We can also make a <em>histogram</em> of this variable. Note that
 there are two ways to do this.</p>
-<p>The first is really simple, and uses “base R”. What do you notice
-about the shape of this variable?</p>
+<p>The first is really simple, and uses “base R”.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">hist</span>(form_data_clean<span class="sc">$</span>pets_numeric)</span></code></pre></div>
 <p>In this class, we are going to focus on learning how to visualize and
 summarize our data using the <code>tidyverse</code> suite of packages.
@@ -1998,14 +1997,12 @@ to accomplish this. Consider the following lines of code.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>form_data_clean<span class="sc">$</span>year</span>
 <span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>form_data_clean<span class="sc">$</span>year<span class="sc">==</span><span class="st">&quot;Senior&quot;</span></span>
 <span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>form_data_clean <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year<span class="sc">==</span><span class="st">&quot;Senior&quot;</span>)</span></code></pre></div>
-<p>Subsetting our histogram to only include seniors is simple:</p>
+<p>Subsetting our histogram to only include seniors is simple: we just
+modify the <code>data</code> argument so that it calls upon the filtered
+dataset.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>form_data_clean <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year<span class="sc">==</span><span class="st">&quot;Senior&quot;</span>), <span class="fu">aes</span>(<span class="at">x=</span>pets_numeric))<span class="sc">+</span><span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">10</span>)<span class="sc">+</span></span>
 <span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;How many pets have you lived with in your life?&quot;</span>)<span class="sc">+</span></span>
 <span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;Stat 202 Survey Responses about Pets&quot;</span>, <span class="st">&quot;Among Seniors&quot;</span>)</span></code></pre></div>
-<p>On your own time, try making a histogram of another variable in the
-dataset! This may require some additional <em>cleaning</em> due to the
-fact that nearly every variable had issues with students entering words
-rather than numbers into the survey.</p>
 </div>
 <div id="one-quantitative-variable-one-categorical-variable." class="section level3">
 <h3>One quantitative variable, one categorical variable.</h3>
@@ -2015,35 +2012,38 @@ this numerically is by using <code>group_by</code> and then
 <code>summarize</code>.</p>
 <p>What do you notice about the following table?</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>form_data_clean <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="fu">mean</span>(pets_numeric))</span></code></pre></div>
-<p>When categorical variables have a natural ordering to them, it is
-nice to tell <code>R</code> this so that the categories will be
-displayed in order. Try running the following code:</p>
+<p><em>Ordinal</em> variables are categorical variables that have a
+natural ordering to them. When we have an ordinal variable, it is nice
+to tell <code>R</code> this so that the categories will be displayed in
+order. Try running the following code:</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>form_data_clean <span class="ot">&lt;-</span> form_data_clean <span class="sc">%&gt;%</span> </span>
 <span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">ordered</span>(year, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;First year&quot;</span>, <span class="st">&quot;Sophomore&quot;</span>, <span class="st">&quot;Junior&quot;</span>, <span class="st">&quot;Senior&quot;</span>)))</span></code></pre></div>
-<p>And now try remaking the table from above. Just for fun, let’s add
-the median number of pets, as well as the number of students, for each
-category.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>form_data_clean <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="fu">mean</span>(pets_numeric), <span class="fu">median</span>(pets_numeric), <span class="fu">n</span>())</span></code></pre></div>
+<p>And now try remaking the table from above.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>form_data_clean <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="fu">mean</span>(pets_numeric))</span></code></pre></div>
 <p>What do you notice? What improved? What did not improve? Does there
 seem to a relationship between the number of pets and the year at
 Williams?</p>
+<p>Eventually in this class, we will review statistical tools that will
+let us say more formally whether or not there seems to be a relationship
+between these variables. For now, we might want to just look informally
+at a bit more information:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>form_data_clean <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="fu">mean</span>(pets_numeric), <span class="fu">median</span>(pets_numeric), <span class="fu">sd</span>(pets_numeric), <span class="fu">n</span>())</span></code></pre></div>
 <p>My favorite way to visually explore the relationship between one
 categorical variable and one quantitative variable is with side-by-side
 boxplots. The following code produces side-by-side boxplots with
 <code>ggplot</code>. What do you notice about the relationship?</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>form_data_clean, <span class="fu">aes</span>(<span class="at">x=</span>year, <span class="at">y=</span>pets_numeric))<span class="sc">+</span><span class="fu">geom_boxplot</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>form_data_clean, <span class="fu">aes</span>(<span class="at">x=</span>year, <span class="at">y=</span>pets_numeric))<span class="sc">+</span><span class="fu">geom_boxplot</span>()</span></code></pre></div>
 </div>
 <div id="two-categorical-variables" class="section level3">
 <h3>Two categorical variables</h3>
-<p>In this section, we will look at the relationship between a student’s
-favorite dining hall and whether or not they play a sport at Williams.
-Both of these variables are categorical, which means that some of the
-techniques that we learned above no longer apply!</p>
-<p>Let’s first look at the two variables individually. Note that I am
+<p>In this final section, we will look at the relationship between a
+student’s favorite dining hall and whether or not they play a sport at
+Williams. Both of these variables are categorical.</p>
+<p>Let’s first look at the variable <code>sports</code>. Note that I am
 going to work with <code>form_data</code>, not
 <code>form_data_clean</code>, because I no longer need to worry about
 the <code>pets</code> variable.</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>form_data <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(sports) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="fu">n</span>())</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a>form_data <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(sports) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="fu">n</span>())</span></code></pre></div>
 <p>While “No” and “Yes” probably seem like very reasonable values for
 this variable, it turns out that it is really convenient in
 <code>R</code> if our <code>binary</code> variables are stored as
@@ -2052,25 +2052,26 @@ this variable, it turns out that it is really convenient in
 can use <em>mutate()</em> to make a new variable called
 <code>athlete</code>, which evaluates to <code>TRUE</code> when
 <code>sports==&quot;Yes&quot;</code> and evaluates to false otherwise.</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a>form_data <span class="ot">&lt;-</span> form_data <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">athlete =</span> sports<span class="sc">==</span><span class="st">&quot;Yes&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>form_data <span class="ot">&lt;-</span> form_data <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">athlete =</span> sports<span class="sc">==</span><span class="st">&quot;Yes&quot;</span>)</span></code></pre></div>
 <p>The reason that this is convenient is that we can now do the
-following. Discuss with your neighbors what these numbers mean!</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>form_data <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="fu">sum</span>(athlete), <span class="fu">mean</span>(athlete))</span></code></pre></div>
-<p>We can now look at the number or proportion of students who are
-athletes, broken down by a student’s favorite dining hall.</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a>form_data <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(dining_hall) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="fu">sum</span>(athlete), <span class="fu">n</span>(),<span class="fu">mean</span>(athlete))</span></code></pre></div>
-<p>We can also display this visually!</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>form_data, <span class="fu">aes</span>(<span class="at">x=</span>dining_hall))<span class="sc">+</span><span class="fu">geom_bar</span>()</span></code></pre></div>
+following. Discuss the meaning of these numbers with your neighbors!</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a>form_data <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="fu">sum</span>(athlete), <span class="fu">mean</span>(athlete))</span></code></pre></div>
+<p>Now that we have this new <code>athlete</code> variable, it is
+seamless to look at the proportion of students who are athletes, broken
+down by a student’s favorite dining hall.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>form_data <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(dining_hall) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="fu">mean</span>(athlete))</span></code></pre></div>
+<p>We can also make a visual representation of this data.</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>form_data, <span class="fu">aes</span>(<span class="at">x=</span>dining_hall, <span class="at">fill=</span>athlete))<span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">position=</span><span class="st">&quot;dodge&quot;</span>)</span></code></pre></div>
-<p>Do you think that there is a relationship? Is it meaningful? Discuss
-with your group!</p>
+<p>Based on the summaries above, do you think that there is a meaningful
+relationship between a students’ favorite dining hall and whether or not
+they play a sport at Williams? Discuss with your group!</p>
 </div>
 </div>
 <div id="wrap-up" class="section level1">
 <h1>Wrap up</h1>
-<p>Hopefully, when you work on homework 1, you will find that I went
-over all of the R functions that you need for the homework in class. It
-is my goal that this will be the case for every homework throughout the
+<p>Hopefully, when you work on HW1, you will find that I went over all
+of the R functions that you need for the homework in class. It is my
+goal that this will be the case for every homework throughout the
 semester!</p>
 <p>If you are already experienced in programming, I would encourage you
 to go above-and-beyond on the homework assignments in terms of making
