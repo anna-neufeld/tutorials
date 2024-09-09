@@ -269,19 +269,80 @@ ggplot(data=form_data_clean, aes(x=pets_numeric))+geom_histogram(bins=10)+
   ggtitle("Stat 202 Survey Responses about Pets")
 ```
 
-You will need to make a histogram for problem 4c in your homework! Hopefully you can figure out how to modify the code above so that this is seamless! 
+Finally, suppose that you want to visualize the number of pets, but only among seniors at Williams. We can use the *filter* function to accomplish this. Consider the following lines of code.
+
+```{r}
+form_data_clean$year
+form_data_clean$year=="Senior"
+form_data_clean %>% filter(year=="Senior")
+```
+Subsetting our histogram to only include seniors is simple:
+
+```{r}
+ggplot(data=form_data_clean %>% filter(year=="Senior"), aes(x=pets_numeric))+geom_histogram(bins=10)+
+  xlab("How many pets have you lived with in your life?")+
+  ggtitle("Stat 202 Survey Responses about Pets", "Among Seniors")
+```
 
 On your own time, try making a histogram of another variable in the dataset! This may require some additional *cleaning* due to the fact that nearly every variable had issues with students entering words rather than numbers into the survey. 
 
 
 ### One quantitative variable, one categorical variable. 
 
-Suppose that we want to study the relationship between the number of pets that someone has had and 
+Suppose that we want to study the relationship between the number of pets that someone has had and their year at Williams. The best way to do this numerically is by using ``group_by`` and then ``summarize``. 
 
+What do you notice about the following table? 
 
 ```{r}
 form_data_clean %>% group_by(year) %>% summarize(mean(pets_numeric))
 ```
+When categorical variables have a natural ordering to them, it is nice to tell `R` this so that the categories will be displayed in order. Try running the following code:
+
+```{r}
+form_data_clean <- form_data_clean %>% 
+    mutate(year = ordered(year, levels=c("First year", "Sophomore", "Junior", "Senior")))
+```
+
+And now try remaking the table from above. Just for fun, let's add the median number of pets, as well as the number of students, for each category. 
+
+```{r}
+form_data_clean %>% group_by(year) %>% summarize(mean(pets_numeric), median(pets_numeric), n())
+```
+
+What do you notice? What improved? What did not improve? Does there seem to a relationship between the number of pets and the year at Williams? 
+
+My favorite way to visually explore the relationship between one categorical variable and one quantitative variable is with side-by-side boxplots. The following code produces side-by-side boxplots with ``ggplot``. What do you notice about the relationship?
+
+```{r}
+ggplot(data=form_data_clean, aes(x=year, y=pets_numeric))+geom_boxplot()
+```
+
+
+### Two categorical variables
+
+
+
+
+
+### Just for fun
+
+I am assuming that we will run out of time to go over these sections in class, 
+
+```{r}
+ggplot(data=form_data, aes(x=dining_hall))+geom_bar()
+```
+
+Do you think that there is a relationship between favorite dining hall and whether or not you play a sport?
+
+```{r}
+table(form_data$sports)
+form_data %>% group_by(dining_hall) %>% summarize(mean(sports=="Yes"))
+```
+
+
+
+
+
 
 One of the categorical variables in our dataset is ``dining_hall``, which is from the question about which dining hall students prefer. A good way to visualize this data is with a bar plot. 
 
@@ -297,39 +358,14 @@ On your own, make a bar plot of another categorical variable in the dataset. Des
 
 
 
-Variables in R can be more than just numbers! If there is time left in section, play around with the following lines of code in your console. You do not need to turn anything in for this part of the assignment, and if you don't get to it during section you do not need to worry about it. 
-
-First, let's explore what happens when we work with text in R. Does it make sense to add two variables when they are not numbers? Discuss!
-
-```{r, eval=FALSE}
-x <- "cat"
-y <- "dog"
-x*y
-```
-
-In statistics, we often are not working with one number at a time. We are often working with lists of numbers; datasets! We can make our first small dataset in R using the `c()` function, which binds elements together in a list. Discuss the following lines of code as a group.
-
-```{r, eval=FALSE}
-data <- c(1,5,7,8,9,10,12,13)
-mean(data)
-data+5
-mean(data+5)
-data[3]
-```
 
 *** 
-
-## Conclusion
-
-Today, we perfomed some basic calculations in R. The primary purpose was to give you practice making and knitting an RMarkdown document. Next week, we will start working with real datasets in R using the **tidyverse** packages. 
-
 ## Acknowledgements
 
-Much of the content in this tutorial was adopted from an OpenIntro lab. <div id="license">
+The formatting and some of the introductory content in this tutorial was adopted from an OpenIntro lab. <div id="license">
 This is a product of OpenIntro that is released under a 
 [Creative Commons Attribution-ShareAlike 3.0 Unported](http://creativecommons.org/licenses/by-sa/3.0). 
 This lab was adapted for OpenIntro by Andrew Bray and Mine &Ccedil;etinkaya-Rundel
 from a lab written by Mark Hansen of UCLA Statistics.
 </div>
 
-This tutorial uses the OpenIntro formatting template.
