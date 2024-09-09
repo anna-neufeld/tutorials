@@ -317,44 +317,50 @@ My favorite way to visually explore the relationship between one categorical var
 ggplot(data=form_data_clean, aes(x=year, y=pets_numeric))+geom_boxplot()
 ```
 
-
 ### Two categorical variables
 
+In this section, we will look at the relationship between a student's favorite dining hall and whether or not they play a sport at Williams. Both of these variables are categorical, which means that some of the techniques that we learned above no longer apply!
 
+Let's first look at the two variables individually. Note that I am going to work with ``form_data``, not ``form_data_clean``, because I no longer need to worry about the ``pets`` variable. 
 
+```{r}
+form_data %>% group_by(sports) %>% summarize(n())
+```
 
+While "No" and "Yes" probably seem like very reasonable values for this variable, it turns out that it is really convenient in `R` if our ``binary`` variables are stored as `0` and `1`. We use `1` to represent `TRUE` and `0` to represent `FALSE`. We can use *mutate()* to make a new variable called ``athlete``, which evaluates to `TRUE` when ``sports=="Yes"`` and evaluates to false otherwise. 
 
-### Just for fun
+```{r}
+form_data <- form_data %>% mutate(athlete = sports=="Yes")
+```
 
-I am assuming that we will run out of time to go over these sections in class, 
+The reason that this is convenient is that we can now do the following. Discuss with your neighbors what these numbers mean!
+
+```{r}
+form_data %>% summarize(sum(athlete), mean(athlete))
+```
+We can now look at the number or proportion of students who are athletes, broken down by a student's favorite dining hall. 
+
+```{r}
+form_data %>% group_by(dining_hall) %>% summarize(sum(athlete), n(),mean(athlete))
+```
+
+We can also display this visually!
 
 ```{r}
 ggplot(data=form_data, aes(x=dining_hall))+geom_bar()
 ```
 
-Do you think that there is a relationship between favorite dining hall and whether or not you play a sport?
-
 ```{r}
-table(form_data$sports)
-form_data %>% group_by(dining_hall) %>% summarize(mean(sports=="Yes"))
+ggplot(data=form_data, aes(x=dining_hall, fill=athlete))+geom_bar(position="dodge")
 ```
 
+Do you think that there is a relationship? Is it meaningful? Discuss with your group! 
 
+# Wrap up
 
+Hopefully, when you work on homework 1, you will find that I went over all of the R functions that you need for the homework in class. It is my goal that this will be the case for every homework throughout the semester! 
 
-
-
-One of the categorical variables in our dataset is ``dining_hall``, which is from the question about which dining hall students prefer. A good way to visualize this data is with a bar plot. 
-
-```{r}
-ggplot(data=form_data_anonymous, aes(x=dining_hall))+geom_bar()
-```
-
-On your own, make a bar plot of another categorical variable in the dataset. Describe what you see!
-
-
-### One quantitative, one categorical 
-
+If you are already experienced in programming, I would encourage you to go above-and-beyond on the homework assignments in terms of making your code and your plots beautiful. If you are new to programming, please let me know if the pacing seems too fast for you! I am happy to provide additional resources for learning R if needed! 
 
 
 
