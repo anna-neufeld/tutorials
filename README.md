@@ -1,27 +1,10 @@
-OpenIntro Labs - tidyverse
+Welcome!
 ==============
 
-OpenIntro Labs promote the understanding and application of statistics through 
-applied data analysis. Labs are titled based on topic area, which correpond to 
-particular chapters in all three versions of OpenIntro Statistics, a free and 
-open-source textbook. The textbook as well as the html version of the labs can
-be found at [http://www.openintro.org/stat/labs.php](http://www.openintro.org/stat/labs.php).
+These materials were developed for Stat 202 at Williams College in the fall of 2024 by Anna Neufeld.
 
-This repository is a fork of the original base-R labs. It incoperates 
-the 'tidyverse' syntax from the `dplyr` package for data maniplation, the `ggplot2` 
-package for graphics, and the `infer` package for statistical inference.
+They are based off of the OpenIntro lab templates. The textbook as well as the html version of the labs can
+be found at [http://www.openintro.org/stat/labs.php](http://www.openintro.org/stat/labs.php). In particular, the template and some content on this cite is taken from the tidyverse version of the OpenIntro labs [https://openintrostat.github.io/oilabs-tidy/](https://openintrostat.github.io/oilabs-tidy/). 
 
-We currently support our source files in the RMarkdown (.Rmd) format, which can be output into
-html format (though output to pdf is also possible). The source files are processed
-using the [knitr](http://yihui.name/knitr/) package in R, and are easiest to use in [RStudio](https://www.rstudio.com/products/rstudio/download/).
 
-It is our hope that these materials are useful for instructors and students of 
-statistics.  If you end up developing some interesting variants of these labs or 
-creating new ones, please let us know!
 
-## Feedback / collaboration
-
-Your feedback is most welcomed! If you have suggestions for minor updates (fixing
-typos, etc.) please do not hesitate to issue a pull request. If you have ideas for
-major revamp of a lab (replacing outdated code with modern version, overhaul in 
-pedagogy, etc.) please create an issue so to start the conversation.
