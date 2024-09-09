@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.9.4)  9 SEP 2024 13:19
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.9.4)  9 SEP 2024 14:05
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -511,10 +511,18 @@ Package pdftex.def Info: example.png  used on input line 333.
 [6 <./RMarkdown2.png> <./example.png>]
 
 [7]
+<data.png, id=80, 1086.0575pt x 320.19624pt>
+File: data.png Graphic file (type png)
+<use data.png>
+Package pdftex.def Info: data.png  used on input line 476.
+(pdftex.def)             Requested size: 469.76312pt x 138.49762pt.
 
-[8]
 
-[9] (./Lecture2_activity.aux)
+[8 <./data.png>]
+
+[9]
+
+[10] (./Lecture2_activity.aux)
  ***********
 LaTeX2e <2024-06-01> patch level 2
 L3 programming layer <2024-08-16>
@@ -524,18 +532,18 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 11679 strings out of 475539
- 180846 string characters out of 5776666
+ 11688 strings out of 475539
+ 180963 string characters out of 5776666
  1938957 words of memory out of 5000000
- 34114 multiletter control sequences out of 15000+600000
+ 34121 multiletter control sequences out of 15000+600000
  609382 words of font info for 79 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 89i,6n,93p,467b,564s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 89i,6n,93p,467b,464s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </Users/annaneufeld/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></Users/annaneufeld/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></Users/annaneufeld/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></Users/annaneufeld/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Users/annaneufeld/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb></Users/annaneufeld/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb></Users/annaneufeld/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></Users/annaneufeld/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on Lecture2_activity.pdf (9 pages, 525109 bytes).
+Output written on Lecture2_activity.pdf (10 pages, 645721 bytes).
 PDF statistics:
- 171 PDF objects out of 1000 (max. 8388607)
- 129 compressed objects within 2 object streams
- 29 named destinations out of 1000 (max. 500000)
- 103 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 179 PDF objects out of 1000 (max. 8388607)
+ 134 compressed objects within 2 object streams
+ 31 named destinations out of 1000 (max. 500000)
+ 108 words of extra memory for PDF output out of 10000 (max. 10000000)
 
