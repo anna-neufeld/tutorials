@@ -11,7 +11,7 @@ names(form_data_anonymous) <-
     "arrive")
 
 form_data_anonymous <- form_data_anonymous[,-c(21,22)]
-save(form_data_anonymous, file="form_data_anonymous.csv")
+write.csv(form_data_anonymous, file="form_data_anonymous.csv")
 
 
 
