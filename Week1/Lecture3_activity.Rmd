@@ -49,37 +49,33 @@ Today, we will work with a dataset about prices of houses that were sold in Sara
 This dataset is built into the ``mosaic`` R package. The easiest way to load this dataset is to install and load this package. First, check to see if you have ``mosaic`` already installed in your packages tab. 
 
 ![](mosaic.png){width=500px}
+
 If not, run the following command in your console:
 
 ```{r, eval=F}
 install.packages("mosaic")
 ```
 
-Once you have done this, load the
+Once you have done this, load the package and the dataset using the following code.
 
-
-
-Just in case you are unable to load the package, you can also download the data from my github website. I posted it here just in case.
-
-```{r}
-SaratogaHouses <- read.csv("https://anna-neufeld.github.io/stat202_tutorials/Week1/SaratogaHouses.csv")
+```{r, eval=T, message=F, warning=F}
+library(mosaic)
+data("SaratogaHouses")
 ```
 
+Just in case you are unable to load the package, you can also download the data from my github website using the following code. But loading directly from the package is preferable. 
 
-
-airbnbs in New York City. Please load the data from the following link! I am still posting datasets to github for you to simplify the process of loading them into R. All you need to load this data is an internet connection! 
-
-
-
-If you were successful, you should be able to view the first few rows of the data with the following command.
-
-```{r}
-head(airbnb_nyc)
+```{r, eval=F}
+SaratogaHouses <- read.csv("https://anna-neufeld.github.io/stat202_tutorials/Week1/SaratogaHouses.csv", row.names=1)
 ```
 
+Once you have the data loaded, you can view the first few lines of the data using the following command.
+
+```{r, eval=T}
+head(SaratogaHouses)
+```
 <div id="boxedtext">
-
-With a neighbor discuss the following.
+**With a neighbor discuss the following:**
 
 - What are the observational units in this dataset? How many are there?
 - How many variables are in the dataset? 
@@ -90,31 +86,111 @@ With a neighbor discuss the following.
 
 # Exploratory Data Analysis
 
-Today's tutorial is all about how we explore different types of variables and the relationship between them! We will go through different cases in order.
+Today's tutorial is all about how we explore different types of variables and the relationship between them! We will go through different cases in order. Before we start, we need to be sure to load the tidyverse!
 
+```{r, eval=T}
+library(tidyverse)
+```
 
 ### One quantitative variable
 
-Let's first focus on ``price``. 
+Let's first focus on ``price``. There are a bunch of different ways to extract the ``price`` variable from the dataset. Try running the following lines of code. What do you notice?
 
+```{r, eval=F}
+price
+SaratogaHouses$price
+SaratogaHouses %>% select(price)
+SaratogaHouses %>% pull(price)
+names(SaratogaHouses)
+SaratogaHouses[,1]
+```
 
+We can view all sorts of numerical summaries of this variable. Try running the following lines of code. What do you notice?
 
-### Keywords
+```{r}
+summary(SaratogaHouses$price)
+SaratogaHouses %>% pull(price) %>% summary()
+mean(SaratogaHouses$price)
+median(SaratogaHouses$price)
+max(SaratogaHouses$price)
+IQR(SaratogaHouses$price)
+sd(SaratogaHouses$price)
+SaratogaHouses %>% summarize(mean(price), max(price), IQR(price))
+```
 
-Click on ``form_data`` in your *environment*. You should see something like this: 
+While numerical summaries are great, it is always important to look at our data visually! For a single quantitative variable, we might be interested in making a histogram. Try out the following code! 
 
-![](data.png)
-
+```{r, eval=T, warning=F, message=F}
+ggplot(data=SaratogaHouses, aes(x=price))+geom_histogram()
+```
 
 <div id="boxedtext">
-**With a neighbor, discuss the following questions:**
+**Whenever we describe a quantitative variable, we want to describe all the elements of SOCS**
 
-- What are the **observational units** in this dataset. How many are there?
-- What are some examples of **quantitative variables** in this dataset?
-- What are some examples of **categorical variables** in this dataset? 
-    - Bonus: are any of these **ordinal variables**? 
-- Do you see any issues with the data?
+- Shape
+- Outliers
+- Center 
+- Spread
+
 </div>
+
+Play around with the plot above. Can you make it more beautiful? Explore changing the number of bins, changing the title, changing the axis labels, etc. 
+
+```{r, eval=T}
+ggplot(data=SaratogaHouses, aes(x=price))+
+  geom_histogram(bins=50)+
+  ggtitle("Prices of homes in Saratoga County")+
+  xlab("Price")+ylab("Count")+
+  theme(axis.title=element_text(size=30), plot.title=element_text(size=20))+
+  theme_bw()
+```
+
+
+
+### One quantitative variable, one categorical variable
+
+Now suppose that we want to examine the relationship between ``price`` and a categorical variable such as ``newConstruction``. For example, maybe we want to know if new houses tend to cost more. 
+
+In terms of numerical summaries, we are usually interested in the same summaries as above, but not we want to report them within each category. Try out the following code.
+
+```{r, eval=T}
+SaratogaHouses %>% group_by(newConstruction) %>% summarize(mean(price), median(price), n())
+```
+
+**Optional:** Someone in office hours asked how we can make our summary tables print more beautifully in RMarkdown. If you would like beautiful tables, try out the following code:
+
+```{r, eval=F}
+install.packages("kableExtra")
+```
+
+```{r, eval=T, message=F, warning=F}
+library(kableExtra)
+SaratogaHouses %>% 
+  group_by(newConstruction) %>% 
+  summarize("Mean"= mean(price), "Median" = median(price), "n"= n()) %>% 
+  kbl() %>% 
+  kable_classic()
+```
+
+To visually display the relationship between a quantitative variable and a categorical variable, we often want to make side by side boxplots. Another option is multiple histograms. Basically, we can do anything that we would do for a single quantitative variable, we just compare across groups!
+
+```{r, eval=T}
+ggplot(data=SaratogaHouses, aes(x=newConstruction, y=price))+geom_boxplot()
+```
+
+<div id="boxedtext">
+**What do you notice? How would you compare these distributions in terms of SOCS?**
+</div>
+
+As an alternative to side by side boxplots, we can make multiple histograms. There are several ways to do this. Please explore on your own time!
+```{r, eval=T, message=F, warning=F}
+ggplot(data=SaratogaHouses, aes(x=price, fill=newConstruction))+
+  geom_histogram()
+ggplot(data=SaratogaHouses, aes(x=price, fill=newConstruction))+
+  geom_histogram(alpha=0.5, position="identity")
+ggplot(data=SaratogaHouses, aes(x=price))+
+  geom_histogram()+facet_grid(vars(newConstruction))
+```
 
 When we do exploratory data analysis, we want to explore **univariate** summaries of our individual variables. We also want to explore **multivariate** relationships between our variables. We want to do this visually, but we may also want to compute some summary statistics! The type of visual and numerical summary depends on the type of variable! We will dive into some examples below. 
 
