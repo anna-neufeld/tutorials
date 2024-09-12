@@ -154,7 +154,8 @@ Now suppose that we want to examine the relationship between ``price`` and a cat
 In terms of numerical summaries, we are usually interested in the same summaries as above, but not we want to report them within each category. Try out the following code.
 
 ```{r, eval=T}
-SaratogaHouses %>% group_by(newConstruction) %>% summarize(mean(price), median(price), n())
+SaratogaHouses %>% group_by(newConstruction) %>% 
+  summarize(mean(price), median(price), n())
 ```
 
 **Optional:** Someone in office hours asked how we can make our summary tables print more beautifully in RMarkdown. If you would like beautiful tables, try out the following code:
@@ -175,15 +176,17 @@ SaratogaHouses %>%
 To visually display the relationship between a quantitative variable and a categorical variable, we often want to make side by side boxplots. Another option is multiple histograms. Basically, we can do anything that we would do for a single quantitative variable, we just compare across groups!
 
 ```{r, eval=T}
-ggplot(data=SaratogaHouses, aes(x=newConstruction, y=price))+geom_boxplot()
+ggplot(data=SaratogaHouses, aes(x=newConstruction, y=price))+
+  geom_boxplot()
 ```
 
 <div id="boxedtext">
 **What do you notice? How would you compare these distributions in terms of SOCS?**
 </div>
 
-As an alternative to side by side boxplots, we can make multiple histograms. There are several ways to do this. Please explore on your own time!
-```{r, eval=T, message=F, warning=F}
+As an alternative to side by side boxplots, we can make multiple histograms. There are several ways to do this. Please explore the following three chunks of code. Which plot do you like best?
+
+```{r, eval=F, message=F, warning=F}
 ggplot(data=SaratogaHouses, aes(x=price, fill=newConstruction))+
   geom_histogram()
 ggplot(data=SaratogaHouses, aes(x=price, fill=newConstruction))+
@@ -192,95 +195,131 @@ ggplot(data=SaratogaHouses, aes(x=price))+
   geom_histogram()+facet_grid(vars(newConstruction))
 ```
 
-### Two quantitiatve variables. 
+### Two quantitiatve variables
 
-### One quantitative variable
+Next, suppose that we want to study the relationship between the size of a home and its price. The best way to do this is with a scatterplot! 
 
-Let's use ``pets,`` which stores the recorded answers to the question "How many pets have you had or have you lived with in your life?".
-
-
-
-```{r}
-form_data_clean$year
-form_data_clean$year=="Senior"
-form_data_clean %>% filter(year=="Senior")
+```{r, eval=T}
+ggplot(data=SaratogaHouses, aes(x=livingArea, y=price))+
+  geom_point()+
+  xlab("Size of House (square feet)")+
+  ylab("Price of house (dollars)")
 ```
-Subsetting our histogram to only include seniors is simple: we just modify the ``data`` argument so that it calls upon the filtered dataset. 
+<div id="boxedtext">
+**When we describe a scatterplot, we should describe: **
 
+- The direction of the relationship (positive? negative?)
+- The shape of the relationship (linear? curved?)
+- Any patterns in the errors (fan shaped)
+- Any outliers (there are three types!)
+</div>
 
+A lot of this class will be focused on numerical summaries of the relationship between two quantitative variables! For this week, we will stick to something simple. Correlation!
 
-```{r}
-form_data_clean %>% group_by(year) %>% summarize(mean(pets_numeric))
+```{r, eval=T}
+SaratogaHouses %>% summarize(cor(livingArea, price))
 ```
+To see a different type of relationship, consider the relationship between the age of a house and the price. We can also color the points in the plot according to weather or not the house has central air conditioning. What do you notice in this plot? 
 
-*Ordinal* variables are categorical variables that have a natural ordering to them. When we have an ordinal variable, it is nice to tell `R` this so that the categories will be displayed in order. Try running the following code:
-
-```{r}
-form_data_clean <- form_data_clean %>% 
-    mutate(year = ordered(year, levels=c("First year", "Sophomore", "Junior", "Senior")))
-```
-
-And now try remaking the table from above.
-
-```{r}
-form_data_clean %>% group_by(year) %>% summarize(mean(pets_numeric))
-```
-What do you notice? What improved? What did not improve? Does there seem to a relationship between the number of pets and the year at Williams? 
-
-Eventually in this class, we will review statistical tools that will let us say more formally whether or not there seems to be a relationship between these variables. For now, we might want to just look informally at a bit more information:
-
-```{r}
-form_data_clean %>% group_by(year) %>% summarize(mean(pets_numeric), median(pets_numeric), sd(pets_numeric), n())
+```{r, eval=T}
+ggplot(data=SaratogaHouses, aes(x=age, y=price, col=centralAir))+
+  geom_point()+
+  xlab("Age of House (square feet)")+
+  ylab("Price of house (dollars)")
 ```
 
-My favorite way to visually explore the relationship between one categorical variable and one quantitative variable is with side-by-side boxplots. The following code produces side-by-side boxplots with ``ggplot``. What do you notice about the relationship?
+Now that the relationship is negative, we have negative correlation. 
 
-```{r}
-ggplot(data=form_data_clean, aes(x=year, y=pets_numeric))+geom_boxplot()
+```{r, eval=T}
+SaratogaHouses %>% summarize(cor(age, price))
 ```
 
-### Two categorical variables
 
-In this final section, we will look at the relationship between a student's favorite dining hall and whether or not they play a sport at Williams. Both of these variables are categorical. 
+## Single categorical variable
 
-Let's first look at the variable ``sports``. Note that I am going to work with ``form_data``, not ``form_data_clean``, because I no longer need to worry about the ``pets`` variable. 
-
-```{r}
-form_data %>% group_by(sports) %>% summarize(n())
-```
-
-While "No" and "Yes" probably seem like very reasonable values for this variable, it turns out that it is really convenient in `R` if our ``binary`` variables are stored as `0` and `1`. We use `1` to represent `TRUE` and `0` to represent `FALSE`. We can use *mutate()* to make a new variable called ``athlete``, which evaluates to `TRUE` when ``sports=="Yes"`` and evaluates to false otherwise. 
+In this section, let's focus on the ``newConstruction`` variable. The easiest way to look at the distribution of this variable is through a table. There are a few ways to do this. Try out the following code, and see what happens.
 
 ```{r}
-form_data <- form_data %>% mutate(athlete = sports=="Yes")
+table(SaratogaHouses$newConstruction)
+SaratogaHouses %>% select(newConstruction) %>% table()
+SaratogaHouses %>% group_by(newConstruction) %>% summarize(n())
+SaratogaHouses %>% select(newConstruction) %>% table() %>% prop.table()
 ```
-
-The reason that this is convenient is that we can now do the following. Discuss the meaning of these numbers with your neighbors! 
+To visualize this data, our best option is a bar plot!
 
 ```{r}
-form_data %>% summarize(sum(athlete), mean(athlete))
+ggplot(data=SaratogaHouses, aes(x=newConstruction))+geom_bar()
 ```
 
-Now that we have this new ``athlete`` variable, it is seamless to look at the proportion of students who are athletes, broken down by a student's favorite dining hall. 
+## Two categorical variables
+
+Last but not least, we should discuss the relationship between two categorical variables. This is actually a tricky subject. The following table actually gives us information about three different distributions.
+
+```{r, echo=T, eval=T}
+SaratogaHouses %>% select(newConstruction, centralAir) %>% 
+  table()
+```
+
+- *Marginal distribution of "new construction":* What is the probability that a randomly selected house from the dataset is new construction?
+- *Conditional distribution of new construction given central air:* What is the probability that a randomly selected house from the dataset is new construction, given that it has central air? 
+- *Joint distribution of new construction and central air:* What is the probability that a randomly selected house from the dataset is new construction and has central air?
+
+We can see these distributions more directly if we modify our tables. Try out and compare the following code. 
+
+```{r, eval=F}
+SaratogaHouses %>% select(newConstruction, centralAir) %>% 
+  table() %>% prop.table()
+```
+
+```{r, eval=F}
+SaratogaHouses %>% select(newConstruction, centralAir) %>% 
+  table() %>% prop.table() %>% addmargins()
+```
+
+```{r, eval=F}
+SaratogaHouses %>% select(newConstruction, centralAir) %>% 
+  table() %>% prop.table(margin=1)
+```
+
+```{r, eval=F}
+SaratogaHouses %>% select(newConstruction, centralAir) %>% 
+  table() %>% prop.table(margin=2)
+```
+
+<div id="boxedtext">
+**After all of those tables, do you think that there is a relationship between these two variables?**
+</div>
+
+Finally, we can visualize all of those distributions with varying types of bar plots. Compare the following plots. 
+
+```{r, eval=F}
+ggplot(data=SaratogaHouses, aes(x=newConstruction, fill=centralAir))+geom_bar(position="stack")
+
+ggplot(data=SaratogaHouses, aes(x=newConstruction, fill=centralAir))+
+  geom_bar(position="dodge")
+
+ggplot(data=SaratogaHouses, aes(x=newConstruction, fill=centralAir))+
+  geom_bar(position="fill")
+```
+
+An even easier way to display a joint distribution is with a mosaic plot, which you can make using the following code: 
 
 ```{r}
-form_data %>% group_by(dining_hall) %>% summarize(mean(athlete))
+SaratogaHouses %>% select(newConstruction, centralAir) %>% 
+  table() %>% mosaicplot()
 ```
-
-We can also make a visual representation of this data. 
-
-```{r}
-ggplot(data=form_data, aes(x=dining_hall, fill=athlete))+geom_bar(position="dodge")
-```
-
-Based on the summaries above, do you think that there is a meaningful relationship between a students' favorite dining hall and whether or not they play a sport at Williams? Discuss with your group! 
 
 # Wrap up
 
-Hopefully, when you work on HW1, you will find that I went over all of the R functions that you need for the homework in class. It is my goal that this will be the case for every homework throughout the semester! 
+We can summarize everything we learned over the past two lectures with the following list.
 
-If you are already experienced in programming, I would encourage you to go above-and-beyond on the homework assignments in terms of making your code and your plots beautiful. If you are new to programming, please let me know if the pacing seems too fast for you! I am happy to provide additional resources for learning R if needed! 
+- When we are exploring **one quantitative variable**, we should make a histogram, discuss SOCS, and look at measures of center and spread like the mean, median, standard deviation, and IQR.
+- When we are exploring the **relationship between a quantitative and categorical variable**, we should make side by side boxplots or multiple histograms. We should mention SOCS within each category, and look at measures of center and spread within each category. 
+- When we are exploring **the relationship between two quantitative variables** we should look at a scatterplot, report the correlation, and discuss the direction/strength/shape of the relationship.
+- When we are exploring **one categorical variable**, we should look at a table and a barplot. We might look at things like balance between categories.
+- When we are exploring the **relationship between two categorical variables**, we should make a two-way table, and visualize it with either multiple bar plots or a mosaic plot. We should consider the joint, marginal, and conditional distributions. 
 
+You should feel comfortable with these concepts on a conceptual level: hopefully many were review. But after the last two R tutorials, you should also now be able to do all of these things in R! 
 
 *** 
 ## Acknowledgements
