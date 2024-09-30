@@ -69,7 +69,7 @@ We will use a t-test to get to the bottom of whether or not there is evidence of
 
 # A hypothesis test for a difference in means
 
-Let $\mu_1$ be the population average of delay time for flights headed from NYC to Los Angeles. Let $\mu_2$ be the population average of delay time for flights headed from NYC to Denver. The null hypothesis is
+Let $\mu_1$ be the population average of delay time for flights headed from NYC to Denver. Let $\mu_2$ be the population average of delay time for flights headed from NYC to Los Angeles. The null hypothesis is
 $$
 H_0: \mu_1 - \mu_2 = 0.
 $$
@@ -102,11 +102,11 @@ However, $\sigma_1$ and $\sigma_2$ are both unknown. Obtain estimates from them 
 $$
 \sqrt{\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2}}.
 $$
-be sure to save this value in `R`, to a variable called ``se``. 
+be sure to save this value in `R`, to a variable called ``se``. While this number does not appear in the `t.test()` printout, you should check to see if your answer matches the number printed by the code: ``t.test(dep_delay~dest, data=nycflights_subsamp)$stderr``.
 
 4. The ``t.test()`` output prints out `t=3.46`. Based on what you have calculated so far, reproduce the number 3.46. On your mini quiz, explain briefly what you did.
 
-5. When we do a two-sample t-test for a difference in means and the two samples have different sizes and different standard deviations, a complicated formula tells us how many degrees of freedom our t-test has. In this case, I would argue that the complicated formula does not matter. Looking at the output of ``t.test()`` where it says ``df=1118.2``, why might I argue that this does not matter?
+5. When we do a two-sample t-test for a difference in means and the two samples have different sizes and different standard deviations, a complicated formula tells us how many degrees of freedom our t-test has. In this case, I would argue that we really don't need to worry about the exact degrees of freedom for our test. In the context of this dataset, why might I argue that we don't need to worry about the exact degrees of freedom?
 
 6. Use `R` to reproduce the p-value given by the ``t.test()`` output. You may *either* use the ``pt()`` function and tell it that ``df=1118.2``, or you may simply use ``pnorm()``. You can even try both and compare your answers. On your mini quiz, briefly explain how you computed the p-value. A picture might help. 
 

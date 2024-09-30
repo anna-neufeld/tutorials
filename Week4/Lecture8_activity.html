@@ -1678,9 +1678,8 @@ evidence of an underlying population difference here.</p>
 <div id="a-hypothesis-test-for-a-difference-in-means" class="section level1">
 <h1>A hypothesis test for a difference in means</h1>
 <p>Let <span class="math inline">\(\mu_1\)</span> be the population
-average of delay time for flights headed from NYC to Los Angeles. Let
-<span class="math inline">\(\mu_2\)</span> be the population average of
-delay time for flights headed from NYC to Denver. The null hypothesis is
+average of delay time for flights headed from NYC to Denver. Let <span class="math inline">\(\mu_2\)</span> be the population average of delay
+time for flights headed from NYC to Los Angeles. The null hypothesis is
 <span class="math display">\[
 H_0: \mu_1 - \mu_2 = 0.
 \]</span> We want to see if our sample provides evidence that <span class="math inline">\(\mu_1 - \mu_2 \neq 0\)</span>. We can actually get
@@ -1733,17 +1732,20 @@ and <code>n2</code>. Do any of these numbers appear in the
 standard deviation of your sampling distribution: <span class="math display">\[
 \sqrt{\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2}}.
 \]</span> be sure to save this value in <code>R</code>, to a variable
-called <code>se</code>.</p></li>
+called <code>se</code>. While this number does not appear in the
+<code>t.test()</code> printout, you should check to see if your answer
+matches the number printed by the code:
+<code>t.test(dep_delay~dest, data=nycflights_subsamp)$stderr</code>.</p></li>
 <li><p>The <code>t.test()</code> output prints out <code>t=3.46</code>.
 Based on what you have calculated so far, reproduce the number 3.46. On
 your mini quiz, explain briefly what you did.</p></li>
 <li><p>When we do a two-sample t-test for a difference in means and the
 two samples have different sizes and different standard deviations, a
 complicated formula tells us how many degrees of freedom our t-test has.
-In this case, I would argue that the complicated formula does not
-matter. Looking at the output of <code>t.test()</code> where it says
-<code>df=1118.2</code>, why might I argue that this does not
-matter?</p></li>
+In this case, I would argue that we really don’t need to worry about the
+exact degrees of freedom for our test. In the context of this dataset,
+why might I argue that we don’t need to worry about the exact degrees of
+freedom?</p></li>
 <li><p>Use <code>R</code> to reproduce the p-value given by the
 <code>t.test()</code> output. You may <em>either</em> use the
 <code>pt()</code> function and tell it that <code>df=1118.2</code>, or
