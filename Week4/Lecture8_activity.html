@@ -1701,30 +1701,62 @@ in our subsetted dataset.</p>
 ##         16.282609          9.782059</code></pre>
 <p>When you run this code, it prints out a lot of information for
 you!</p>
-<p>This prints a lot of information for you! Your task is to reproduce
-all of the numbers in this output using the theory that we learned in
-class. You will still use R to</p>
+<p>At a high level, we see that the p-value is equal to <span class="math inline">\(0.00055\)</span>. You should recognize that this
+means we <em>reject</em> the null hypothesis, and conclude that there is
+convincing evidence of a difference in means.</p>
+<p>But how did <code>R</code> come up with this p-value? And what is all
+of the other information that is printed? We will dive into this
+below!</p>
 </div>
-<div id="your-task" class="section level1">
-<h1>Your task</h1>
-<p>You may work in groups! While I want you to turn something in for the
-mini-quiz, I will calibrate the grading based on whether or not it seems
-like most people had time to finish. AKA, it might be the case than
-anyone you answers the first 4 questions correctly gets a 3/3,
-regardless of the final 4 questions.</p>
-<div id="one-more-airport" class="section level2">
-<h2>One more airport</h2>
-<p>Do flights going to Denver tend to be more delayed, on average, than
-those going to LAX? The following visual seems to suggest a
-difference.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>nycflights_subsamp <span class="ot">&lt;-</span> nycflights <span class="sc">%&gt;%</span> <span class="fu">filter</span>(dest<span class="sc">==</span><span class="st">&quot;LAX&quot;</span> <span class="sc">|</span> dest <span class="sc">==</span> <span class="st">&quot;DEN&quot;</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="fu">ggplot</span>(nycflights_subsamp, <span class="fu">aes</span>(<span class="at">x=</span>dest, <span class="at">y=</span>dep_delay))<span class="sc">+</span><span class="fu">geom_boxplot</span>()<span class="sc">+</span><span class="fu">ylab</span>(<span class="st">&quot;Departure Delay&quot;</span>)<span class="sc">+</span><span class="fu">xlab</span>(<span class="st">&quot;Destination Airport&quot;</span>)<span class="sc">+</span><span class="fu">theme_bw</span>()</span></code></pre></div>
-<p>Using R, conduct a t-test to see if the difference in means that we
-see in our sample provides convincing evidence of a true difference in
-population means. Write down your answer and interpret your results.
-Compare your results here to your results for Denver vs. LA. What could
-explain the difference?</p>
-</div>
+<div id="your-task-in-groups" class="section level1">
+<h1>Your task in groups</h1>
+<p>Your task is to reproduce all of the numbers in the
+<code>t.test()</code> output using the dataset and the theory that we
+learned in class.</p>
+<ol style="list-style-type: decimal">
+<li><p>Your sample statistic should have the form <span class="math inline">\(\bar{x}_1 - \bar{x}_2\)</span>. Find the values of
+<span class="math inline">\(\bar{x}_1\)</span> and <span class="math inline">\(\bar{x}_2\)</span> directly from your dataset, and
+save then in <code>R</code> to variables called <code>xbar1</code> and
+<code>xbar2</code>. Do these show up in the <code>t.test()</code>
+output?</p></li>
+<li><p>R is basing this t-test off of a sampling distribution, whose
+standard deviation is supposed to be <span class="math display">\[
+\sqrt{\frac{\sigma_1^2}{n_1}+\frac{\sigma_2^2}{n_2}}.
+\]</span> However, <span class="math inline">\(\sigma_1\)</span> and
+<span class="math inline">\(\sigma_2\)</span> are both unknown. Obtain
+estimates from them using your data, and save the result to variables
+called <code>s1</code> and <code>s2</code> in R. While you are at it,
+also save the appropriate values of <span class="math inline">\(n_1\)</span> and <span class="math inline">\(n_2\)</span> to <code>R</code> as <code>n1</code>
+and <code>n2</code>. Do any of these numbers appear in the
+<code>t.test()</code> output?</p></li>
+<li><p>Finally, plug all of your estimates in to obtain your estimated
+standard deviation of your sampling distribution: <span class="math display">\[
+\sqrt{\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2}}.
+\]</span> be sure to save this value in <code>R</code>, to a variable
+called <code>se</code>.</p></li>
+<li><p>The <code>t.test()</code> output prints out <code>t=3.46</code>.
+Based on what you have calculated so far, reproduce the number 3.46. On
+your mini quiz, explain briefly what you did.</p></li>
+<li><p>When we do a two-sample t-test for a difference in means and the
+two samples have different sizes and different standard deviations, a
+complicated formula tells us how many degrees of freedom our t-test has.
+In this case, I would argue that the complicated formula does not
+matter. Looking at the output of <code>t.test()</code> where it says
+<code>df=1118.2</code>, why might I argue that this does not
+matter?</p></li>
+<li><p>Use <code>R</code> to reproduce the p-value given by the
+<code>t.test()</code> output. You may <em>either</em> use the
+<code>pt()</code> function and tell it that <code>df=1118.2</code>, or
+you may simply use <code>pnorm()</code>. You can even try both and
+compare your answers. On your mini quiz, briefly explain how you
+computed the p-value. A picture might help.</p></li>
+<li><p>Use <code>R</code> to reproduce the confidence interval printed
+by `<code>t.test()</code>. Once again, you may use either a
+<code>t</code>-multiplier (with the appropriate degrees of freedom) or a
+<code>z</code>-multiplier. On your mini quiz, explain briefly how you
+did this, and interpret your confidence interval in your own
+words.</p></li>
+</ol>
 </div>
 
 

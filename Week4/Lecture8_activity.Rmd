@@ -79,26 +79,42 @@ We want to see if our sample provides evidence that $\mu_1 - \mu_2 \neq 0$. We c
 t.test(dep_delay~dest, data=nycflights_subsamp)
 ```
 
-When you run this code, it prints out a lot of information for you!
+When you run this code, it prints out a lot of information for you! 
 
-This prints a lot of information for you! Your task is to reproduce all of the numbers in this output using the theory that we learned in class. You will still use R to 
+At a high level, we see that the p-value is equal to $0.00055$. You should recognize that this means we *reject* the null hypothesis, and conclude that there is convincing evidence of a difference in means. 
+
+But how did `R` come up with this p-value? And what is all of the other information that is printed? We will dive into this below!
+
+# Your task in groups
+
+Your task is to reproduce all of the numbers in the `t.test()` output using the dataset and the theory that we learned in class. 
+
+1. Your sample statistic should have the form $\bar{x}_1 - \bar{x}_2$. Find the values of $\bar{x}_1$ and $\bar{x}_2$ directly from your dataset, and save then in `R` to variables called `xbar1` and `xbar2`. Do these show up in the ``t.test()`` output?
+
+2. R is basing this t-test off of a sampling distribution, whose standard deviation is supposed to be 
+$$
+\sqrt{\frac{\sigma_1^2}{n_1}+\frac{\sigma_2^2}{n_2}}.
+$$
+However, $\sigma_1$ and $\sigma_2$ are both unknown. Obtain estimates from them using your data, and save the result to variables called `s1` and `s2` in R. While you are at it, also save the appropriate values of $n_1$ and $n_2$ to `R` as `n1` and `n2`. Do any of these numbers appear in the ``t.test()`` output?
 
 
-# Your task
+3. Finally, plug all of your estimates in to obtain your estimated standard deviation of your sampling distribution:
+$$
+\sqrt{\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2}}.
+$$
+be sure to save this value in `R`, to a variable called ``se``. 
 
-You may work in groups! While I want you to turn something in for the mini-quiz, I will calibrate the grading based on whether or not it seems like most people had time to finish. AKA, it might be the case than anyone you answers the first 4 questions correctly gets a 3/3, regardless of the final 4 questions. 
+4. The ``t.test()`` output prints out `t=3.46`. Based on what you have calculated so far, reproduce the number 3.46. On your mini quiz, explain briefly what you did.
 
+5. When we do a two-sample t-test for a difference in means and the two samples have different sizes and different standard deviations, a complicated formula tells us how many degrees of freedom our t-test has. In this case, I would argue that the complicated formula does not matter. Looking at the output of ``t.test()`` where it says ``df=1118.2``, why might I argue that this does not matter?
 
+6. Use `R` to reproduce the p-value given by the ``t.test()`` output. You may *either* use the ``pt()`` function and tell it that ``df=1118.2``, or you may simply use ``pnorm()``. You can even try both and compare your answers. On your mini quiz, briefly explain how you computed the p-value. A picture might help. 
 
+```{r}
 
-## One more airport
-
-Do flights going to Denver tend to be more delayed, on average, than those going to LAX? The following visual seems to suggest a difference.
-
-```{r, echo=T, fig.height=2, fig.width=2, fig.align="center"}
-nycflights_subsamp <- nycflights %>% filter(dest=="LAX" | dest == "DEN")
-ggplot(nycflights_subsamp, aes(x=dest, y=dep_delay))+geom_boxplot()+ylab("Departure Delay")+xlab("Destination Airport")+theme_bw()
 ```
 
-Using R, conduct a t-test to see if the difference in means that we see in our sample provides convincing evidence of a true difference in population means. Write down your answer and interpret your results. Compare your results here to your results for Denver vs. LA. What could explain the difference?
+
+7. Use `R` to reproduce the confidence interval printed by ``t.test()`. Once again, you may use either a `t`-multiplier (with the appropriate degrees of freedom) or a `z`-multiplier. On your mini quiz, explain briefly how you did this, and interpret your confidence interval in your own words. 
+
 
