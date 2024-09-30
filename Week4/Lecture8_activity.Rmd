@@ -1,0 +1,104 @@
+---
+title: "Lecture 8: t-tests in R"
+output:
+  html_document:
+    css: ../lab.css
+    highlight: pygments
+    theme: cerulean
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(eval = FALSE)
+library(tidyverse)
+library(openintro)
+```
+
+
+<div id="boxedtext">
+
+**Learning Objectives**
+
++ Learn how to use R to test for a difference in population means across two groups. 
++ Reproduce the results that R gives you "by hand" to ensure that you understand where R's results come from. 
++ Get mini-quiz credit for attendance and effort/progress.
+</div>
+
+# Loading the data
+
+```{r, echo=F, message=F, warning=F}
+library(knitr)
+```
+
+We will work with the ``nycflights`` dataset from the ``openintro`` package. Please start by loading the required packages and the dataset. 
+
+```{r, warning=F, message=F, echo=T}
+library(tidyverse)
+library(openintro)
+data(nycflights)
+```
+
+Even though this dataset is massive, the ``openintro`` documentation says that this is a random sample of flights from the population of all flights that departed from NYC in 2013. To see the documentation, you can type ``?nycflights`` in your console. 
+
+# Setting up a research question
+
+I would like to know if flights headed to Denver are more delayed, on average, than flights headed to Los Angeles. 
+
+Since my research question relates only to a certain subset of flights in my dataset, my first step is to subset my dataset. 
+
+```{r, eval=T}
+nycflights_subsamp <- nycflights %>% 
+  filter(dest=="LAX" | dest == "DEN")
+```
+
+Next, I can either visually or numerically compare the distribution of flights headed to Los Angeles vs. Denver in my sample. I decided to do this with boxplots, but you could do this however you choose. I came up with the following plot:
+
+```{r, echo=T, fig.height=3, fig.width=2, fig.align="center", echo=F, eval=T}
+ggplot(nycflights_subsamp, aes(x=dest, y=dep_delay))+
+  geom_boxplot()+ 
+  ylab("Departure Delay")+
+  xlab("Destination Airport")+theme_bw()
+```
+
+Based on the plot, I can tell that there is a difference in means between flights headed to `LAX` and `DEN` in my sample. However, I cannot tell if this is driven by a true underlying population difference, or just a few unlucky outliers in my sample. 
+
+We will use a t-test to get to the bottom of whether or not there is evidence of an underlying population difference here.
+
+# A hypothesis test for a difference in means
+
+Let $\mu_1$ be the population average of delay time for flights headed from NYC to Los Angeles. Let $\mu_2$ be the population average of delay time for flights headed from NYC to Denver. The null hypothesis is
+$$
+H_0: \mu_1 - \mu_2 = 0.
+$$
+We want to see if our sample provides evidence that $\mu_1 - \mu_2 \neq 0$. We can actually get R to do all of this work for us. The following line of code will conduct a t-test to see if ``dep_delay`` differs by destination airport in our subsetted dataset.
+
+```{r, eval=T}
+t.test(dep_delay~dest, data=nycflights_subsamp)
+```
+
+When you run this code, it prints out a lot of information for you!
+
+This prints a lot of information for you! Your task is to reproduce all of the numbers in this output using the theory that we learned in class. You will still use R to 
+
+
+# Your task
+
+You may work in groups! While I want you to turn something in for the mini-quiz, I will calibrate the grading based on whether or not it seems like most people had time to finish. AKA, it might be the case than anyone you answers the first 4 questions correctly gets a 3/3, regardless of the final 4 questions. 
+
+
+
+
+## One more airport
+
+Do flights going to Denver tend to be more delayed, on average, than those going to LAX? The following visual seems to suggest a difference.
+
+```{r, echo=T, fig.height=2, fig.width=2, fig.align="center"}
+nycflights_subsamp <- nycflights %>% filter(dest=="LAX" | dest == "DEN")
+ggplot(nycflights_subsamp, aes(x=dest, y=dep_delay))+geom_boxplot()+ylab("Departure Delay")+xlab("Destination Airport")+theme_bw()
+```
+
+Using R, conduct a t-test to see if the difference in means that we see in our sample provides convincing evidence of a true difference in population means. Write down your answer and interpret your results. Compare your results here to your results for Denver vs. LA. What could explain the difference?
+
