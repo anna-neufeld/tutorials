@@ -19,13 +19,11 @@ library(openintro)
 
 
 <div id="boxedtext">
-**Learning Objectives**
-- See how coefficients change when you add and remove variables from a multiple linear regression model. 
+**Learning Objectives**: See how coefficients, p-values, and predictions change when you add and remove variables from a multiple linear regression model. 
 </div>
 
 <div id="boxedtext">
-**Instructions**
-- Submit written answers to anything marked "quiz question" on pencil and paper! This activity is Mini Quiz 6! 
+**Instructions**: Submit written answers to anything marked "quiz question" on pencil and paper! This activity is Mini Quiz 6! 
 </div>
 
 ```{r, echo=F, eval=T}
@@ -44,10 +42,10 @@ y <- 1*x1+2*x2+3*x3+4*x4+5*x5+6*x6+7*x7+rnorm(30, sd=3)
 dat.small <- data.frame(cbind(y,x1,x2,x3,x4,x5,x6,x7))
 write.csv(dat.small, file=c("dat.small.csv"))
 
-X <- MASS::mvrnorm(30, mu=rep(0,30), Sigma=diag(30))
+X <- MASS::mvrnorm(30, mu=rep(0,29), Sigma=diag(29))
 y <- 3*X[,1]+5*X[,5]+rnorm(30)
 dat.big <- data.frame(cbind(y,X))
-names(dat.big)[2:31] <- paste0("x", 1:30)
+names(dat.big)[2:30] <- paste0("x", 1:29)
 write.csv(dat.big, file=c("dat.big.csv"))
 
 
@@ -60,307 +58,81 @@ write.csv(dat.big.test, file=c("dat.big.test.csv"))
 
 # Getting Started 
 
-I made you three fake datasets to explore some strange properties of multiple regression. Download them with the following code:
+I made you three fake datasets to explore some properties of multiple regression. Download them with the following code:
 
 ```{r, eval=F}
+library(tidyverse)
 dat.small <- read.csv("https://anna-neufeld.github.io/stat202_tutorials/Week9/dat.small.csv")
 dat.big <- read.csv("https://anna-neufeld.github.io/stat202_tutorials/Week9/dat.big.csv")
 dat.big.test <- read.csv("https://anna-neufeld.github.io/stat202_tutorials/Week9/dat.big.test.csv")
 ```
+# 1. Starting with dat.small
 
+This dataset has 30 observations, one response variable `y`, and $7$ predictor variables `x1`, `x2`, ..., `x7`. The following code will show you relationships between all of your variables.
 
-
-
-Please open up RStudio so that you see the following window. 
-
-![](R_interface.png)
-
-For today's tutorial, I am going to work in an R Script file instead of an RMarkdown file. This is because I realized it is easier for you all to see what I am doing on the projector screen when I don't have different chunks of code floating around! Also, today is all about exploratory data analysis. R Script files are really great for exploring! RMarkdown files are important when we are done exploring and need to actually *communicate* our results. 
-
-With this in mind, please open up an RScript file! As a reminder, you can do this by going to File, New File, R Script. A new blank white file should show up in the upper left panel of your screen. As a reminder, this file works just like the console, but instead of running a command every time you click enter, you can write several lines at once without running them. If your cursor is on a certain line, clicking "run" in the top right corner will execute just that line. Clicking "source" will execute all lines at once. Experiment by typing code such as the following into your R Script file. Make sure you are comfortable with the difference between running an individual line and running the whole file.  
-
-![](more/RScriptpractice.png){width=700px}
-
-* * *
-
-# Loading the dataset
-
-Today, we will work with a dataset about prices of houses that were sold in Saratoga County, New York in 2006. These data were collected by a Williams student (Candice Corvetti) for her senior thesis in 2007! 
-
-This dataset is built into the ``mosaic`` R package. The easiest way to load this dataset is to install and load this package. First, check to see if you have ``mosaic`` already installed in your packages tab. 
-
-![](mosaic.png){width=500px}
-
-If not, run the following command in your console:
-
-```{r, eval=F}
-install.packages("mosaic")
+```{r, fig.height=6, fig.width=6, eval=T}
+pairs(dat.small)
 ```
 
-Once you have done this, load the package and the dataset using the following code.
+Note that the following code and output tells you about the pairwise correlations between all variables in your dataset.
 
-```{r, eval=T, message=F, warning=F}
-library(mosaic)
-data("SaratogaHouses")
+\tiny
+```{r, echo=T, eval=F}
+cor(dat.small)
 ```
 
-Just in case you are unable to load the package, you can also download the data from my github website using the following code. But loading directly from the package is preferable. 
-
-```{r, eval=F}
-SaratogaHouses <- read.csv("https://anna-neufeld.github.io/stat202_tutorials/Week1/SaratogaHouses.csv", row.names=1)
-```
-
-Once you have the data loaded, you can view the first few lines of the data using the following command.
-
-```{r, eval=T}
-head(SaratogaHouses)
-```
-<div id="boxedtext">
-**With a neighbor discuss the following:**
-
-- What are the observational units in this dataset? How many are there?
-- How many variables are in the dataset? 
-    - For each one, is it quantitative or categorical? 
-
-</div>
-
-
-# Exploratory Data Analysis
-
-Today's tutorial is all about how we explore different types of variables and the relationship between them! We will go through different cases in order. Before we start, we need to be sure to load the tidyverse!
-
-```{r, eval=T}
+```{r, echo=F, eval=T, warning=F, message=F}
 library(tidyverse)
-```
-
-### One quantitative variable
-
-Let's first focus on ``price``. There are a bunch of different ways to extract the ``price`` variable from the dataset. Try running the following lines of code. What do you notice?
-
-```{r, eval=F}
-price
-SaratogaHouses$price
-SaratogaHouses %>% select(price)
-SaratogaHouses %>% pull(price)
-names(SaratogaHouses)
-SaratogaHouses[,1]
-```
-
-We can view all sorts of numerical summaries of this variable. Try running the following lines of code. What do you notice?
-
-```{r}
-summary(SaratogaHouses$price)
-SaratogaHouses %>% pull(price) %>% summary()
-mean(SaratogaHouses$price)
-median(SaratogaHouses$price)
-max(SaratogaHouses$price)
-IQR(SaratogaHouses$price)
-sd(SaratogaHouses$price)
-SaratogaHouses %>% summarize(mean(price), max(price), IQR(price))
-```
-
-While numerical summaries are great, it is always important to look at our data visually! For a single quantitative variable, we might be interested in making a histogram. Try out the following code! 
-
-```{r, eval=T, warning=F, message=F}
-ggplot(data=SaratogaHouses, aes(x=price))+geom_histogram()
-```
-
-<div id="boxedtext">
-**Whenever we describe a quantitative variable, we want to describe all the elements of SOCS**
-
-- Shape
-- Outliers
-- Center 
-- Spread
-
-</div>
-
-Play around with the plot above. Can you make it more beautiful? Explore changing the number of bins, changing the title, changing the axis labels, etc. 
-
-```{r, eval=T}
-ggplot(data=SaratogaHouses, aes(x=price))+
-  geom_histogram(bins=50)+
-  ggtitle("Prices of homes in Saratoga County")+
-  xlab("Price")+ylab("Count")+
-  theme(axis.title=element_text(size=30), plot.title=element_text(size=20))+
-  theme_bw()
-```
-
-
-
-### One quantitative variable, one categorical variable
-
-Now suppose that we want to examine the relationship between ``price`` and a categorical variable such as ``newConstruction``. For example, maybe we want to know if new houses tend to cost more. 
-
-In terms of numerical summaries, we are usually interested in the same summaries as above, but not we want to report them within each category. Try out the following code.
-
-```{r, eval=T}
-SaratogaHouses %>% group_by(newConstruction) %>% 
-  summarize(mean(price), median(price), n())
-```
-
-**Optional:** Someone in office hours asked how we can make our summary tables print more beautifully in RMarkdown. If you would like beautiful tables, try out the following code:
-
-```{r, eval=F}
-install.packages("kableExtra")
-```
-
-```{r, eval=T, message=F, warning=F}
+library(knitr)
 library(kableExtra)
-SaratogaHouses %>% 
-  group_by(newConstruction) %>% 
-  summarize("Mean"= mean(price), "Median" = median(price), "n"= n()) %>% 
-  kbl() %>% 
-  kable_classic()
+cor(dat.small) %>%kable()%>%
+  kable_styling(font_size = 10)
 ```
+The *pairs* plot and the *correlation matrix* above may help you answer some of the questions below!
 
-To visually display the relationship between a quantitative variable and a categorical variable, we often want to make side by side boxplots. Another option is multiple histograms. Basically, we can do anything that we would do for a single quantitative variable, we just compare across groups!
-
-```{r, eval=T}
-ggplot(data=SaratogaHouses, aes(x=newConstruction, y=price))+
-  geom_boxplot()
-```
-
-<div id="boxedtext">
-**What do you notice? How would you compare these distributions in terms of SOCS?**
-</div>
-
-As an alternative to side by side boxplots, we can make multiple histograms. There are several ways to do this. Please explore the following three chunks of code. Which plot do you like best?
-
-```{r, eval=F, message=F, warning=F}
-ggplot(data=SaratogaHouses, aes(x=price, fill=newConstruction))+
-  geom_histogram()
-ggplot(data=SaratogaHouses, aes(x=price, fill=newConstruction))+
-  geom_histogram(alpha=0.5, position="identity")
-ggplot(data=SaratogaHouses, aes(x=price))+
-  geom_histogram()+facet_grid(vars(newConstruction))
-```
-
-### Two quantitiatve variables
-
-Next, suppose that we want to study the relationship between the size of a home and its price. The best way to do this is with a scatterplot! 
-
-```{r, eval=T}
-ggplot(data=SaratogaHouses, aes(x=livingArea, y=price))+
-  geom_point()+
-  xlab("Size of House (square feet)")+
-  ylab("Price of house (dollars)")
-```
-<div id="boxedtext">
-**When we describe a scatterplot, we should describe: **
-
-- The direction of the relationship (positive? negative?)
-- The shape of the relationship (linear? curved?)
-- Any patterns in the errors (fan shaped)
-- Any outliers (there are three types!)
-</div>
-
-A lot of this class will be focused on numerical summaries of the relationship between two quantitative variables! For this week, we will stick to something simple. Correlation!
-
-```{r, eval=T}
-SaratogaHouses %>% summarize(cor(livingArea, price))
-```
-To see a different type of relationship, consider the relationship between the age of a house and the price. We can also color the points in the plot according to weather or not the house has central air conditioning. What do you notice in this plot? 
-
-```{r, eval=T}
-ggplot(data=SaratogaHouses, aes(x=age, y=price, col=centralAir))+
-  geom_point()+
-  xlab("Age of House (square feet)")+
-  ylab("Price of house (dollars)")
-```
-
-Now that the relationship is negative, we have negative correlation. 
-
-```{r, eval=T}
-SaratogaHouses %>% summarize(cor(age, price))
-```
-
-
-## Single categorical variable
-
-In this section, let's focus on the ``newConstruction`` variable. The easiest way to look at the distribution of this variable is through a table. There are a few ways to do this. Try out the following code, and see what happens.
+**1a.** Compare a linear regression of `y` on `x1` to a linear regression of `y` on `x1` and `x2`. What do you notice about the coefficients, p-values, and $R^2$? To explain your answer, you may want to consider the correlation between `x1` and `x2`. 
 
 ```{r}
-table(SaratogaHouses$newConstruction)
-SaratogaHouses %>% select(newConstruction) %>% table()
-SaratogaHouses %>% group_by(newConstruction) %>% summarize(n())
-SaratogaHouses %>% select(newConstruction) %>% table() %>% prop.table()
+summary(lm(y~x1, data=dat.small))
+summary(lm(y~x1+x2, data=dat.small))
 ```
-To visualize this data, our best option is a bar plot!
+
+
+
+**1b.** Compare a linear regression of `y` on `x1` to a linear regression of `y` on `x1` and `x3`. What do you notice about the coefficients, p-values, and $R^2$? To explain your answer, you may want to consider the relationship between `x1` and `x3`. 
 
 ```{r}
-ggplot(data=SaratogaHouses, aes(x=newConstruction))+geom_bar()
+summary(lm(y~x1, data=dat.small))
+summary(lm(y~x1+x3, data=dat.small))
 ```
 
-## Two categorical variables
+**1c.** What happens if you fit a linear regression of `y` on `x1` and `x5` and `x6`. Compare this to the answer in parts a and b. Can you explain your answer by looking at the correlations between all of the x variables. 
 
-Last but not least, we should discuss the relationship between two categorical variables. This is actually a tricky subject. The following table actually gives us information about three different distributions.
+**1d.** What happens if you fit a linear regression of `y` on `x1` and `x3`
 
-```{r, echo=T, eval=T}
-SaratogaHouses %>% select(newConstruction, centralAir) %>% 
-  table()
-```
 
-- *Marginal distribution of "new construction":* What is the probability that a randomly selected house from the dataset is new construction?
-- *Conditional distribution of new construction given central air:* What is the probability that a randomly selected house from the dataset is new construction, given that it has central air? 
-- *Joint distribution of new construction and central air:* What is the probability that a randomly selected house from the dataset is new construction and has central air?
+**1e.** Fit a linear regression of `y` on `x1+x2+x3+x5+x6+x7``. How do you feel about this final model? If you have time, consider diagnostics, etc. 
 
-We can see these distributions more directly if we modify our tables. Try out and compare the following code. 
 
-```{r, eval=F}
-SaratogaHouses %>% select(newConstruction, centralAir) %>% 
-  table() %>% prop.table()
-```
+# 2. Moving on to dat.big
 
-```{r, eval=F}
-SaratogaHouses %>% select(newConstruction, centralAir) %>% 
-  table() %>% prop.table() %>% addmargins()
-```
-
-```{r, eval=F}
-SaratogaHouses %>% select(newConstruction, centralAir) %>% 
-  table() %>% prop.table(margin=1)
-```
-
-```{r, eval=F}
-SaratogaHouses %>% select(newConstruction, centralAir) %>% 
-  table() %>% prop.table(margin=2)
-```
-
-<div id="boxedtext">
-**After all of those tables, do you think that there is a relationship between these two variables?**
-</div>
-
-Finally, we can visualize all of those distributions with varying types of bar plots. Compare the following plots. 
-
-```{r, eval=F}
-ggplot(data=SaratogaHouses, aes(x=newConstruction, fill=centralAir))+geom_bar(position="stack")
-
-ggplot(data=SaratogaHouses, aes(x=newConstruction, fill=centralAir))+
-  geom_bar(position="dodge")
-
-ggplot(data=SaratogaHouses, aes(x=newConstruction, fill=centralAir))+
-  geom_bar(position="fill")
-```
-
-An even easier way to display a joint distribution is with a mosaic plot, which you can make using the following code: 
+This dataset has 30 observations and 30 variables. The following command will let you fit a regression of `y` on all other variables in the dataset.
 
 ```{r}
-SaratogaHouses %>% select(newConstruction, centralAir) %>% 
-  table() %>% mosaicplot()
+mod.full <- lm(y~., data=dat.big)
 ```
 
-# Wrap up
+What do you notice about $R^2$ and your predictions? 
 
-We can summarize everything we learned over the past two lectures with the following list.
 
-- When we are exploring **one quantitative variable**, we should make a histogram, discuss SOCS, and look at measures of center and spread like the mean, median, standard deviation, and IQR.
-- When we are exploring the **relationship between a quantitative and categorical variable**, we should make side by side boxplots or multiple histograms. We should mention SOCS within each category, and look at measures of center and spread within each category. 
-- When we are exploring **the relationship between two quantitative variables** we should look at a scatterplot, report the correlation, and discuss the direction/strength/shape of the relationship.
-- When we are exploring **one categorical variable**, we should look at a table and a barplot. We might look at things like balance between categories.
-- When we are exploring the **relationship between two categorical variables**, we should make a two-way table, and visualize it with either multiple bar plots or a mosaic plot. We should consider the joint, marginal, and conditional distributions. 
+# 3. Bringing in the test set
 
-You should feel comfortable with these concepts on a conceptual level: hopefully many were review. But after the last two R tutorials, you should also now be able to do all of these things in R! 
+The dataset ``test.big`` comes from exactly the same po
+
+
+
+
+
 
 *** 
 ## Acknowledgements
