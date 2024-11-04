@@ -1,0 +1,239 @@
+---
+title: "Lecture 16: Exploring multiple regression"
+output:
+  html_document:
+    css: ../lab.css
+    highlight: pygments
+    theme: cerulean
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(eval = FALSE)
+library(tidyverse)
+library(openintro)
+```
+
+
+<div id="boxedtext">
+**Learning Objectives**: See how coefficients, p-values, and predictions change when you add and remove variables from a multiple linear regression model. 
+</div>
+
+<div id="boxedtext">
+**Instructions**: Submit written answers to the numbered questions on pencil and paper! This activity is Mini Quiz 6! You don't need to write a ton in your answers, but I should be able to tell that you were making progress and learning something! You can work in groups!
+</div>
+
+```{r, echo=F, eval=F}
+setwd("~/stat202_tutorials/Week9")
+n <- 30
+set.seed(1)
+x1 <- rnorm(30)
+x1 <- x1-mean(x1)
+x2 <- x1+rnorm(30, sd=0.04)
+x4 <- 1/2*x1
+x5 <- rnorm(x1, sd=0.25)
+x6 <- rnorm(30)
+x3 <- x6 - sum(x1*x6)/(sum(x1^2))*x1
+x7 <- rnorm(30)
+y <- 1*x1+2*x2+3*x3+4*x4+5*x5+6*x6+7*x7+rnorm(30, sd=3)
+dat.small <- data.frame(cbind(y,x1,x2,x3,x4,x5,x6,x7))
+write.csv(dat.small, file=c("dat.small.csv"), row.names=F)
+
+X <- MASS::mvrnorm(30, mu=rep(0,29), Sigma=diag(29))
+y <- 3*X[,1]+5*X[,5]+rnorm(30)
+dat.big <- data.frame(cbind(y,X))
+names(dat.big)[2:30] <- paste0("x", 1:29)
+write.csv(dat.big, file=c("dat.big.csv"), row.names=F)
+
+
+X <- MASS::mvrnorm(30, mu=rep(0,30), Sigma=diag(30))
+y <- 3*X[,1]+5*X[,5]+rnorm(30)
+dat.big.test <- data.frame(cbind(y,X))
+names(dat.big.test)[2:31] <- paste0("x", 1:30)
+write.csv(dat.big.test, file=c("dat.big.test.csv"), row.names=F)
+```
+
+# Getting Started 
+
+I made you three fake datasets to explore some properties of multiple regression. Download them with the following code:
+
+```{r, eval=T}
+library(tidyverse)
+dat.small <- read.csv("https://anna-neufeld.github.io/stat202_tutorials/Week9/dat.small.csv")
+dat.big <- read.csv("https://anna-neufeld.github.io/stat202_tutorials/Week9/dat.big.csv")
+dat.big.test <- read.csv("https://anna-neufeld.github.io/stat202_tutorials/Week9/dat.big.test.csv")
+```
+
+# 1. Starting with dat.small
+
+This dataset has 30 observations, one response variable `y`, and $7$ predictor variables `x1`, `x2`, ..., `x7`. The following code will show you relationships between all of your variables.
+
+```{r, fig.height=6, fig.width=6, eval=T}
+pairs(dat.small)
+```
+
+The following code and output tells you about the pairwise correlations between all variables in your dataset.For example, 0.395 is the correlation between $y$ and $x2$ in this dataset. The values on the diagonal are all $1$, since every variable is perfectly correlated with itself!
+
+\tiny
+```{r, echo=T, eval=F}
+cor(dat.small)
+```
+
+```{r, echo=F, eval=T, warning=F, message=F}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+cor(dat.small) %>%kable()%>%
+  kable_styling(font_size = 10)
+```
+
+We will now try out a bunch of regressions of `y` on subsets of the predictor variables `x1`,...,`x7`. For each exercise, try out some code in your console, and then record a handwritten answer on your mini quiz. 
+
+<div id="boxedtext">
+**1a: Highly correlated predictors: ** Compare a linear regression of `y` on `x1` to a linear regression of `y` on `x1` and `x2`. Specifically, compare your two models in terms of: the coefficient for `x1`, its standard error, its p-value, and $R^2$. What did you learn from this problem?
+</div>
+
+*The coefficient on x1 changes a LOT between the two models. In the model that includes x1 and x2, the standard error is quite high, and therefore we do not have a small p-value or statistical significance. This is despite the fact that I can see from ``pairs()`` that `x1` really is associated with `y`.*
+
+```{r, eval=T}
+mod1 <- lm(y~x1, data=dat.small)
+mod12 <- lm(y~x1+x2, data=dat.small)
+summary(mod1)$coefficients[2,]
+summary(mod12)$coefficients[2,]
+```
+*Even though the model with `x1` and `x2` has no statistical significance, its $R^2$ is higher than the model with only `x1`.* 
+
+```{r, eval=T}
+summary(mod1)$r.squared
+summary(mod12)$r.squared
+```
+
+*The issue here is that x1 and x2 are very highly correlated. So the model with x1 and x2 is giving x1 a massive positive coefficient and x2 a massive negative coefficient, and we are ending up with similar predictions from the two models. But this tradeoff between x1 and x2 is not really useful for interpretation. The plot below shows that the two models have similar predictions, despite having very different coefficients and standard errors.*
+
+```{r, eval=T}
+cor(dat.small$x1, dat.small$x2)
+ggplot(data=NULL, aes(x=mod1$fitted, y=mod12$fitted))+geom_point()+
+  geom_abline(slope=1, intercept=0)
+```
+<div id="boxedtext">
+**1b: Perfectly uncorrelated predictors:** Compare a linear regression of `y` on `x1` to a linear regression of `y` on `x1` and `x3`. What do you notice about: the coefficient on `x1`, its standard error, and its p-value. Also, what do you notice about $R^2$? What did you learn from this problem?
+</div> 
+
+*We now get the exact same slope in the two models, but the standard errors and p-values are a bit different because the residual standard error has changed. We can tell the residual standard error has changed because $R^2$ is much higher- we got much better predictions. Here, we have clearly improved our model by adding a totally new piece of information!!!! But because x3 was not a confounder (not correlated with x1), it did not change our takeaways from our first model.*
+
+```{r, eval=T}
+cor(dat.small$x1, dat.small$x3)
+mod13 <- lm(y~x1+x3, data=dat.small)
+
+summary(mod13)$coefficients[2,]
+summary(mod1)$coefficients[2,]
+
+summary(mod13)$r.squared
+summary(mod1)$r.squared
+```
+
+
+<div id="boxedtext">
+**1c: Perfectly correlated predictors:** What happens if you fit a linear regression of `y` on `x1` and `x4`? What do you learn from this?
+</div> 
+
+*R will not let us fit a regression with perfectly correlated predictors.*
+
+```{r, eval=T}
+summary(lm(y~x1+x4, data=dat.small))
+```
+
+<div id="boxedtext">
+**1d: Mostly uncorrelated predictors:** What happens if you fit a linear regression of `y` on `x1` and `x5` and `x6` and `x7`. How does this model compare to ones from the previous parts? Play around with this model by adding or removing one variable at a time, and be sure to check out the correlations between different pairs of these variables. What did you learn from this, and how does it relate to the previous parts of the question?
+</div> 
+
+*The coefficients definitely change a bit if you add and remove variables. There is non-zero correlation between the Xs and all variables besides x5 seem important for predicting $y$. We now have quite a large $R^2$, so all of these seem useful. If we were to suddenly add x2, we would ruin some statistical significance but not ruin $R^2$. *
+
+```{r}
+mod167 <- lm(y~x1+x6+x7, data=dat.small)
+summary(mod167)
+```
+
+<div id="boxedtext">
+**1e: What would be your pick for a "final model" for this dataset?**
+</div> 
+
+# 2. Moving on to dat.big
+
+The dataset ``dat.big`` has 30 observations and 29 variables. The following command will let you fit a regression of `y` on all other variables in the dataset.
+
+```{r}
+mod.full <- lm(y~., data=dat.big)
+```
+
+<div id="boxedtext">
+**2a: Perfect predictions:** What is $R^2$ in this model? To explain what is going on, compare your $\hat{y}$ values (stored in ``mod.full$fitted``) to the actual values of $y$ in your dataset. 
+</div> 
+
+I wrote some complicated code for you that makes a plot of $R^2$ vs. $k$, for a linear regression of `y` on `x1`, ... , `xk` in the dataset ``dat.big``. 
+
+```{r, echo=T, eval=T}
+ks <- 1:30
+R2s <- c(summary(lm(y~1, data=dat.big))$r.squared,
+  sapply(ks[2:30], function(u) summary(lm(y~., data=dat.big[,1:u]))$r.squared))
+ggplot(data=NULL, aes(x=ks-1, y=R2s))+geom_point()+geom_line()+theme_bw()
+```
+As you can see, $R^2$ reaches its maximum when all 29 variables are included in the model. However, there are clearly some variables that are 
+
+
+<div id="boxedtext">
+**2b: Effect of increasing the number of variables on $R^2:** Can you make a general claim about what happens to $R^2$ as we add more variables to our model. 
+</div> 
+
+
+<div id="boxedtext">
+**2c: Choosing a model:** Do a bit of visualizing and sleuthing in your dataset. 
+</div> 
+
+You should explore this dataset a bit by making some plots of your variables. Some examples are below.
+
+```{r, echo=T, eval=T, message=F, warning=F}
+library(patchwork)
+```
+
+
+<div id="boxedtext">
+**2b: General behavior of $R^2$:** Explore this dataset a bit by making some plots. 
+</div> 
+
+
+
+# 3. Bringing in the test set
+
+The dataset ``test.big`` comes from exactly the same po
+
+
+
+
+# Takeaways
+
+I hope you learned that:
+
+- Multiple regression is tricky in the presence of correlated predictors. 
+    - When the correlation between two predictors is 1, the model can literally not be fit (the design matrix is singular)!
+    - When the correlation between two predictors is quite high, the model is *unstable*. This also has to do with near-singularity (tiny eigenvalues in the design matrix). 
+    - When the correlation between two predictors is actually 0, adding the second variable to the model does not change the coefficient on the first!
+
+- Measures like $R^2$ will always increase when you increase the number of predictors, so just looking at an increasing $R^2$ is not a good way to say that a more complex model is "better".
+
+- A test set is a better way to assess the ability of a model to generate accurate predictions for a *new sample*. 
+
+We will return to some of these topics next week when we study model selection!
+
+
+*** 
+## Acknowledgements
+
+The formatting of this tutorial was adopted from an OpenIntro lab. <div id="license">
+This is a product of OpenIntro that is released under a 
+[Creative Commons Attribution-ShareAlike 3.0 Unported](http://creativecommons.org/licenses/by-sa/3.0). 
+</div>
+
