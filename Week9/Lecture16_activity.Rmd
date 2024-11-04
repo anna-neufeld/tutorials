@@ -23,10 +23,10 @@ library(openintro)
 </div>
 
 <div id="boxedtext">
-**Instructions**: Submit written answers to the numbered questions on pencil and paper! This activity is Mini Quiz 6! You don't need to write a ton in your answers, but I should be able to tell that you were making progress and learning something! You can work in groups!
+**Instructions**: Submit written answers to the numbered questions on pencil and paper! This activity is Mini Quiz 6! You don't need to write a lot in your handwritten answers, but I should be able to tell that you were making progress and learning something! You can work in groups!
 </div>
 
-```{r, echo=F, eval=T}
+```{r, echo=F, eval=F}
 setwd("~/stat202_tutorials/Week9")
 n <- 30
 set.seed(1)
@@ -60,12 +60,13 @@ write.csv(dat.big.test, file=c("dat.big.test.csv"), row.names=F)
 
 I made you three fake datasets to explore some properties of multiple regression. Download them with the following code:
 
-```{r, eval=F}
+```{r, eval=T}
 library(tidyverse)
 dat.small <- read.csv("https://anna-neufeld.github.io/stat202_tutorials/Week9/dat.small.csv")
 dat.big <- read.csv("https://anna-neufeld.github.io/stat202_tutorials/Week9/dat.big.csv")
 dat.big.test <- read.csv("https://anna-neufeld.github.io/stat202_tutorials/Week9/dat.big.test.csv")
 ```
+
 # 1. Starting with dat.small
 
 This dataset has 30 observations, one response variable `y`, and $7$ predictor variables `x1`, `x2`, ..., `x7`. The following code will show you relationships between all of your variables.
@@ -88,48 +89,117 @@ library(kableExtra)
 cor(dat.small) %>%kable()%>%
   kable_styling(font_size = 10)
 ```
-The *pairs* plot and the *correlation matrix* above may help you answer some of the questions below!
 
-**1a.** Compare a linear regression of `y` on `x1` to a linear regression of `y` on `x1` and `x2`. What do you notice about the coefficients, p-values, and $R^2$? To explain your answer, you may want to consider the correlation between `x1` and `x2`. 
+We will now try out a bunch of regressions of `y` on subsets of the predictor variables `x1`,...,`x7`. For each exercise, try out some code in your console, and then record a handwritten answer on your mini quiz. 
 
-```{r}
-summary(lm(y~x1, data=dat.small))
-summary(lm(y~x1+x2, data=dat.small))
-```
+<div id="boxedtext">
+**1a: Highly correlated predictors: ** Compare a linear regression of `y` on `x1` to a linear regression of `y` on `x1` and `x2`. Specifically, compare your two models in terms of: the coefficient for `x1`, its standard error, its p-value, and $R^2$. What did you learn from this problem?
+</div>
 
 
-
-**1b.** Compare a linear regression of `y` on `x1` to a linear regression of `y` on `x1` and `x3`. What do you notice about the coefficients, p-values, and $R^2$? To explain your answer, you may want to consider the relationship between `x1` and `x3`. 
-
-```{r}
-summary(lm(y~x1, data=dat.small))
-summary(lm(y~x1+x3, data=dat.small))
-```
-
-**1c.** What happens if you fit a linear regression of `y` on `x1` and `x5` and `x6`. Compare this to the answer in parts a and b. Can you explain your answer by looking at the correlations between all of the x variables. 
-
-**1d.** What happens if you fit a linear regression of `y` on `x1` and `x3`
+<div id="boxedtext">
+**1b: Perfectly uncorrelated predictors:** Compare a linear regression of `y` on `x1` to a linear regression of `y` on `x1` and `x3`. What do you notice about: the coefficient on `x1`, its standard error, and its p-value. Also, what do you notice about $R^2$? What did you learn from this problem?
+</div> 
 
 
-**1e.** Fit a linear regression of `y` on `x1+x2+x3+x5+x6+x7``. How do you feel about this final model? If you have time, consider diagnostics, etc. 
+<div id="boxedtext">
+**1c: Perfectly correlated predictors:** What happens if you fit a linear regression of `y` on `x1` and `x4`? What do you learn from this?
+</div> 
 
+
+<div id="boxedtext">
+**1d: Mostly uncorrelated predictors:** What happens if you fit a linear regression of `y` on `x1` and `x5` and `x6` and `x7`. How does this model compare to ones from the previous parts? Play around with this model by adding or removing one variable at a time, and be sure to check out the correlations between different pairs of these variables. What did you learn from this, and how does it relate to the previous parts of the question?
+</div> 
+
+<div id="boxedtext">
+**1e: What would be your pick for a "final model" for this dataset? Be sure that you can justify your answer!**
+</div> 
 
 # 2. Moving on to dat.big
 
-This dataset has 30 observations and 30 variables. The following command will let you fit a regression of `y` on all other variables in the dataset.
+The dataset ``dat.big`` that you downloaded above has 30 observations and 29 variables. The following command will let you fit a regression of `y` on all other variables in the dataset.
 
 ```{r}
 mod.full <- lm(y~., data=dat.big)
 ```
 
-What do you notice about $R^2$ and your predictions? 
+<div id="boxedtext">
+**2a: Perfect predictions:** What is $R^2$ in this model? To explain what is going on, compare your predicted values (stored in ``mod.full$fitted``) to the actual values of $y$ in your dataset. 
+</div> 
+
+I wrote some complicated code for you that makes a plot of $R^2$ vs. $k$, for a linear regression of `y` on `x1`, ... , `xk` in the dataset ``dat.big``. 
+
+```{r, echo=T, eval=T}
+ks <- 1:30
+R2s <- c(summary(lm(y~1, data=dat.big))$r.squared,
+  sapply(ks[2:30], function(u) summary(lm(y~., data=dat.big[,1:u]))$r.squared))
+ggplot(data=NULL, aes(x=ks-1, y=R2s))+geom_point()+geom_line()+theme_bw()
+```
+
+As you can see, $R^2$ reaches its maximum when all 29 variables are included in the model. However, there are clearly some variables that improve $R^2$ more than others. After doing some visualizing and plotting of your data, answer the following question.
 
 
-# 3. Bringing in the test set
+<div id="boxedtext">
+**2b: Choosing a model:** Do you think that the best model is the one with the highest $R^2$? Why or why not?
+</div> 
 
-The dataset ``test.big`` comes from exactly the same po
+# 3. Evaluating a model using an independent test set
+
+The dataset ``test.big`` comes from exactly the same population as ``dat.big``. In this question, we will see that the giant ``mod.full`` from Question 2 does a very bad job making predictions for unseen examples, despite the fact that its predictions were perfect on its own dataset. This phenomenon is known as *overfitting*: ``mod.full`` was so complex that it perfectly traced the training dataset values, but cannot generalize to unseen examples. This is an example of why we cannot directly trust $R^2$ as a measure of model performance. 
+
+Run the following code, which computes the SSE of this "full model" when it is applied to the test set.
+
+```{r}
+preds.test <- predict(mod.full, newdata=dat.big.test)
+sum((preds.test - dat.big.test$y)^2)
+```
+
+Compare this SSE to a much simpler model, which only uses ``x1`` and ``x5`` for predictions. What do you notice?
+
+```{r}
+mod.small <- lm(y~x1+x5, data=dat.big)
+preds.test.small <- predict(mod.small, newdata=dat.big.test)
+sum((preds.test.small - dat.big.test$y)^2)
+```
+
+It is not, however, the case that the simplest model is always the best. Now consider the intercept-only model. 
+
+```{r}
+mod.intercept <- lm(y~1, data=dat.big)
+preds.intercept <- predict(mod.intercept, newdata=dat.big.test)
+sum((preds.intercept- dat.big.test$y)^2)
+```
+
+<div id="boxedtext">
+**3. Based on the past few explorations, as well as what you explored in Question 2, what do you think is the "best model" for this dataset?
+</div> 
+
+# Totally optional code to explore if you have time. 
+
+I wrote you the following code. It considers the regression of $y$ on $x_1,\ldots,x_k$, for $k$ ranging from $0$ (the intercept only model) to $29$ (the full model). It fits each regression model to ``dat.big``. 
+
+```{r, eval=T}
+SSE.train <- rep(0, 30)
+SSE.test <- rep(0,30)
+
+mod.train <- lm(y~1, data=dat.big) 
+SSE.train[1] <- sum((mod.train$fitted-dat.big$y)^2)
+preds.test <- predict(mod.train, newdata=dat.big.test)
+SSE.test[1] <- sum((preds.test -dat.big$y)^2)
+for (k in 2:30) {
+  mod.train <- lm(y~., data=dat.big[,1:k])
+  SSE.train[k] <- sum((mod.train$fitted-dat.big$y)^2)
+  preds.test <- predict(mod.train, newdata=dat.big.test)
+  SSE.test[k] <- sum((preds.test -dat.big.test$y)^2)
+}
 
 
+ggplot(data=NULL) +
+  geom_line(aes(x=1:30, y=SSE.train, col="Train SSE"))+
+  geom_line(aes(x=1:30, y=SSE.test, col="Test SSE")) +
+  theme_bw()+ylab("Sum of Squared Errors")+labs(col="Dataset")+
+  xlab("Number of Variables in Model")
+```
 
 
 # Takeaways

@@ -185,7 +185,7 @@ As you can see, $R^2$ reaches its maximum when all 29 variables are included in 
 
 
 <div id="boxedtext">
-**2b: Effect of increasing the number of variables on $R^2:** Can you make a general claim about what happens to $R^2$ as we add more variables to our model. 
+**2b: Effect of increasing the number of variables on $R^2$:** Can you make a general claim about what happens to $R^2$ as we add more variables to our model. 
 </div> 
 
 
@@ -199,18 +199,70 @@ You should explore this dataset a bit by making some plots of your variables. So
 library(patchwork)
 ```
 
+# 3. Bringing in the test set
+
+The dataset ``test.big`` comes from exactly the same population as ``dat.big``. In this question, you will see that the giant ``mod.full`` from Question 2 does a very bad job making predictions for unseen examples. This is an example of why we cannot directly trust $R^2$ as a measure of model performance. 
+
+Run the following code, which computes the SSE of this "full model" when it is applied to the test set.
+
+```{r}
+preds.test <- predict(mod.full, newdata=dat.big.test)
+sum((preds.test - dat.big.test$y)^2)
+```
+
+Compare this SSE to a much simpler model, which only uses ``x1`` and ``x5`` for predictions. What do you notice?
+
+```{r}
+mod.small <- lm(y~1, data=dat.big)
+preds.test.small <- predict(mod.small, newdata=dat.big.test)
+sum((preds.test.small - dat.big.test$y)^2)
+```
+
+```{r}
+mod.small <- lm(y~x1+x5, data=dat.big)
+preds.test.small <- predict(mod.small, newdata=dat.big.test)
+sum((preds.test.small - dat.big.test$y)^2)
+```
+
+Perhaps try an in-between model, just for fun. What do you notice?
+
+```{r}
+mod.medium <- lm(y~x1+x5+x6+x7+x10, data=dat.big)
+preds.test.medium <- predict(mod.medium, newdata=dat.big.test)
+sum((preds.test.medium - dat.big.test$y)^2)
+```
 
 <div id="boxedtext">
-**2b: General behavior of $R^2$:** Explore this dataset a bit by making some plots. 
+**3: Behavoir :** Do a bit of visualizing and sleuthing in your dataset. 
 </div> 
 
 
+# Optional section, if you have time
 
-# 3. Bringing in the test set
+I wrote you the following code. It considers the regression of $y$ on $x_1,\ldots,x_k$, for $k$ ranging from $0$ (the intercept only model) to $29$ (the full model). It fits each regression model to ``dat.big``. 
 
-The dataset ``test.big`` comes from exactly the same po
+```{r}
+SSE.train <- rep(0, 30)
+SSE.test <- rep(0,30)
+
+mod.train <- lm(y~1, data=dat.big) 
+SSE.train[1] <- sum((mod.train$fitted-dat.big$y)^2)
+preds.test <- predict(mod.train, newdata=dat.big.test)
+SSE.test[1] <- sum((preds.test -dat.big$y)^2)
+for (k in 2:30) {
+  mod.train <- lm(y~., data=dat.big[,1:k])
+  SSE.train[k] <- sum((mod.train$fitted-dat.big$y)^2)
+  preds.test <- predict(mod.train, newdata=dat.big.test)
+  SSE.test[k] <- sum((preds.test -dat.big.test$y)^2)
+}
 
 
+ggplot(data=NULL) +
+  geom_line(aes(x=1:30, y=SSE.train, col="Train SSE"))+
+  geom_line(aes(x=1:30, y=SSE.test, col="Test SSE")) +
+  theme_bw()+ylab("Sum of Squared Errors")+labs(col="Dataset")+
+  xlab("Number of Variables in Model")
+```
 
 
 # Takeaways
