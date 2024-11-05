@@ -123,24 +123,12 @@ The dataset ``dat.big`` that you downloaded above has 30 observations and 29 var
 mod.full <- lm(y~., data=dat.big)
 ```
 
-<div id="boxedtext">
-**2a: Perfect predictions:** What is $R^2$ in this model? To explain what is going on, compare your predicted values (stored in ``mod.full$fitted``) to the actual values of $y$ in your dataset. 
-</div> 
+Check the $R^2$ of this model. While you are at it, compare your predicted values (stored in ``mod.full$fitted``) to the actual values of $y$ in your dataset. What is going on in this dataset?
 
-I wrote some complicated code for you that makes a plot of $R^2$ vs. $k$, for a linear regression of `y` on `x1`, ... , `xk` in the dataset ``dat.big``. 
-
-```{r, echo=T, eval=T}
-ks <- 1:30
-R2s <- c(summary(lm(y~1, data=dat.big))$r.squared,
-  sapply(ks[2:30], function(u) summary(lm(y~., data=dat.big[,1:u]))$r.squared))
-ggplot(data=NULL, aes(x=ks-1, y=R2s))+geom_point()+geom_line()+theme_bw()
-```
-
-As you can see, $R^2$ reaches its maximum when all 29 variables are included in the model. However, there are clearly some variables that improve $R^2$ more than others. After doing some visualizing and plotting of your data, answer the following question.
-
+Do some visualizing and exploring of your data. Consider some smaller models that have fewer than 29 variables in them. 
 
 <div id="boxedtext">
-**2b: Choosing a model:** Do you think that the best model is the one with the highest $R^2$? Why or why not?
+**2: Choosing a model:** Based on your exploration, do you think that the best model is the one with the highest $R^2$? Why or why not?
 </div> 
 
 # 3. Evaluating a model using an independent test set
@@ -176,7 +164,7 @@ sum((preds.intercept- dat.big.test$y)^2)
 
 # Totally optional code to explore if you have time. 
 
-I wrote you the following code. It considers the regression of $y$ on $x_1,\ldots,x_k$, for $k$ ranging from $0$ (the intercept only model) to $29$ (the full model). It fits each regression model to ``dat.big``. 
+I wrote you the following code. It considers the regression of $y$ on $x_1,\ldots,x_k$, for $k$ ranging from $0$ (the intercept only model) to $29$ (the full model). It fits each regression model to ``dat.big``. It then computes $R^2$ for the model. It also considers an $R^2$-like metric (1-SSE/SST), but computed using the test dataset.
 
 ```{r, eval=T}
 SSE.train <- rep(0, 30)
@@ -193,13 +181,18 @@ for (k in 2:30) {
   SSE.test[k] <- sum((preds.test -dat.big.test$y)^2)
 }
 
+R2.train <- 1-SSE.train/(sum((dat.big$y-mean(dat.big$y))^2))
+R2.test <- 1-SSE.test/(sum((dat.big.test$y-mean(dat.big.test$y))^2))
+
 
 ggplot(data=NULL) +
-  geom_line(aes(x=1:30, y=SSE.train, col="Train SSE"))+
-  geom_line(aes(x=1:30, y=SSE.test, col="Test SSE")) +
-  theme_bw()+ylab("Sum of Squared Errors")+labs(col="Dataset")+
+  geom_line(aes(x=1:30, y=R2.train, col="R2 on training set"))+
+  geom_line(aes(x=1:30, y=R2.test, col="R2 on test set")) +
+  theme_bw()+ylab("R2")+labs(col="Dataset")+
   xlab("Number of Variables in Model")
 ```
+
+To the best of your ability, explain what is going on in this plot! Based on this plot, what model would you pick for your data?
 
 
 # Takeaways
