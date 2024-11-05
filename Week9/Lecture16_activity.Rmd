@@ -92,28 +92,18 @@ cor(dat.small) %>%kable()%>%
 
 We will now try out a bunch of regressions of `y` on subsets of the predictor variables `x1`,...,`x7`. For each exercise, try out some code in your console, and then record a handwritten answer on your mini quiz. 
 
-<div id="boxedtext">
-**1a: Highly correlated predictors: ** Compare a linear regression of `y` on `x1` to a linear regression of `y` on `x1` and `x2`. Specifically, compare your two models in terms of: the coefficient for `x1`, its standard error, its p-value, and $R^2$. What did you learn from this problem?
-</div>
+1. Highly correlated predictors: Compare a linear regression of `y` on `x1` to a linear regression of `y` on `x1` and `x2`. Specifically, compare your two models in terms of: the coefficient for `x1`, its standard error, its p-value, and $R^2$. What did you learn from this problem?
 
 
-<div id="boxedtext">
-**1b: Perfectly uncorrelated predictors:** Compare a linear regression of `y` on `x1` to a linear regression of `y` on `x1` and `x3`. What do you notice about: the coefficient on `x1`, its standard error, and its p-value. Also, what do you notice about $R^2$? What did you learn from this problem?
-</div> 
+2. Perfectly uncorrelated predictors:** Compare a linear regression of `y` on `x1` to a linear regression of `y` on `x1` and `x3`. What do you notice about: the coefficient on `x1`, its standard error, its p-value, and $R^2$? What did you learn from this problem?
 
 
-<div id="boxedtext">
-**1c: Perfectly correlated predictors:** What happens if you fit a linear regression of `y` on `x1` and `x4`? What do you learn from this?
-</div> 
+3. Perfectly correlated predictors:** What happens if you fit a linear regression of `y` on `x1` and `x4`? What do you learn from this?
+
+4. Mostly uncorrelated predictors:** What happens if you fit a linear regression of `y` on `x1` and `x5` and `x6` and `x7`. How does this model compare to ones from the previous parts? Play around with this model by adding or removing one variable at a time, and be sure to check out the correlations between different pairs of these variables. What did you learn from this, and how does it relate to the previous parts of the question?
 
 
-<div id="boxedtext">
-**1d: Mostly uncorrelated predictors:** What happens if you fit a linear regression of `y` on `x1` and `x5` and `x6` and `x7`. How does this model compare to ones from the previous parts? Play around with this model by adding or removing one variable at a time, and be sure to check out the correlations between different pairs of these variables. What did you learn from this, and how does it relate to the previous parts of the question?
-</div> 
-
-<div id="boxedtext">
-**1e: What would be your pick for a "final model" for this dataset? Be sure that you can justify your answer!**
-</div> 
+5. What would be your pick for a "final model" for this dataset?** Be sure that you can justify your answer!
 
 # 2. Moving on to dat.big
 
@@ -127,9 +117,8 @@ Check the $R^2$ of this model. While you are at it, compare your predicted value
 
 Do some visualizing and exploring of your data. Consider some smaller models that have fewer than 29 variables in them. 
 
-<div id="boxedtext">
-**2: Choosing a model:** Based on your exploration, do you think that the best model is the one with the highest $R^2$? Why or why not?
-</div> 
+6. Based on your exploration, do you think that the best model is the one with the highest $R^2$? Why or why not?
+
 
 # 3. Evaluating a model using an independent test set
 
@@ -150,7 +139,7 @@ preds.test.small <- predict(mod.small, newdata=dat.big.test)
 sum((preds.test.small - dat.big.test$y)^2)
 ```
 
-It is not, however, the case that the simplest model is always the best. Now consider the intercept-only model. 
+It is not, however, the case that the simplest model is always the best. We can see this by considering the intercept-only model, which is worse than the model above. 
 
 ```{r}
 mod.intercept <- lm(y~1, data=dat.big)
@@ -158,13 +147,13 @@ preds.intercept <- predict(mod.intercept, newdata=dat.big.test)
 sum((preds.intercept- dat.big.test$y)^2)
 ```
 
-<div id="boxedtext">
-**3. Based on the past few explorations, as well as what you explored in Question 2, what do you think is the "best model" for this dataset?
-</div> 
+3. Based on the past few explorations, as well as what you explored in Question 2, what do you think is the "best model" for this dataset?
+
+This is the last question of the mini quiz! Move on to the next part, but only if you have time!
 
 # Totally optional code to explore if you have time. 
 
-I wrote you the following code. It considers the regression of $y$ on $x_1,\ldots,x_k$, for $k$ ranging from $0$ (the intercept only model) to $29$ (the full model). It fits each regression model to ``dat.big``. It then computes $R^2$ for the model. It also considers an $R^2$-like metric (1-SSE/SST), but computed using the test dataset.
+I wrote you the following code. It considers the regression of $y$ on $x_1,\ldots,x_k$, for $k$ ranging from $0$ (the intercept only model) to $29$ (the full model). It fits each regression model to ``dat.big,`` but then considers the sum of squared errors both on its own training data (``dat.big``) and the unseen test data (``dat.big.test``). The code is below. 
 
 ```{r, eval=T}
 SSE.train <- rep(0, 30)
@@ -180,11 +169,21 @@ for (k in 2:30) {
   preds.test <- predict(mod.train, newdata=dat.big.test)
   SSE.test[k] <- sum((preds.test -dat.big.test$y)^2)
 }
+```
 
+To make these numbers more interpretable, we convert them from SSE values to $R^2$ values. Recall that 
+$$
+R^2 = 1 - SSE/SST.
+$$
+
+```{r, eval=T}
 R2.train <- 1-SSE.train/(sum((dat.big$y-mean(dat.big$y))^2))
 R2.test <- 1-SSE.test/(sum((dat.big.test$y-mean(dat.big.test$y))^2))
+```
 
+The following plot shows how $R^2$, computed using the training set and the test set, change as we add more variables to the model. What do you notice? How does this knowledge coincide with your knowledge about the best possible model for this data? To the best of your ability, explain what is going on in this plot!
 
+```{r, eval=T}
 ggplot(data=NULL) +
   geom_line(aes(x=1:30, y=R2.train, col="R2 on training set"))+
   geom_line(aes(x=1:30, y=R2.test, col="R2 on test set")) +
@@ -192,10 +191,8 @@ ggplot(data=NULL) +
   xlab("Number of Variables in Model")
 ```
 
-To the best of your ability, explain what is going on in this plot! Based on this plot, what model would you pick for your data?
 
-
-# Takeaways
+# Takeaways (not as optional)
 
 I hope you learned that:
 
@@ -203,12 +200,13 @@ I hope you learned that:
     - When the correlation between two predictors is 1, the model can literally not be fit (the design matrix is singular)!
     - When the correlation between two predictors is quite high, the model is *unstable*. This also has to do with near-singularity (tiny eigenvalues in the design matrix). 
     - When the correlation between two predictors is actually 0, adding the second variable to the model does not change the coefficient on the first!
+    - When the correlation between two predictors is small but non-zero, adding a new variable to the model always changes the coefficient on the first, but it might only change it slightly. 
 
-- Measures like $R^2$ will always increase when you increase the number of predictors, so just looking at an increasing $R^2$ is not a good way to say that a more complex model is "better".
+- Measures like $R^2$, computed using the same dataset that was used to fit the model, will always increase when you increase the number of predictors. so just looking at an increasing $R^2$ is not a good way to say that a more complex model is "better".
 
 - A test set is a better way to assess the ability of a model to generate accurate predictions for a *new sample*. 
 
-We will return to some of these topics next week when we study model selection!
+We will return to some of these topics next week when we study model selection! 
 
 
 *** 
