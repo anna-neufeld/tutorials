@@ -55,6 +55,22 @@ ol ol li:last-child {margin-bottom:0;}
     list-style-type:decimal;
 }
 
+ol li ol > li {
+    list-style: none; /* Disable default numbering for sub-items */
+    position: relative;
+    padding-left: 2em; /* Adjust padding for sub-items */
+    counter-increment: subitem; /* Increment the subitem counter */
+}
+
+ol li ol > li:before {
+    content: counter(li) counter(subitem, lower-alpha); /* Combine the main and subitem counters */
+    /* Style the subitem label */
+    position: absolute;
+    left: -2em;
+    font-weight: bold;
+    color: #317EAC;
+}
+
 hr {
     border: 1px solid #357FAA;
 }
