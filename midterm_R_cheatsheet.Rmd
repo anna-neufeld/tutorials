@@ -1,0 +1,349 @@
+---
+title: "R Cheatsheet: functions you might want to use on the midterm"
+output:
+  html_document:
+    css: ../lab.css
+    highlight: pygments
+    theme: cerulean
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(eval = FALSE)
+library(tidyverse)
+library(openintro)
+```
+
+
+<div id="boxedtext">
+This document is not necessarily exhaustive. You may use functions on the midterm that are not in this document! But I wanted to give you one document in which you could find a lot of the code that you might need for the midterm.
+</div>
+
+
+---
+title: "Midterm R Cheat Sheet"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+date: "2024-11-16"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message=F, warning=F)
+```
+
+# Ames dataset walkthrough 
+
+In this section, I will walk through an analysis of the `ames` real estate data. The point will be to use most of the R functions that you might need on the midterm.
+
+## Loading the data
+
+The `ames` data is stored in the `openintro` package. If you didn't already have the `openintro` package installed on your computer, you would need to run ``install.packages(openintro)`` in your console to get the package installed. Note that the ``install.packages`` command should never go in your .Rmd file- it only needs to be run once, and you should run it from your console!
+
+Then, to actually load the data, you need to make sure that you first load the package. This code does need to go in your .Rmd. 
+
+```{r}
+library(openintro)
+data(ames)
+```
+
+As soon as you load a dataset, it's always nice to explore it just a little bit. We can print the dimensions, or the variable names, or the first few rows.
+
+```{r, echo=T, eval=F}
+dim(ames)
+names(ames)
+head(ames)
+```
+
+## Random exploratory data analysis code
+
+It would be good to know how to make histograms, boxplots, scatterplots, and summary tables. I showed some examples below. Be sure that you know what each piece of code does. Also, don't forget to load ``tidyverse`` before doing any of this.
+
+First, maybe I want to explore the single numerical variable, price. I can print summary statistics.
+
+```{r}
+library(tidyverse)
+ames %>% summarize(mean(price), sd(price), median(price))
+```
+
+I can also make a histogram. Note that, for a histogram, I might want to change the binwidth to comething that is appropriate for by data. Here, I want to have bins of width $10,000.
+
+```{r}
+ggplot(data=ames, aes(x=price))+geom_histogram(binwidth=10000)
+```
+
+Then, maybe I want to look at the relationship between price and building type. This is the relationship between a categorical variable and a numerical variable. To do this, I should use ``group_by`` to print summary statistics, or else I should make side by side boxplots.
+
+Note- if you ever are trying to make side by side boxplots and it only makes you one boxplot- you probably need to do ``as.factor()`` to your X variable.
+
+```{r}
+ames %>% group_by(Bldg.Type) %>% summarize(mean(price))
+ggplot(data=ames, aes(x=Bldg.Type, y=price))+geom_boxplot()
+```
+
+I could also look at the relationship between two quantitative variables, such as price and area. This is best done with a scatterplot, although I can also just print the correlation. 
+
+```{r}
+cor(ames$area, ames$price)
+ggplot(data=ames, aes(x=area, y=price))+geom_point()
+```
+
+This is where we can start making things more beautiful and interesting. Maybe we want to color the scatterplot by building type, and maybe we want a title and nice font sizes and good axis labels.
+
+```{r}
+ggplot(data=ames, aes(x=area, y=price, col=Bldg.Type))+geom_point()+
+  xlab("Living Area")+ylab("Price")+theme_bw()+theme(
+    axis.text=element_text(size=14), axis.title=element_text(size=14)
+  )+labs(col = "Building Type")+ggtitle("Price vs. Area, with Building Type")
+```
+
+## T-test code
+
+What if you just wanted to know if the average price was different between single family homes and non single family homes using a t-test?
+
+We might first want to use ``mutate()`` to create a new variable, which stores TRUE if the building is single family and stores false otherwise. 
+
+```{r}
+ames <- ames %>% mutate(single.family = Bldg.Type=="1Fam")
+```
+
+We see from this table that most homes are actually single family. 
+
+```{r}
+ames %>% select(single.family) %>% table()
+```
+
+To do our t-test for a difference in means, we just do one of the following (depending on whether or not we want to assume equal variance):
+
+```{r, echo=T, eval=F}
+t.test(price~single.family, data=ames)
+t.test(price~single.family, data=ames, var.equal=T)
+```
+
+
+## Simple linear regression code
+
+### Fitting the model
+
+Fitting a model to predict price using area is easy using the ``lm()`` function. You can also draw the best-fit line using ``geom_smooth()``.
+
+```{r}
+mod <- lm(price~area, data=ames)
+ggplot(data=ames, aes(x=area, y=price))+geom_point()+geom_smooth(method="lm", se=F)
+```
+
+### Interpretting the model or doing inference or evaluation
+
+Once you fit the model, you likely want to look at the ``summary()``. Most interesting pieces of information come from the summary!
+
+We have talked about all of the pieces in the summary model. Note that you can extract a lot of the pieces individually! Be sure that you know what each of these pieces is telling you!
+
+```{r, eval=F}
+summary(mod)
+summary(mod)$coefficients
+summary(mod)$r.squared
+summary(mod)$adj.r.squared
+```
+
+You can also extract the $\hat{y}$ for your datapoints or the residuals for your datapoints as:
+
+```{r, echo=T, eval=F}
+mod$fitted
+mod$residuals
+```
+
+If we sum up these quantities, we get the original prices! This follows because $y = \hat{y}+e$. 
+
+```{r}
+cor(ames$price, mod$fitted+mod$residuals)
+```
+
+### Checking the assumptions
+
+You might also want to check the assumptions of your model. The ``plot()`` command for a linear model will make diagnostic plots for you. Be sure that you know how to read these, and what you are looking for!
+
+```{r}
+par(mfrow=c(2,2))
+plot(mod)
+```
+
+The first plot is good for checking linearity or the equal variance assumption. The second plot is good for checking normality of residuals. The final plot is good for looking for outliers: unusual points have high cooks distance and high leverage and/or residuals. R will label the unusual points for us. If you want to go find an unusual point:
+
+```{r, echo=T}
+mean(ames$price)
+mean(ames$area)
+ames[1499,]$price
+ames[1499,]$area
+```
+
+We can see that the thing that is strange about this point is that it is MUCH larger than the average house, but it is not expensive. It is good to know how to extract a single row of data in this way. 
+
+### Transformation
+
+The residuals vs. fitted plot shows a fan shape! We might want to consider a transformation! ``boxcox``, from the ``MASS`` package, tells is that we might want to consider taking something like the log of price.
+
+```{r}
+library(MASS)
+boxcox(mod)
+```
+
+We can fit this model as follows. We can still look at a summary, check the assumptions, etc.
+
+```{r}
+lm.log <- lm(log(price)~area, data=ames)
+```
+
+
+## Multiple linear regression code
+
+### Fitting and summarizing
+
+Let's add building type to our model!
+
+```{r}
+mod.multi <- lm(price~Bldg.Type+area, data=ames)
+```
+
+We can use ``summary()`` in the same way to view most of the interesting things about our model!
+
+```{r}
+summary(mod.multi)
+```
+
+If we want to know which Bldg.Type is being treated as the baseline, we just check for which category is missing a coefficient. We are missing `1Fam`, so this is the baseline!
+
+```{r}
+unique(ames$Bldg.Type)
+```
+
+### Prediction
+
+To obtain predictions for new datapoints, it might be annoying to type in a lot of coefficients. So you can use the ``predict()`` function. We get the same answer as if we typed in the coefficients by hand. 
+
+```{r}
+predict(mod.multi, newdata = data.frame(area=1500, Bldg.Type="Twnhs"))
+11934.969+1500*113.899+-18058.897
+```
+
+### Anova
+
+We have four different p-values in our summary table for the ``Bldg.Type`` variable, because it is being encoded as four separate variables. If we want to know about its overall significance, we should use the nested F-test. This will test the null hypothesis that ALL of the Bldg.Type coefficients are $0$, which means the null that all of the categories are the same. 
+
+```{r}
+anova(mod.multi, mod)
+```
+
+The very tiny p-value tells us that Bldg.Type is significant!
+
+### Interaction term
+
+What if we think that we need an interaction term between Bldg.Type are area? This means that do we think all building types have paralell best fit lines? Or do we think that each building type needs its own slope? The plot below suggests that maybe each building type really does need its own slope.
+
+```{r}
+ggplot(data=ames, aes(x=area, y=price, col=Bldg.Type))+geom_point()+
+  geom_smooth(method="lm", se=F)
+```
+
+```{r}
+mod.int <- lm(price~area*Bldg.Type, data=ames)
+summary(mod.int)
+```
+
+To check the overall significance of the interaction term, we can use ANOVA again.
+
+```{r}
+anova(mod.int, mod.multi)
+```
+
+We reject the null, which means it seems like the interaction term is important!
+
+## Added variable plots and VIFs
+
+Let's add even more variables to our model. We can keep our interaction between area and building type, but we can add ``Total.Bsmt.SF`` and ``Lot.Area`` to incorporate more types of "area" that a house could have.
+
+```{r}
+mod.big <- lm(price~area*Bldg.Type+Total.Bsmt.SF+Lot.Area, data=ames)
+summary(mod.big)
+```
+
+Added variable plots are a great way to visualize the linearity assumption in a multiple linear regression model, but they really make the most sense for quantitative variables. So let's look at added variable plots for ``area``, ``Lot.Area``, and ``Total.Bsmt.SF``.
+
+```{r}
+library(car)
+par(mfrow=c(1,3))
+avPlot(mod.big, variable="area")
+avPlot(mod.big, variable="Lot.Area")
+avPlot(mod.big, variable="Total.Bsmt.SF")
+```
+
+Things looks really good for ``area`` and ``Total.Bsmt.SF``. The plot for ``Lot.Area``. does not look very linear and looks possibly highly affected by outliers. This could tell us that Lot.Area is redundant with the other predictors, although the VIF does not necessarily make it look like this is a problem! Maybe we should go investigate the outliers more thoroughly.
+
+```{r}
+vif(mod.big)
+```
+The VIFs on Bldg.Type and area:Bldg.Type are very large, but I think that this is just because clearly a variable is redundant with its own interaction term. I am not sure that we need to take those values too seriously.
+
+### Really big models
+
+Typically, if you wanted to fit a linear regression of price on all other variables in the dataset, you could do this with ``lm(price~., data=ames)``. Unfortunately, that fails in this dataset due to wierd issues with `NA`s and with variables that only have one unique value. But it is still good to know about this code.
+
+## Logistic regression code
+
+Now let's let "single family" be our response variable.  Let's try to predict this using area and price.
+
+```{r}
+glm.mod <- glm(single.family~price+area, data=ames, family="binomial")
+```
+
+We can still do things like ``summary()`` and ``plot()``. We didn't learn specifically about everything in the ``plot()`` function for GLMs, and for this dataset things look kind of strange. It could still be useful for identifying unusual points or patterns, though.
+
+```{r}
+summary(glm.mod)
+```
+
+To check predictive accuracy, we can use the following workflow.
+
+```{r}
+pred.probs <- predict(glm.mod, type="response")
+table(pred.probs > 0.5, ames$single.family)
+```
+
+Uh oh! It turns out that this model is *Always* predicting that a house is a single family home. 
+
+```{r}
+summary(pred.probs)
+```
+
+This is not a very good model! Since so many of the houses in the original dataset *are* single family homes, apparently this model is sort of optimal. But it is also useless! We should really try to make a better model!
+
+
+# Other things you might want to know how to do in R
+
+Please see HW6 and HW7 for examples of places where you carried out a simulation study. In these, you had R fit thousands of linear models at once to different subsamples of data. The goal was to study the properties of quantities like $\hat{\beta}_1$ or the p-value of $\hat{\beta}_1$ over many repeated samples.
+
+Running or analyzing a simulation study in R is a slightly different skill than analyzing a dataset in R, but many of the same concepts apply.
+
+
+# General other R reminders
+
+- Make sure that all of your R code is in an R chunk in your R Markdown document. You can tell that you are in a proper chunk if the background of your R Markdown document is grey and you see a little green arrow button in the top corner.
+- Check carefully for typos in your code before you freak out about errors. 
+- Occasionally, an R chunk can get kind of messed up or R can start doing strange things. In this case, save your file and restart R. You may want to start a new chunk and retype your code into the new chunk.
+- Any variables that you use in your RMarkdown document must be defined in the R Markdown document, above the place where you try to use them.
+- All packages that you want to use in your RMarkdown document must be loaded with ``library()`` in your RMarkdown document, above the place where you try to use them.
+- If you get an error message, you can use the internet to try to help resolve it! I google errors all the time!
+
+
+
+*** 
+## Acknowledgements
+
+The formatting of this tutorial was adopted from an OpenIntro lab. <div id="license">
+This is a product of OpenIntro that is released under a 
+[Creative Commons Attribution-ShareAlike 3.0 Unported](http://creativecommons.org/licenses/by-sa/3.0). 
+</div>
+
