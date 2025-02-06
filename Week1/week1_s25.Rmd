@@ -151,6 +151,18 @@ While using R as a calculator was a fun warmup, in this class we are typically g
 
 At the start of the semester, we will always give you very clear instructions on how to load the required dataset. Eventually, for your projects, you will need to know how to troubleshoot and load the data yourself! 
 
+<div id="boxedtext">
+
+**Goals:**
+
+- Review the basic language of data analysis. 
+- Review some challenges of data cleaning.
+- Get exposed to the following functions:
+
+  - `select()`
+  - `filter()`
+</div>
+
 ### Loading the "Getting to Know You" dataset
 
 Over the weekend, XXXXX Stat 202 students filled out the "getting to know you" survey. Google forms lets me export the survey responses into a google sheet / Excel spreadsheet. I removed the names, pronouns, and email addresses from the spreadsheet, and I also removed the answers to the "free response" questions (e.g. "Why are you taking this class"). I changed the column names for readability. Finally, I saved the resulting spreadsheet as a `.csv`. 
@@ -165,26 +177,7 @@ The slightly more cumbersome (but useful!) way involves downloading the .csv doc
 
 Copy the code above into your RMarkdown document. Run the code, such that you have an object called ``form_data`` in your environment? What happens if you click on this dataset? 
 
-### Manipulation and clearning this dataset 
-
-<div id="boxedtext">
-
-**Goals:**
-
-- Review the basic language of data analysis. 
-- Review some challenges of data cleaning.
-- Get exposed to the following functions:
-
-  - `select()`
-  - `filter()`
-</div>
-
-
-XXXXX MOVE STUFF HERE XXXXXX
-
-
-
-### Keywords
+### Reviewing the key components of a dataset
 
 Click on ``form_data`` in your *environment*. You should see something like this: 
 
@@ -199,6 +192,15 @@ Click on ``form_data`` in your *environment*. You should see something like this
     - Bonus: are any of these **ordinal variables**? 
 - Do you see any issues with the data?
 </div>
+
+### Extracting pieces of this dataset
+
+
+
+
+
+### Manipulating or cleaning this dataset
+
 
 
 # Exploratory Data Anlysis
@@ -225,12 +227,12 @@ When we do exploratory data analysis, we want to explore **univariate** summarie
 
 ### One quantitative variable
 
-Let's use ``pets,`` which stores the recorded answers to the question "How many pets have you had or have you lived with in your life?".
+Let's use ``cups.coffee``, which stores the recorded answers to the question "How many cups of coffee or tea do you think you drink per week, on average?".
 
 As a first step, we should always **look** at the data. Run the following command in your console to view this variable. What do you notice? 
 
 ```{r, eval=F}
-form_data$pets
+form_data$cups.coffee
 ```
 
 Uh oh! Since not everyone input their answer as a number, R is treating this as a categorical variable. This means that we will not be able to do things like compute the mean! This is a teachable moment about designing your surveys well: I allowed this issue to happen by giving you a free response question on google forms!
@@ -384,7 +386,13 @@ Based on the summaries above, do you think that there is a meaningful relationsh
 Hopefully, when you work on HW1, you will find that I went over all of the R functions that you need for the homework in class. It is my goal that this will be the case for every homework throughout the semester! 
 
 If you are already experienced in programming, I would encourage you to go above-and-beyond on the homework assignments in terms of making your code and your plots beautiful. If you are new to programming, please let me know if the pacing seems too fast for you! I am happy to provide additional resources for learning R if needed! 
-
+You should now have a sense of how to summarize and visualize:
+    - One quantitative variable
+    - One quantitative variable, one categorical variable
+    - Two quantitative variables
+    - One categorical variable
+    - Two categorical variables.
+You should have a sense of how to do this in R, and you should have some basic vocabulary for describing what you see! We won't spend any more class time on these skills, but hopefully you will be practicing throughout the semester! 
 
 *** 
 ## Acknowledgements

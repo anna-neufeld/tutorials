@@ -1,0 +1,68 @@
+---
+title: "Lecture 21: various statistical dangers"
+output:
+  html_document:
+    css: ../lab.css
+    highlight: pygments
+    theme: cerulean
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(eval = FALSE)
+library(tidyverse)
+library(openintro)
+```
+
+
+<div id="boxedtext">
+**Learning Objectives**: 
+
+- Understand the problem with running many simultaneous statistical tests, as we do in multiple linear regression. 
+- Understand the most basic solution to the multiple testing problem: Bonferroni correction.
+- Understand how model selection (automated or not!) invalidates our subsequent inference.
+
+</div>
+
+
+# Generating data from a totally null population
+
+First, I write a function that will give me a totally null random dataset. The dataset will have $n$ observations, $p$ identical predictor variables $X_1, \ldots, X_p$, and a single response variable $y$. 
+
+```{r, echo=T, eval=T}
+generate.null <- function(n,p) {
+  X <- matrix(data=rnorm(n*p, mean=0, sd=1), nrow=n)
+  y <- rnorm(n, mean=0, sd=3)
+  dat <- data.frame(cbind(y,X))
+  names(dat)[2:(p+1)] <- paste0("x", 1:p)
+  return(dat)
+}
+```
+
+This is the first time that we have written our own function in this class. You can play around with how this works below. 
+
+```{r, eval=F}
+generate.null(10,3)
+generate.null(5,8)
+```
+
+
+
+
+
+
+
+
+## Train/test splits
+
+*** 
+## Acknowledgements
+
+The formatting of this tutorial was adopted from an OpenIntro lab. <div id="license">
+This is a product of OpenIntro that is released under a 
+[Creative Commons Attribution-ShareAlike 3.0 Unported](http://creativecommons.org/licenses/by-sa/3.0). 
+</div>
+
