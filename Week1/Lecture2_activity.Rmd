@@ -184,15 +184,6 @@ Click on ``form_data`` in your *environment*. You should see something like this
 
 ![](data.png)
 
-
-XXXXX MOVE STUFF HERE XXXXXX
-
-
-
-### Keywords
-
-
-
 <div id="boxedtext">
 **With a neighbor, discuss the following questions:**
 
@@ -203,9 +194,72 @@ XXXXX MOVE STUFF HERE XXXXXX
 - Do you see any issues with the data?
 </div>
 
+We are really lucky that we don't have too many issues with our data this semester! 
+
+Last semester, many people added commentary to their numerical answers. For example, these were all answers that I got last semester for "How many pets have you had or have you lived with in your life?" on this survey last semester. 
+
+- "1! My dog Sammy is 8. He's a schnoodle." 
+- "more than 25 fish, but no more than 7 at a time."
+- "3 dogs. 2 dogs currently "                       
+- "2 cats!"
+
+This led to some issues! I wanted this to be a numerical variable, but `R` cannot figure out how to convert the sentence *1! My dog Sammy is 8. He's a schnoodle.* to a number automatically. This meant that we had to spend a lot of time *cleaning* our data. This semester, I specifically asked you to enter the answer as a number, and you all followed the instructions! This really reduced the number of things that we will need to clean, which serves as a nice reminder for me about the importance of survey design!
+
+To see that we had issues with added commentary this year, we can extract the ``pets`` variable from our dataset. There are a few ways to do this. See if you can figure out any differences between these.
+
+```{r}
+form_data$pets
+form_data[,4]
+form_data %>% select(pets)
+form_data %>% pull(pets)
+```
+
+The function ``select()`` is a key function from the ``tidyverse()`` package that we will be using to extract a subset of *variables* (columns) from a dataset. 
+
+When we want to select a subset of *observations* (rows) from a dataset, we use ``filter()``. The following code displays only the data for students who play a sport at Williams. 
+
+```{r}
+form_data %>% filter(sports=="Yes")
+```
+
+Suppose that we want to save the data subset above to a new dataset called ``athetes``. We can certainly do that!
+
+```{r}
+athletes <- form_data %>% filter(sports=="Yes")
+```
+
+One reason that the ``tidyverse()`` set of functions is so nice is because it becomes quite easy to combine functions together. What does the following code do?
+
+```{r}
+form_data %>% filter(sports=="Yes") %>% select(pets)
+```
+
+And, as a harder question, why doesn't the following code work? 
+
+```{r}
+form_data %>% select(pets) %>% filter(sports=="Yes")
+```
+
+We do have one chance to do some data cleaning. Let's look at the variable ``favorite.coffee``.
+
+```{r}
+form_data$favorite.coffee
+```
+While it is completely fine that some people do not drink coffee, we probably do not want to treat "n/a", "", and "Don't Drink Coffee" as separate answers. Furthermore, categorical variables with only one category can be a bit hard to work with! Let's use the following code to simplify this variable. 
+
+```{r}
+form_data <- form_data %>% mutate(favorite.coffee.clean = ifelse(favorite.coffee %in% c("Tunnel", "Goodrich"), favorite.coffee, "Other"))
+```
+
+We used ``mutate`` to make a new variable called ``favorite.coffee.clean``. This variable is equal to ``favorite.coffee`` if ``favorite.coffee`` was equal to ``Tunnel`` or ``Goodrich``, but just stores ``Other`` otherwise. Because we *saved* our mutated dataset back into ``form_data`` (this step is very important!), we can now view our new variable:
+
+```{r}
+form_data %>% select(favorite.coffee.clean)
+```
+
+I am sure that we will have many more chances to clean data later in the semester!
 
 # Exploratory Data Anlysis
-
 
 <div id="boxedtext">
 
@@ -230,157 +284,144 @@ When we do exploratory data analysis, we want to explore **univariate** summarie
 
 Let's use ``pets,`` which stores the recorded answers to the question "How many pets have you had or have you lived with in your life?".
 
-As a first step, we should always **look** at the data. Run the following command in your console to view this variable. What do you notice? 
-
-```{r, eval=F}
-form_data$pets
-```
-
-Uh oh! Since not everyone input their answer as a number, R is treating this as a categorical variable. This means that we will not be able to do things like compute the mean! This is a teachable moment about designing your surveys well: I allowed this issue to happen by giving you a free response question on google forms!
-
-Now that we have this issue, we have a choice to make as a researcher about how to deal with this. Here, we are going to make an easy and yet potentially problematic choice: we are just going to throw out all students whose data cannot be automatically converted to a numerical variable. 
-
-Let's discuss the following three lines of code: 
-
-```{r, eval=F}
-as.numeric(form_data$pets)
-is.na(as.numeric(form_data$pets))
-!is.na(as.numeric(form_data$pets))
-```
-
-The following code first **mutates** our dataset, meaning that it adds a new variable. This new variable is named ``pets_numeric`` and stores the output of ``as.numeric(pets)``. The code then **filters** our dataset so that it only contains observations whose values of ``pets_numeric`` are not ``NA``. Copy this code into your RMarkdown document.
-
-```{r, warning=F}
-form_data_clean <- form_data %>% 
-  mutate(pets_numeric = as.numeric(pets)) %>%
-  filter(!is.na(pets_numeric))
-```
-
-How many rows and how many columns are in the new dataset? 
-
-Now, we should have a quantitative variable that we can work with.
-
-```{r, eval=F}
-form_data_clean$pets_numeric
-```
-
-The *summarize()* function is a nice way to view a numeric summary such as the mean or the median of a variable. What do you notice about the mean as compared to the median?
+Your are all familiar with many ways to summarize a single quantitative variable. Most of these ways have really intuitive function names in `R`. The *summarize()* function is a nice way to view multiple numeric summaries such as the mean and the median of a variable at once. What do you notice about the mean number of pets as compared to the median?
 
 ```{r}
-form_data_clean %>% summarize(mean(pets_numeric), median(pets_numeric))
+form_data %>% summarize(mean(pets), median(pets))
 ```
-We can also make a *histogram* of this variable. Note that there are two ways to do this. 
 
-The first is really simple, and uses "base R". 
+While the mean and median are measures of *center*, we might also want to see some measures of *spread*. 
 
 ```{r}
-hist(form_data_clean$pets_numeric)
+form_data %>% summarize(mean(pets), median(pets), sd(pets), IQR(pets), max(pets))
+```
+Note that each of these functions can be used individually without using ``summarize()``. But the main advantage of summarize is again that it lets us view many summaries at once, and also it will be easy to combine with functions like ``filter()`` and ``mutate()``. 
+
+```{r}
+mean(form_data$pets)
+form_data %>% pull(pets) %>% mean()
+```
+
+
+The best way to visually explore a single quantitative variable is with a *histogram*. There are two ways to make a histogram in `R`. 
+
+```{r}
+hist(form_data$pets)
 ```
 
 In this class, we are going to focus on learning how to visualize and summarize our data using the ``tidyverse`` suite of packages. As part of this, we will be making plots using ``ggplot()``. While at first these may seem unnecessarily complex, they will eventually allow you to make much more interesting and customizable plots than base R. I use ``ggplot()`` for all of my research papers! 
 
 ```{r, message=F}
-ggplot(data=form_data_clean, aes(x=pets_numeric))+geom_histogram()
+ggplot(data=form_data, aes(x=pets))+geom_histogram()
 ```
+
 We can already start exploring the numerous ways that ``ggplot()`` lets us customize our plots and make them beautiful. 
 
 ```{r, message=F}
-ggplot(data=form_data_clean, aes(x=pets_numeric))+geom_histogram(bins=10)+
+ggplot(data=form_data, aes(x=pets))+geom_histogram(bins=10)+
   xlab("How many pets have you lived with in your life?")+
   ggtitle("Stat 202 Survey Responses about Pets")
 ```
-Finally, suppose that you want to visualize the number of pets, but only among seniors at Williams. We can use the *filter* function to accomplish this. Consider the following lines of code.
+Finally, suppose that you want to visualize the number of pets, but only among athletes at Williams. We can easily use the *filter* function to accomplish this; we just need to modify our ``data`` argument. 
 
 ```{r}
-form_data_clean$year
-form_data_clean$year=="Senior"
-form_data_clean %>% filter(year=="Senior")
-```
-Subsetting our histogram to only include seniors is simple: we just modify the ``data`` argument so that it calls upon the filtered dataset. 
-
-```{r}
-ggplot(data=form_data_clean %>% filter(year=="Senior"), aes(x=pets_numeric))+geom_histogram(bins=10)+
+ggplot(data=form_data %>% filter(sports=="Yes"), aes(x=pets))+geom_histogram(bins=10)+
   xlab("How many pets have you lived with in your life?")+
-  ggtitle("Stat 202 Survey Responses about Pets", "Among Seniors")
+  ggtitle("Stat 202 Survey Responses about Pets", "Among Athletes")
 ```
 ### One categorical variable
 
-XXXX THIS IS BORING. BOXPLOT AND TABLE IS ALL XXXXXX. 
+Suppose that we want to explore the variable ``favorite.dining``. This is a categorical variable. 
 
+Summarizing a single categorical variable is sort of boring! We don't have measures of center and spread. The main way that we numerically explore a single categorical variable is by making a table. Try out the following lines of code, which all give the same information. What did you learn about this variable?
+
+```{r}
+form_data %>% group_by(favorite.dining) %>% summarize(n())
+table(form_data$favorite.dining)
+form_data %>% select(favorite.dining) %>% table()
+```
+
+If we wanted to visually explore a single categorical variable, we would typically use a bar chart. This displays the same information as the table.
+
+```{r}
+ggplot(data=form_data, aes(x=favorite.dining))+geom_bar()
+```
 
 ### One quantitative variable, one categorical variable. 
 
-Suppose that we want to study the relationship between the number of pets that someone has had and their year at Williams. The best way to do this numerically is by using ``group_by`` and then ``summarize``. 
+Data analysis gets more interesting when we start looking at the relationship between two or more variables. We need methods for numerically or visually summarizing the relationships between variables. Our methods will depend on what type of variables we are working with. To start, suppose that we are working with one quantitative variable and one categorical variable.
 
-What do you notice about the following table? 
-
-```{r}
-form_data_clean %>% group_by(year) %>% summarize(mean(pets_numeric))
-```
-
-*Ordinal* variables are categorical variables that have a natural ordering to them. When we have an ordinal variable, it is nice to tell `R` this so that the categories will be displayed in order. Try running the following code:
+For example, suppose that we want to study the relationship between the number of cups of coffee that someone drinks per week and whether or not they play a sport at Williams. The best way to do this numerically is by using ``group_by`` and then ``summarize``. 
 
 ```{r}
-form_data_clean <- form_data_clean %>% 
-    mutate(year = ordered(year, levels=c("First year", "Sophomore", "Junior", "Senior")))
+form_data %>% group_by(sports) %>% summarize(mean(cups.coffee), median(cups.coffee), sd(cups.coffee), n())
 ```
 
-And now try remaking the table from above.
+Note that this one person who answered both ``Yes`` and ``No`` to the question of whether or not they play a sport at Williams is a bit of an oddity. At the risk of throwing out valuable data, I am going to remove them from the dataset! I can do this using ``filter()``.
 
 ```{r}
-form_data_clean %>% group_by(year) %>% summarize(mean(pets_numeric))
+form_data_clean <- form_data %>% filter(sports=="Yes" | sports=="No")
 ```
-What do you notice? What improved? What did not improve? Does there seem to a relationship between the number of pets and the year at Williams? 
 
-Eventually in this class, we will review statistical tools that will let us say more formally whether or not there seems to be a relationship between these variables. For now, we might want to just look informally at a bit more information:
+This takes our dataset and keeps only those who answered a simple "Yes" or "No" to the sports question. It then saves the filtered dataset back to a new dataset called ``form_data_clean``. This is nice, because at least we know that our original dataset is not gone forever. 
+
+We can now redo our summary table. 
 
 ```{r}
-form_data_clean %>% group_by(year) %>% summarize(mean(pets_numeric), median(pets_numeric), sd(pets_numeric), n())
+form_data_clean %>% group_by(sports) %>% summarize(mean(cups.coffee), median(cups.coffee), sd(cups.coffee), n())
 ```
 
-My favorite way to visually explore the relationship between one categorical variable and one quantitative variable is with side-by-side boxplots. The following code produces side-by-side boxplots with ``ggplot``. What do you notice about the relationship?
+Based on this table, it does not seem like there is much of a relationship between the amount of coffee that someone drinks and whether or not they play a sport. Eventually in this class, we will review statistical tools that will let us say more formally whether or not there seems to be a relationship between these variables. For now, we are just exploring and looking for patterns. 
+
+My favorite way to visually explore the relationship between one categorical variable and one quantitative variable is with side-by-side boxplots. The following code produces side-by-side boxplots with ``ggplot``. This boxplot again shows that there is likely no relationship between sports and cups of coffee. 
 
 ```{r}
-ggplot(data=form_data_clean, aes(x=year, y=pets_numeric))+geom_boxplot()
+ggplot(data=form_data_clean, aes(x=sports, y=cups.coffee))+geom_boxplot()
 ```
+<div id="boxedtext">
+**On your own: ** Can you find a categorical variable and a quantitative variable in this dataset that *do* seem to be related to one another? If so, what are they?
+</div>
 
 ### Two quantitative variables 
 
+When we want to look at the relationship between two quantitative variables, we can use a scatterplot. We will be using a lot of scatterplots later this semester! What do you notice about the relationship below?
+
+```{r}
+ggplot(data=form_data, aes(x=sleep.semester, y=cups.coffee))+geom_point()+ylab("Average cups of coffee per week")+xlab("Average hours of sleep per night during semester")+ggtitle("Coffee vs. Sleep")+theme_bw()
+```
+
+When we want to numerically summarize the relationship between two quantitative variables, we use correlation. According to the correlation, there is a weak negative relationship between these two variables. We will cover correlation in more depth later in the semester!
+
+```{r}
+cor(form_data$sleep.semester, form_data$cups.coffee)
+```
+
 ### Two categorical variables
 
-In this final section, we will look at the relationship between a student's favorite dining hall and whether or not they play a sport at Williams. Both of these variables are categorical. 
-
-Let's first look at the variable ``sports``. Note that I am going to work with ``form_data``, not ``form_data_clean``, because I no longer need to worry about the ``pets`` variable. 
+In this final section, we will look at the relationship between a student's favorite dining hall and what side of route 2 they live on. Both of these variables are categorical. What do you notice from the following table?
 
 ```{r}
-form_data %>% group_by(sports) %>% summarize(n())
+form_data %>% select(route2.side, favorite.dining) %>% table()
 ```
 
-While "No" and "Yes" probably seem like very reasonable values for this variable, it turns out that it is really convenient in `R` if our ``binary`` variables are stored as `0` and `1`. We use `1` to represent `TRUE` and `0` to represent `FALSE`. We can use *mutate()* to make a new variable called ``athlete``, which evaluates to `TRUE` when ``sports=="Yes"`` and evaluates to false otherwise. 
+Two-way tables are a great way to summarize the relationship between two categorical variables. But there are actually a lot of subtle things that we need to remember from intro stats. For example, if we want to turn the counts in the table above into percentages, we actually have a lot of choices about how to do this. 
+
+Consider the three tables below. Can you figure out what each one is telling you? How do they differ? Which are most useful for studying the relationhip between these two variables?
 
 ```{r}
-form_data <- form_data %>% mutate(athlete = sports=="Yes")
+form_data %>% select(route2.side, favorite.dining) %>% table() %>% prop.table()
+form_data %>% select(route2.side, favorite.dining) %>% table() %>% prop.table(margin=1)
+form_data %>% select(route2.side, favorite.dining) %>% table() %>% prop.table(margin=2)
 ```
 
-The reason that this is convenient is that we can now do the following. Discuss the meaning of these numbers with your neighbors! 
+
+Each of the tables above also has a corresponding visual that we can make. You will practice interpreting these tables and plots on HW2. For now, consider the plot below to be a preview of what is to come. How would you interpret this?
 
 ```{r}
-form_data %>% summarize(sum(athlete), mean(athlete))
+ggplot(data=form_data, aes(x=route2.side, fill=favorite.dining))+geom_bar(position="stack")
 ```
 
-Now that we have this new ``athlete`` variable, it is seamless to look at the proportion of students who are athletes, broken down by a student's favorite dining hall. 
-
-```{r}
-form_data %>% group_by(dining_hall) %>% summarize(mean(athlete))
-```
-
-We can also make a visual representation of this data. 
-
-```{r}
-ggplot(data=form_data, aes(x=dining_hall, fill=athlete))+geom_bar(position="dodge")
-```
-
-Based on the summaries above, do you think that there is a meaningful relationship between a students' favorite dining hall and whether or not they play a sport at Williams? Discuss with your group! 
+Based on the summaries above, do you think that there is a meaningful relationship between a students' favorite dining hall and what side of route 2 they live on? Discuss with your group!
 
 # Wrap up
 
