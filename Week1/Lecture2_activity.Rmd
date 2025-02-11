@@ -166,7 +166,7 @@ The slightly more cumbersome (but useful!) way involves downloading the .csv doc
 
 Copy the code above into your RMarkdown document. Run the code, such that you have an object called ``form_data`` in your environment? What happens if you click on this dataset? 
 
-### Manipulation and clearning this dataset 
+### Manipulating and cleaning this dataset 
 
 <div id="boxedtext">
 
@@ -175,10 +175,14 @@ Copy the code above into your RMarkdown document. Run the code, such that you ha
 - Review the basic language of data analysis. 
 - Review some challenges of data cleaning.
 - Get exposed to the following functions:
-
   - `select()`
   - `filter()`
+  - `mutate()`
 </div>
+
+Click on ``form_data`` in your *environment*. You should see something like this: 
+
+![](data.png)
 
 
 XXXXX MOVE STUFF HERE XXXXXX
@@ -187,9 +191,7 @@ XXXXX MOVE STUFF HERE XXXXXX
 
 ### Keywords
 
-Click on ``form_data`` in your *environment*. You should see something like this: 
 
-![](data.png)
 
 <div id="boxedtext">
 **With a neighbor, discuss the following questions:**

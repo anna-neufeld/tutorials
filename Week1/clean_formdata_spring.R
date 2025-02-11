@@ -5,21 +5,23 @@ names(form_data_anon) <- c(
   "sleep.semester", "sleep.winterstudy", "cups.coffee", "height", "sports", "musical",
   "favorite.coffee", "favorite.dining", "campus.winterstudy", "route2.side"
 )
+form_data_anon <- form_data_anon[,-1] 
+
+write.csv(form_data_anon, file="form_data_anonymous.csv", row.names=FALSE)
 
 
 library(tidyverse)
 
 #### CLEANING
+FIND ONE PLACE WHERE THIS IS NEEDED
 
 
 ### ONE QUANTITATIVE:
 form_data_anon %>% summarize(mean(cups.coffee), sd(cups.coffee), median(cups.coffee))
-
 ggplot(data=form_data_anon, aes(x=cups.coffee))+geom_histogram()
 ## Discuss SKEW. 
 
 ### One categorical
-
 form_data_anon %>% group_by(sports) %>% summarize(n())
 
 ### One quantititave, one categorical
