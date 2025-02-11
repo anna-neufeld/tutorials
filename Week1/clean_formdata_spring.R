@@ -25,6 +25,22 @@ form_data_anon %>% group_by(sports) %>% summarize(n())
 ### One quantititave, one categorical
 ggplot(data=form_data_anon, aes(x=sports, y=cups.coffee))+geom_boxplot()
 
+form_data_anon %>% group_by(sports) %>% summarize(mean(cups.coffee), sd(cups.coffee), median(cups.coffee))
+
+### Two quantitative
+
+ggplot(data=form_data_anon, aes(x=sleep.semester, y=sleep.winterstudy))+geom_point()
+ggplot(data=form_data_anon, aes(x=sleep.semester, y=cups.coffee))+geom_point()
+
+
+### Two categorical 
+form_data_anon %>% group_by(sports, musical) %>% summarize(n())
+form_data_anon %>% select(sports, musical) %>% table()
+
+form_data_anon %>% group_by(route2.side, favorite.dining) %>% summarize(n())
+form_data_anon %>% select(route2.side, favorite.dining) %>% table()
+
+form_data_anon %>% select(route2.side,year) %>% table()
 
 
 form_data_anon %>% select(musical) %>% table()
