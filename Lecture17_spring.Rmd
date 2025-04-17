@@ -1,5 +1,5 @@
 ---
-title: "Lecture 16: Exploring multiple regression"
+title: "Lecture 17: Exploring multiple regression"
 output:
   html_document:
     css: ../lab.css
@@ -64,7 +64,6 @@ I made you two fake datasets to explore some properties of multiple regression. 
 library(tidyverse)
 dat.small <- read.csv("https://anna-neufeld.github.io/stat202_tutorials/Week9/dat.small.csv")
 dat.big <- read.csv("https://anna-neufeld.github.io/stat202_tutorials/Week9/dat.big.csv")
-dat.big.test <- read.csv("https://anna-neufeld.github.io/stat202_tutorials/Week9/dat.big.test.csv")
 ```
 
 # 1. Starting with dat.small
@@ -92,18 +91,18 @@ cor(dat.small) %>%kable()%>%
 
 We will now try out a bunch of regressions of `y` on subsets of the predictor variables `x1`,...,`x7`. For each exercise, try out some code in your console, and then record a handwritten answer on your mini quiz. 
 
-1. Highly correlated predictors: Compare a linear regression of `y` on `x1` to a linear regression of `y` on `x1` and `x2`. Specifically, compare your two models in terms of: the coefficient for `x1`, its standard error, its p-value, and $R^2$. What did you learn from this problem?
+1. **Highly correlated predictors:** Compare a linear regression of `y` on `x1` to a linear regression of `y` on `x1` and `x2`. Specifically, compare your two models in terms of: the coefficient for `x1`, its standard error, its p-value, and $R^2$. What did you learn from this problem?
 
 
-2. Perfectly uncorrelated predictors:** Compare a linear regression of `y` on `x1` to a linear regression of `y` on `x1` and `x3`. What do you notice about: the coefficient on `x1`, its standard error, its p-value, and $R^2$? What did you learn from this problem?
+2. **Perfectly uncorrelated predictors:** Compare a linear regression of `y` on `x1` to a linear regression of `y` on `x1` and `x3`. What do you notice about: the coefficient on `x1`, its standard error, its p-value, and $R^2$? What did you learn from this problem?
 
 
-3. Perfectly correlated predictors:** What happens if you fit a linear regression of `y` on `x1` and `x4`? What do you learn from this?
+3. **Perfectly correlated predictors:** What happens if you fit a linear regression of `y` on `x1` and `x4`? What do you learn from this?
 
-4. Mostly uncorrelated predictors:** What happens if you fit a linear regression of `y` on `x1` and `x5` and `x6` and `x7`. How does this model compare to ones from the previous parts? Play around with this model by adding or removing one variable at a time, and be sure to check out the correlations between different pairs of these variables. What did you learn from this, and how does it relate to the previous parts of the question?
+4. **Mostly uncorrelated predictors:** What happens if you fit a linear regression of `y` on `x1` and `x5` and `x6` and `x7`. How does this model compare to ones from the previous parts? Play around with this model by adding or removing one variable at a time, and be sure to check out the correlations between different pairs of these variables. What did you learn from this, and how does it relate to the previous parts of the question?
 
 
-5. What would be your pick for a "final model" for this dataset?** Be sure that you can justify your answer!
+5. **What would be your pick for a "final model" for this dataset?** Be sure that you can justify your answer!
 
 # 2. Moving on to dat.big
 
@@ -120,9 +119,16 @@ Do some visualizing and exploring of your data. Consider some smaller models tha
 6. Based on your exploration, do you think that the best model is the one with the highest $R^2$? Why or why not?
 
 
-# 3. Evaluating a model using an independent test set
+# 3. Optional: only move on to this if you have time!
 
-The dataset ``test.big`` comes from exactly the same population as ``dat.big``. In this question, we will see that the giant ``mod.full`` from Question 2 does a very bad job making predictions for unseen examples, despite the fact that its predictions were perfect on its own dataset. This phenomenon is known as *overfitting*: ``mod.full`` was so complex that it perfectly traced the training dataset values, but cannot generalize to unseen examples. This is an example of why we cannot directly trust $R^2$ as a measure of model performance. 
+The dataset ``dat.big.test``, which can be downloaded below, comes from exactly the same population as ``dat.big``. 
+
+```{r, eval=T}
+library(tidyverse)
+dat.big.test <- read.csv("https://anna-neufeld.github.io/stat202_tutorials/Week9/dat.big.test.csv")
+```
+
+In this question, we will see that the giant ``mod.full`` from Question 2 does a very bad job making predictions for unseen examples, despite the fact that its predictions were perfect on its own dataset. This phenomenon is known as *overfitting*: ``mod.full`` was so complex that it perfectly traced the training dataset values, but cannot generalize to unseen examples. This is an example of why we cannot directly trust $R^2$ as a measure of model performance. 
 
 Run the following code, which computes the SSE of this "full model" when it is applied to the test set.
 
@@ -149,50 +155,9 @@ sum((preds.intercept- dat.big.test$y)^2)
 
 3. Based on the past few explorations, as well as what you explored in Question 2, what do you think is the "best model" for this dataset?
 
-This is the last question of the mini quiz! Move on to the next part, but only if you have time!
+In real life, a common way to do model selection is to select the model that achieves the highest predictive accuracy on a test dataset. We will return to this idea during the last week of class. 
 
-# Totally optional code to explore if you have time. 
-
-I wrote you the following code. It considers the regression of $y$ on $x_1,\ldots,x_k$, for $k$ ranging from $0$ (the intercept only model) to $29$ (the full model). It fits each regression model to ``dat.big,`` but then considers the sum of squared errors both on its own training data (``dat.big``) and the unseen test data (``dat.big.test``). The code is below. 
-
-```{r, eval=T}
-SSE.train <- rep(0, 30)
-SSE.test <- rep(0,30)
-
-mod.train <- lm(y~1, data=dat.big) 
-SSE.train[1] <- sum((mod.train$fitted-dat.big$y)^2)
-preds.test <- predict(mod.train, newdata=dat.big.test)
-SSE.test[1] <- sum((preds.test -dat.big$y)^2)
-for (k in 2:30) {
-  mod.train <- lm(y~., data=dat.big[,1:k])
-  SSE.train[k] <- sum((mod.train$fitted-dat.big$y)^2)
-  preds.test <- predict(mod.train, newdata=dat.big.test)
-  SSE.test[k] <- sum((preds.test -dat.big.test$y)^2)
-}
-```
-
-To make these numbers more interpretable, we convert them from SSE values to $R^2$ values. Recall that 
-$$
-R^2 = 1 - SSE/SST.
-$$
-
-```{r, eval=T}
-R2.train <- 1-SSE.train/(sum((dat.big$y-mean(dat.big$y))^2))
-R2.test <- 1-SSE.test/(sum((dat.big.test$y-mean(dat.big.test$y))^2))
-```
-
-The following plot shows how $R^2$, computed using the training set and the test set, change as we add more variables to the model. What do you notice? How does this knowledge coincide with your knowledge about the best possible model for this data? To the best of your ability, explain what is going on in this plot!
-
-```{r, eval=T}
-ggplot(data=NULL) +
-  geom_line(aes(x=1:30, y=R2.train, col="R2 on training set"))+
-  geom_line(aes(x=1:30, y=R2.test, col="R2 on test set")) +
-  theme_bw()+ylab("R2")+labs(col="Dataset")+
-  xlab("Number of Variables in Model")
-```
-
-
-# Takeaways (not as optional)
+# Takeaways 
 
 I hope you learned that:
 
@@ -204,7 +169,7 @@ I hope you learned that:
 
 - Measures like $R^2$, computed using the same dataset that was used to fit the model, will always increase when you increase the number of predictors. so just looking at an increasing $R^2$ is not a good way to say that a more complex model is "better".
 
-- A test set is a better way to assess the ability of a model to generate accurate predictions for a *new sample*. 
+  - A test set is a better way to assess the ability of a model to generate accurate predictions for a *new sample*. 
 
 We will return to some of these topics next week when we study model selection! 
 
