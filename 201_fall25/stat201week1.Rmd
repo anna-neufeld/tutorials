@@ -37,8 +37,7 @@ When a statistician develops a new method, or when a scientist decides that they
 
 # Getting Started
 
-Hopefully you were able to download R and RStudio by following the instructions on GLOW. If so, go ahead and launch RStudio. You should see a window that looks like the image 
-shown below.
+Hopefully you were able to download R and RStudio by following the instructions on GLOW. If so, go ahead and launch RStudio. You should see a window that looks like the image shown below.
 
 ![](R_interface.png)
 <br>
@@ -152,14 +151,14 @@ At the start of the semester, we will always give you very clear instructions on
 
 ### Loading the "Getting to Know You" dataset
 
-Over the weekend, 41 Stat 202 students filled out the "getting to know you" survey. Google forms lets me export the survey responses into a google sheet / Excel spreadsheet. I removed the names, pronouns, and email addresses from the spreadsheet, and I also removed the answers to the "free response" questions (e.g. "Why are you taking this class"). I changed the column names for readability. Finally, I saved the resulting spreadsheet as a `.csv`. 
+Over the weekend, most of you filled out the "getting to know you" survey. Google forms lets me export the survey responses into a google sheet / Excel spreadsheet. I removed the names, pronouns, and email addresses from the spreadsheet, and I also removed the answers to the "free response" questions (e.g. "Why are you taking this class"). I changed the column names for readability. Finally, I saved the resulting spreadsheet as a `.csv`. 
 
-As a very quick interlude on data ethics: I also removed ``year`` at Williams. Since we only have two high school students in the class, the data is hardly anonymous if you include this information! It is always good to think about these things when preparing data to share!
+\textcolor{red}{Data notes here.}
 
 I saved the anonymized data as a `.csv` file. I posted it both on GLOW and on my github website. There are two ways that you can load the data. The easiest is to run this code:
 
 ```{r}
-form_data <- read.csv("https://anna-neufeld.github.io/stat202_tutorials/Week1/form_data_anonymous.csv")
+form_data <- read.csv("https://anna-neufeld.github.io/tutorials/Week1/form_data_anonymous.csv")
 ```
 
 The slightly more cumbersome (but useful!) way involves downloading the .csv document from GLOW and importing it using the ``import dataset`` button. We will go over this later in the semester.

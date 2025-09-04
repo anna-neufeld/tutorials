@@ -1,5 +1,6 @@
 ---
 title: "Stat 201: Exploratory Data Analysis in R"
+date: "Weeks 1-2"
 output:
   html_document:
     css: ../lab.css
@@ -25,7 +26,7 @@ library(openintro)
 - Become comfortable with the RStudio interface.
 - Understand how to record written explanations and code chunks in an RMarkdown file and ``knit`` the file into a report.
 - Run some fun, basic commands in R.
-- Load our first dataset into R: use this dataset to review basic concepts about exploratory data analysis. 
+- Load our first dataset into R, and perform basic exploratory data analysis.
 </div>
 
 ## Why R?
@@ -152,14 +153,12 @@ At the start of the semester, we will always give you very clear instructions on
 
 ### Loading the "Getting to Know You" dataset
 
-Over the weekend, 41 Stat 202 students filled out the "getting to know you" survey. Google forms lets me export the survey responses into a google sheet / Excel spreadsheet. I removed the names, pronouns, and email addresses from the spreadsheet, and I also removed the answers to the "free response" questions (e.g. "Why are you taking this class"). I changed the column names for readability. Finally, I saved the resulting spreadsheet as a `.csv`. 
-
-As a very quick interlude on data ethics: I also removed ``year`` at Williams. Since we only have two high school students in the class, the data is hardly anonymous if you include this information! It is always good to think about these things when preparing data to share!
+Over the weekend, XXXX students filled out the "getting to know you" survey. Google forms lets me export the survey responses into a google sheet / Excel spreadsheet. I removed the names, pronouns, and email addresses from the spreadsheet, and I also removed the answers to the "free response" questions (e.g. "Why are you taking this class"). I changed the column names for readability. Finally, I saved the resulting spreadsheet as a `.csv`. 
 
 I saved the anonymized data as a `.csv` file. I posted it both on GLOW and on my github website. There are two ways that you can load the data. The easiest is to run this code:
 
 ```{r}
-form_data <- read.csv("https://anna-neufeld.github.io/stat202_tutorials/Week1/form_data_anonymous.csv")
+form_data <- read.csv("https://anna-neufeld.github.io/tutorials/Week1/form_data_anonymous.csv")
 ```
 
 The slightly more cumbersome (but useful!) way involves downloading the .csv document from GLOW and importing it using the ``import dataset`` button. We will go over this later in the semester.
@@ -196,7 +195,7 @@ Click on ``form_data`` in your *environment*. You should see something like this
 
 We are really lucky that we don't have too many issues with our data this semester! 
 
-Last semester, many people added commentary to their numerical answers. For example, these were all answers that I got last semester for "How many pets have you had or have you lived with in your life?" on this survey last semester. 
+Last year, many people added commentary to their numerical answers. For example, these were all answers that I got for "How many pets have you had or have you lived with in your life?" on this survey last year. 
 
 - "1! My dog Sammy is 8. He's a schnoodle." 
 - "more than 25 fish, but no more than 7 at a time."
@@ -240,49 +239,57 @@ And, as a harder question, why doesn't the following code work?
 form_data %>% select(pets) %>% filter(sports=="Yes")
 ```
 
-We do have one chance to do some data cleaning. Let's look at the variable ``favorite.coffee``.
+There are a lot more topics that we could cover in data cleaning; but we will come back to these later in the semester. For now, our goal is to visually and numerically describe variables!
 
-```{r}
-form_data$favorite.coffee
-```
-While it is completely fine that some people do not drink coffee, we probably do not want to treat "n/a", "", and "Don't Drink Coffee" as separate answers. Furthermore, categorical variables with only one category can be a bit hard to work with! Let's use the following code to simplify this variable. 
+<!-- We do have one chance to do some data cleaning. Let's look at the variable ``favorite.coffee``. -->
 
-```{r}
-form_data <- form_data %>% mutate(favorite.coffee.clean = ifelse(favorite.coffee %in% c("Tunnel", "Goodrich"), favorite.coffee, "Other"))
-```
+<!-- ```{r} -->
+<!-- form_data$favorite.coffee -->
+<!-- ``` -->
+<!-- While it is completely fine that some people do not drink coffee, we probably do not want to treat "n/a", "", and "Don't Drink Coffee" as separate answers. Furthermore, categorical variables with only one category can be a bit hard to work with! Let's use the following code to simplify this variable.  -->
 
-We used ``mutate`` to make a new variable called ``favorite.coffee.clean``. This variable is equal to ``favorite.coffee`` if ``favorite.coffee`` was equal to ``Tunnel`` or ``Goodrich``, but just stores ``Other`` otherwise. Because we *saved* our mutated dataset back into ``form_data`` (this step is very important!), we can now view our new variable:
+<!-- ```{r} -->
+<!-- form_data <- form_data %>% mutate(favorite.coffee.clean = ifelse(favorite.coffee %in% c("Tunnel", "Goodrich"), favorite.coffee, "Other")) -->
+<!-- ``` -->
 
-```{r}
-form_data %>% select(favorite.coffee.clean)
-```
+<!-- We used ``mutate`` to make a new variable called ``favorite.coffee.clean``. This variable is equal to ``favorite.coffee`` if ``favorite.coffee`` was equal to ``Tunnel`` or ``Goodrich``, but just stores ``Other`` otherwise. Because we *saved* our mutated dataset back into ``form_data`` (this step is very important!), we can now view our new variable: -->
 
-I am sure that we will have many more chances to clean data later in the semester!
+<!-- ```{r} -->
+<!-- form_data %>% select(favorite.coffee.clean) -->
+<!-- ``` -->
 
-# Exploratory Data Anlysis
+<!-- I am sure that we will have many more chances to clean data later in the semester! -->
+
+# Explore and describe a single quantitative variable
 
 <div id="boxedtext">
 
 **Goals:**
 
-- Review the methods for numerically or visually summarizing different types of variables. 
-- Get exposed to the following functions:
+- Make a histogram; describe what you see.
+- Make a boxplot; describe what you see.
+- Have R compute measures of center and spread (mean, median, sd, IQR, etc.)
 
-  - `group_by()`
-  - `summarize()`
-  - ``mean()``, ``median()``, ``sd()``, etc. 
-  - ``ggplot()``
-  - ``geom_histogram()``
-  - ``geom_boxplot()``
-  - ``geom_point()``
 </div>
 
-
-When we do exploratory data analysis, we want to explore **univariate** summaries of our individual variables. We also want to explore **multivariate** relationships between our variables. We want to do this visually, but we may also want to compute some summary statistics! The type of visual and numerical summary depends on the type of variable! We will dive into some examples below. 
-
-### One quantitative variable
-
 Let's use ``pets,`` which stores the recorded answers to the question "How many pets have you had or have you lived with in your life?".
+
+Let's first learn how to make a histogram in R. There are actually two ways. The first may look simpler, but I would like to encourage you all to use the second version. 
+
+```{r}
+hist(form_data$pets)
+ggplot(data=form_data, aes(x=pets))+geom_histogram()
+```
+I actually sort of prefer the *look* of ``hist()`` to the look of ``ggplot()``. However, ``ggplot()`` turns out to be a really powerful tool for data visualization. It is going to be easy to customize our plots, add extra variables, add legends and captions, etc. Thus, I encourage you to get familiar with ``ggplot``.
+
+Play around with the code below. Is there a histogram that you like best?
+
+```{r}
+ggplot(data=form_data, aes(x=pets))+geom_histogram(col="red", fill="pink", binwidth=1)+theme_bw()+
+  xlab("Pets")+ylab("Frequency")+ggtitle("My favorite histogram")
+```
+
+
 
 Your are all familiar with many ways to summarize a single quantitative variable. Most of these ways have really intuitive function names in `R`. The *summarize()* function is a nice way to view multiple numeric summaries such as the mean and the median of a variable at once. What do you notice about the mean number of pets as compared to the median?
 
