@@ -1904,8 +1904,8 @@ semester.</p>
 that you have an object called <code>form_data</code> in your
 environment? What happens if you click on this dataset?</p>
 </div>
-<div id="diagnosing-and-cleaning-our-first-dataset" class="section level1">
-<h1>Diagnosing and cleaning our first dataset</h1>
+<div id="cleaning-our-first-dataset" class="section level1">
+<h1>Cleaning our first dataset</h1>
 <div id="boxedtext">
 <p><strong>Goals:</strong></p>
 <ul>
@@ -2008,21 +2008,37 @@ we can now view our new variable:</p>
 <p>I am sure that we will have many more chances to clean data later in
 the semester!</p>
 </div>
-<div id="exploratory-data-anlysis" class="section level1">
-<h1>Exploratory Data Anlysis</h1>
+<div id="exploring-indvidual-variables-in-our-dataset" class="section level1">
+<h1>Exploring indvidual variables in our dataset</h1>
+<p>Datasets are usually too big to understand just by looking at the raw
+data. We need to go one variable at a time and produce numerical and
+visual summaries. We then need to look at relationships between
+variables. Luckily, R makes this all pretty straightforward.</p>
 <div id="boxedtext">
 <p><strong>Goals:</strong></p>
 <ul>
 <li><p>Go over methods for numerically or visually summarizing different
-types of variables.</p></li>
+types of variables. Here are some key R functions that we will
+learn.</p></li>
+<li><p>One numerical variable: <code>mean()</code>,
+<code>median()</code>, <code>sd()</code>,
+<code>geom_histogram()</code>.</p></li>
+<li><p>One categorical variable: <code>table()</code>,
+<code>geom_bar()</code>.</p></li>
+<li><p>One categorical and one numerical: <code>group_by()</code>,
+<code>summarize()</code>, <code>geom_boxplot()</code>.</p></li>
+<li><p>Two categorical variables: continue with tables and
+barplots.</p></li>
+<li><p>Two numerical variables: <code>geom_point()</code>,
+<code>cor()</code>.<br />
+</p></li>
 <li><p>Get exposed to the following functions:</p>
 <ul>
 <li><code>group_by()</code></li>
 <li><code>summarize()</code></li>
-<li><code>mean()</code>, <code>median()</code>, <code>sd()</code>,
-etc.</li>
+<li>, etc.</li>
 <li><code>ggplot()</code></li>
-<li><code>geom_histogram()</code></li>
+<li></li>
 <li><code>geom_boxplot()</code></li>
 <li><code>geom_point()</code></li>
 </ul></li>
