@@ -1,0 +1,28 @@
+---
+title: "Pre-lab 1"
+author: "Anna Neufeld"
+date: "9/9/2019"
+output: pdf_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# First Prelab
+### Getting started
+This is my first Pre lab. I want to see if I can create a PDF document that contains text and R code.
+
+```{r}
+5+8
+```
+When I knit this, hopefully my PDF document will contain the printed number 13!! 
+
+### More advanced
+Let's try one more chunk!
+```{r}
+x = 5+7
+y = 10-3
+x-y
+```
+
+What do you see in the PDF document? 

@@ -1,0 +1,318 @@
+---
+title: "Stat 201: Exploratory Data Analysis in R"
+author: "Part 2"
+output:
+  html_document:
+    css: ../lab.css
+    highlight: pygments
+    theme: cerulean
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(eval = FALSE)
+library(tidyverse)
+library(openintro)
+```
+
+
+<div id="boxedtext">
+
+**Learning Objectives**
+
+- Continue practicing with the RStudio interface.
+- Do some manipulating and cleaning of our datasets.
+- Start to explore relationships between variables.
+</div>
+
+## Getting started
+
+Hopefully, you already worked through **tutorial 1**. So, there is not as much introductory material today- we are going to dive right in to working with our dataset. 
+
+To start, let's load the ``tidyverse`` package, and then load our dataset. If you are working in an RMarkdown document, you will want this code to appear *in* your RMarkdown document.
+
+
+```{r load-packages, message = FALSE, eval=TRUE}
+library(tidyverse)
+
+```
+
+**Anna ntoe to self- pick a variable that needs to be cleaned for this day.**
+
+*Knitting* an RMarkdown document means turning the input file (`.Rmd`) into a nicely formatted output file (`.pdf` in this case). To knit your current template document, select ``knit`` from the buttons at the top of the RMarkdown file. A nicely formatted document will open up in a new window. 
+
+Modify your example document so that it looks something like this one: 
+
+![](RMarkdown2.png){width=900px}
+
+## Running code in RMarkdown files
+
+You will notice that just typing the code in the gray chunk did not produce any sort of answer for us. To see the answer to this math expression, we need to **run** this code. 
+
+![](example.png)
+First note that all code in your chunks is automatically run each time you knit your document. Knit your template document now to try this out! Did it print your answer? 
+
+You can knit your R Markdown file every time you write code, but sometimes the knitting process takes a few minutes and you just want to run a few lines at a time to make sure they are working. To run chunks without knitting, you can use either the Run button on the chunk 
+(green sideways triangle) or you can highlight the code and click Run on the top right corner of the R Markdown editor. While it is good to run individual chunks to test out ideas and explore, we also strongly recommend that you **knit your document** each time you finish an exercise. The knitting process can sometimes lead to errors. Students often run in to trouble if they wait to try knitting their document until right before the assignment deadline. Knitting after each exercise ensures that you catch errors as you go. 
+
+When an R Markdown document is knitting, it only has access to the variables that are created inside of the R Markdown document itself. The R Markdown document does not get to use the environment in the upper right hand corner of your screen while it is knitting. The R Markdown document only gets to see the variables that are defined inside of the document. 
+
+To illustrate this concept, delete the line ``x <- 5+7`` from your sample document. Can you still run the chunk locally? What happens if you try to knit your document? 
+
+```{r}
+y <- 10-3
+x-y
+```
+
+It is also important in an R Markdown document that all variables are defined in order. You will notice that exercise 5 contains two code chunks in your template. What happens if you add ``x <- 5+7`` back into your sample document, but you add it to its own code chunk. Can you knit the document now? 
+
+* * *
+
+# Loading our first dataset
+
+While using R as a calculator was a fun warmup, in this class we are typically going to use R to analyze datasets. With this in mind, we need to learn how to load our dataset into R. There are several ways that we will do this in this class.
+
++ Many datasets are built into packages. These are extremely easy to load. As long as you have the package installed, you just load the package and then access the relevant dataset with the ``data()`` function. This is what you will be doing on HW1! These are typically datasets that are meant for educational purposes. 
++ We can also load data in from an Excel file or a .csv file. This is probably the way that many of you will load your data for your final projects. You can do this using the ``import dataset`` button, which you will find in the top right corner of your RStudio interface. 
++ Today, we will load our dataset directly from a URL. I sometimes post the dataset on my github website for you to read directly, because this is easier and quicker than uploading/downloading files. But this is sort of contrived because I post it in a really special format: you won't typically be able to do this in the real world. 
++ Sometimes (later in the semester) we will generate our own data! 
+
+At the start of the semester, we will always give you very clear instructions on how to load the required dataset. Eventually, for your projects, you will need to know how to troubleshoot and load the data yourself! 
+
+Over the weekend, most of you filled out the "getting to know you" survey. Google forms lets me export the survey responses into a google sheet / Excel spreadsheet. I removed the names, pronouns, and email addresses from the spreadsheet, and I also removed the answers to the "free response" questions (e.g. "Why are you taking this class"). I changed the column names for readability. Finally, I saved the resulting spreadsheet as a `.csv`. 
+
+\textcolor{red}{Data notes here.}
+
+I saved the anonymized data as a `.csv` file. I posted it both on GLOW and on my github website. There are two ways that you can load the data. The easiest is to run this code:
+
+```{r}
+form_data <- read.csv("https://anna-neufeld.github.io/tutorials/Week1/201_fall25/form_data_anonymous.csv")
+```
+
+The slightly more cumbersome (but useful!) way involves downloading the .csv document from GLOW and importing it using the ``import dataset`` button. We will go over this later in the semester.
+
+Copy the code above into your RMarkdown document. Run the code, such that you have an object called ``form_data`` in your environment? What happens if you click on this dataset? 
+
+# Cleaning our first dataset
+
+<div id="boxedtext">
+
+**Goals:**
+
+- What are the basics of a dataset?
+- What "problems" should we look for in a dataset?
+- What does it mean to "clean" a dataset"
+- Get exposed to the following functions:
+  - `select()`
+  - `filter()`
+  - `mutate()`
+</div>
+
+Click on ``form_data`` in your *environment*. You should see something like this: 
+
+![](data.png)
+
+\textcolor{red}{Update for fall 2025}
+
+<div id="boxedtext">
+**With a neighbor, discuss the following questions:**
+
+- What are the **observational units** in this dataset. How many are there?
+- What are some examples of **quantitative variables** in this dataset?
+- What are some examples of **categorical variables** in this dataset? 
+    - Bonus: are any of these **ordinal variables**? An ordinal variable is a categorical variable where the categories have a natural ordering. 
+- Do you see any issues with the data?
+</div>
+
+We are really lucky that we don't have too many issues with our data this semester! 
+
+\textcolor{red}{Update for fall 2025}
+
+Last semester, many people added commentary to their numerical answers. For example, these were all answers that I got last semester for "How many pets have you had or have you lived with in your life?" on this survey last semester. 
+
+- "1! My dog Sammy is 8. He's a schnoodle." 
+- "more than 25 fish, but no more than 7 at a time."
+- "3 dogs. 2 dogs currently "                       
+- "2 cats!"
+
+This led to some issues! I wanted this to be a numerical variable, but `R` cannot figure out how to convert the sentence *1! My dog Sammy is 8. He's a schnoodle.* to a number automatically. This meant that we had to spend a lot of time *cleaning* our data. This semester, I specifically asked you to enter the answer as a number, and you all followed the instructions! This really reduced the number of things that we will need to clean, which serves as a nice reminder for me about the importance of survey design!
+
+To see if we have issues with added commentary this year, we can extract the ``pets`` variable from our dataset. There are a few ways to do this. See if you can figure out any differences between these.
+
+```{r}
+form_data$pets
+form_data[,4]
+form_data %>% select(pets)
+form_data %>% pull(pets)
+```
+
+The function ``select()`` is a key function from the ``tidyverse()`` package that we will be using to extract a subset of *variables* (columns) from a dataset. 
+
+When we want to select a subset of *observations* (rows) from a dataset, we use ``filter()``. The following code displays only the data for students who play a sport at Williams. 
+
+```{r}
+form_data %>% filter(sports=="Yes")
+```
+
+Suppose that we want to save the data subset above to a new dataset called ``athetes``. We can certainly do that!
+
+```{r}
+athletes <- form_data %>% filter(sports=="Yes")
+```
+
+One reason that the ``tidyverse()`` set of functions is so nice is because it becomes quite easy to combine functions together. What does the following code do?
+
+```{r}
+form_data %>% filter(sports=="Yes") %>% select(pets)
+```
+
+And, as a harder question, why doesn't the following code work? 
+
+```{r}
+form_data %>% select(pets) %>% filter(sports=="Yes")
+```
+
+We do have one chance to do some data cleaning. Let's look at the variable ``favorite.coffee``.
+
+```{r}
+form_data$favorite.coffee
+```
+
+While it is completely fine that some people do not drink coffee, we probably do not want to treat "n/a", "", and "Don't Drink Coffee" as separate answers. Furthermore, categorical variables with only one category can be a bit hard to work with! Let's use the following code to simplify this variable. 
+
+```{r}
+form_data <- form_data %>% mutate(favorite.coffee.clean = ifelse(favorite.coffee %in% c("Tunnel", "Goodrich"), favorite.coffee, "Other"))
+```
+
+We used ``mutate`` to make a new variable called ``favorite.coffee.clean``. This variable is equal to ``favorite.coffee`` if ``favorite.coffee`` was equal to ``Tunnel`` or ``Goodrich``, but just stores ``Other`` otherwise. Because we *saved* our mutated dataset back into ``form_data`` (this step is very important!), we can now view our new variable:
+
+```{r}
+form_data %>% select(favorite.coffee.clean)
+```
+
+I am sure that we will have many more chances to clean data later in the semester!
+
+
+# Explore and describe a single quantitative variable
+
+Datasets are usually too big to understand just by looking at the raw data. We need to go one variable at a time and produce numerical and visual summaries. Luckily, R makes this all pretty straightforward. We will start by covering this process for numerical variables.
+
+<div id="boxedtext">
+
+**Goals:**
+
+- Make a histogram; describe what you see.
+- Make a boxplot; describe what you see.
+- Have R compute measures of center and spread (mean, median, sd, IQR, etc.)
+
+</div>
+
+Let's use ``pets,`` which stores the recorded answers to the question "How many pets have you had or have you lived with in your life?".
+
+### Make a histogram
+
+Let's first learn how to make a histogram in R. There are actually two ways. The first may look simpler, but I would like to encourage you all to use the second version, which comes from the ``tidyverse`` package.  While at first ``ggplot`` may seem unnecessarily complex, 
+the ``tidyverse`` package has become the standard for data cleaning and data visualization. Once you get used to ``ggplot()``, it will let you make very complex and very beautiful, customizable plots. I use ``ggplot()`` for all of my research papers! 
+
+```{r}
+hist(form_data$pets)
+ggplot(data=form_data, aes(x=pets))+geom_histogram()
+```
+
+Play around with the code below. Is there a histogram that you like best?
+
+```{r}
+ggplot(data=form_data, aes(x=pets))+geom_histogram(col="red", fill="pink", binwidth=1)+theme_bw()+
+  xlab("Pets")+ylab("Frequency")+ggtitle("My favorite histogram")
+```
+
+### Make a boxplot
+
+Once again, we have a "base R" version and a ``tidyverse`` (``ggplot``) version. I highly recommend the ``ggplot()`` version: once we start comparing data across groups, it will be super useful.
+
+```{r}
+boxplot(form_data$pets)
+ggplot(data=form_data, aes(y=pets))+geom_boxplot()
+```
+
+**Challenge:** Using what you learned in the histogram section, can you figure out how to add axes labels and a title to your ``ggplot`` boxplot?
+
+*Hint:* It really isn't that challenging, because it looks exactly the same as it did for histograms.
+
+### Report numerical summaries
+
+Everything that we discussed in lecture is easily computed in R. Usually, the name of the relevant ``R`` function is just the english name of the statistic we want to compute: how lucky are we!
+
+The following three lines of code all report the same number. Which do you prefer?
+
+```{r}
+mean(form_data$pets)
+form_data %>% summarize(mean(pets))
+form_data %>% pull(pets) %>% mean()
+```
+
+Try running the same lines of code as above, but change the word ``mean()`` to the word ``median()``. What happens? Explain how the mean and the median relate for this dataset.
+
+```{r}
+median(form_data$pets)
+form_data %>% summarize(median(pets))
+form_data %>% pull(pets) %>% median()
+```
+One of my favorite things about the ``summarize()`` function is that we can report multiple summary statistics at a time. We can also stratify our summaries into groups, which is really helpful. Check out the following lines of code.
+
+```{r}
+form_data %>% summarize(mean(pets), median(pets), IQR(pets), sd(pets))
+form_data %>% group_by(sports) %>% summarize(mean(pets), median(pets), IQR(pets), sd(pets))
+form_data %>% filter(sports=="Yes") %>% summarize(mean(pets), median(pets), IQR(pets), sd(pets))
+```
+
+### Explore and describe a single categorical variable
+
+Suppose that we want to explore the variable ``favorite.dining``. This is a categorical variable. 
+
+Summarizing a single categorical variable is sort of boring! We don't have measures of center and spread. The main way that we numerically explore a single categorical variable is by making a table. Try out the following lines of code, which all give the same information. What did you learn about this variable?
+
+```{r}
+form_data %>% group_by(favorite.dining) %>% summarize(n())
+table(form_data$favorite.dining)
+form_data %>% select(favorite.dining) %>% table()
+```
+
+If we wanted to visually explore a single categorical variable, we would typically use a bar chart. This displays the same information as the table.
+
+```{r}
+ggplot(data=form_data, aes(x=favorite.dining))+geom_bar()
+```
+
+Again, a nice thing about learning ``ggplot()`` is that we can use exactly the same methods as before to make this plot more beautiful- we can just use the plus sign to add on aesthetic features. 
+
+```{r}
+ggplot(data=form_data, aes(x=favorite.dining, fill="pink"))+geom_bar()+xlab("Favorite Dining Hall")+ylab("Number of Students")+ggtitle("My favorite plot")
+```
+
+# Wrap up
+
+If you were lost in class today, please read through this tutorial again on your own time. Actually run each line of code in the tutorial, and try to think about what it is doing. 
+
+Hopefully, when you work on HW1, you will find that I went over all of the R functions that you need for the homework in class (some are coming on Thursday). It is my goal that this will be the case for every homework throughout the semester! 
+
+If you are already experienced in programming, I would encourage you to go above-and-beyond on the homework assignments in terms of making your code and your plots beautiful. If you are new to programming, please let me know if the pacing seems too fast for you! I am happy to provide additional resources for learning R if needed!
+
+Finally, when it comes to debugging, the internet is your friend! Learning to use google, stack overflow, or ChatGPT to resolve R errors on your own is a key skill. Please do not stare at a piece of code for 8 hours waiting for a TA session because you cannot find the source of an error: learn to google your error messages and problem solve for yourself! 
+
+
+*** 
+## Acknowledgements
+
+The formatting and some of the introductory content in this tutorial was adopted from an OpenIntro lab.
+
+<div id="license">
+This is a product of OpenIntro that is released under a 
+[Creative Commons Attribution-ShareAlike 3.0 Unported](http://creativecommons.org/licenses/by-sa/3.0). 
+This lab was adapted for OpenIntro by Andrew Bray and Mine &Ccedil;etinkaya-Rundel
+from a lab written by Mark Hansen of UCLA Statistics.
+</div>
+
