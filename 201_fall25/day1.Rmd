@@ -157,7 +157,8 @@ Over the weekend, most of you filled out the "getting to know you" survey. Googl
 I saved the anonymized data as a `.csv` file. I posted it both on GLOW and on my github website. There are two ways that you can load the data. The easiest is to run this code:
 
 ```{r}
-form_data <- read.csv("https://anna-neufeld.github.io/tutorials/Week1/201_fall25/form_data_anonymous.csv")
+form_data <- read.csv("https://anna-neufeld.github.io/tutorials/201_fall25/form_data_anonymous.csv")
+NROW(form_data)
 ```
 
 The slightly more cumbersome (but useful!) way involves downloading the .csv document from GLOW and importing it using the ``import dataset`` button. We will go over this later in the semester.
