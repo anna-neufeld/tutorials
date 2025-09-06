@@ -164,7 +164,6 @@ NROW(form_data)
 The slightly more cumbersome (but useful!) way involves downloading the .csv document from GLOW and importing it using the ``import dataset`` button. We will go over this later in the semester.
 
 Copy the code above into your RMarkdown document. Run the code, such that you have an object called ``form_data`` in your environment? What happens if you click on this dataset? 
-**Anna note to self: cleaning should probably go on Thursday. So much to do on Tuesday!**
 
 # Cleaning our first dataset
 
@@ -174,11 +173,9 @@ Copy the code above into your RMarkdown document. Run the code, such that you ha
 
 - What are the basics of a dataset?
 - What "problems" should we look for in a dataset?
-- What does it mean to "clean" a dataset"
 - Get exposed to the following functions:
   - `select()`
   - `filter()`
-  - `mutate()`
 </div>
 
 Click on ``form_data`` in your *environment*. You should see something like this: 

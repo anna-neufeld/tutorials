@@ -6,4 +6,4 @@ names(form_data_anonymous) <- c("pets", "sleep_semester", "sleep_school", "cups.
                                 "music", "favorite.coffee", "favorite.dining", "campus.summer", "div.three", "labs",
                                 "route2")
 
-write.csv(form_data_anonymous, file="form_data_anonymous.csv")
+write.csv(form_data_anonymous, file="form_data_anonymous.csv", row.names = F)
