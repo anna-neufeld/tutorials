@@ -13,7 +13,7 @@ output:
 ---
 
 ```{r global_options, include=FALSE}
-knitr::opts_chunk$set(eval = TRUE)
+knitr::opts_chunk$set(eval = FALSE)
 library(tidyverse)
 library(openintro)
 ```
@@ -187,9 +187,9 @@ Click on ``form_data`` in your *environment*. You should see something like this
 
 Let's extract the variable ``pets`` from our dataset. There are a few ways to do this. See if you can figure out any differences between these.
 
-```{r}
+```{r, eval=F}
 form_data$pets
-form_data[,4]
+form_data[,2]
 form_data %>% select(pets)
 form_data %>% pull(pets)
 ```
@@ -198,43 +198,43 @@ The function ``select()`` is a key function from the ``tidyverse()`` package tha
 
 When we want to select a subset of *observations* (rows) from a dataset, we use ``filter()``. The following code displays only the data for students who play a sport at Williams. 
 
-```{r}
+```{r, eval=F}
 form_data %>% filter(sports=="Yes")
 ```
 
 Suppose that we want to save the data subset above to a new dataset called ``athetes``. We can certainly do that!
 
-```{r}
+```{r, eval=F}
 athletes <- form_data %>% filter(sports=="Yes")
 ```
 
 One reason that the ``tidyverse()`` set of functions is so nice is because it becomes quite easy to combine functions together. What does the following code do?
 
-```{r}
+```{r, eval=F}
 form_data %>% filter(sports=="Yes") %>% select(pets)
 ```
 
 And, as a harder question, why doesn't the following code work? 
 
-```{r}
+```{r, eval=F}
 form_data %>% select(pets) %>% filter(sports=="Yes")
 ```
 
 Note that `R` has correctly identified ``pets`` as a numerical variable. 
 
-```{r}
+```{r, eval=F}
 class(form_data$pets)
 ```
 
 On the other hand, `R` has not identified ``height`` as a numerical variable.
 
-```{r}
+```{r, eval=F}
 class(form_data$height)
 ```
 
 The fact that not everyone entered their height as a number on the survey is an example of a data quality issue. In order to make appropriate plots or summaries of the variable ``height``, we will need to *clean* our dataset. If you have time while your classmates finish the other exercises, try to see if you can figure out what the following code does. If you do not get to this, don't worry. We will go over an example of using ``mutate()`` to clean a dataset on Thursday.
 
-```{r}
+```{r, eval=F, warning=F}
 form_data <- form_data %>% mutate(height_numeric = as.numeric(height))
 form_data_subset <- form_data %>% filter(!is.na(height_numeric))
 ```
@@ -260,14 +260,14 @@ Let's use ``pets,`` which stores the recorded answers to the question "How many 
 Let's first learn how to make a histogram in R. There are actually two ways. The first may look simpler, but I would like to encourage you all to use the second version, which comes from the ``tidyverse`` package.  While at first ``ggplot`` may seem unnecessarily complex, 
 the ``tidyverse`` package has become the standard for data cleaning and data visualization. Once you get used to ``ggplot()``, it will let you make very complex and very beautiful, customizable plots. I use ``ggplot()`` for all of my research papers! 
 
-```{r}
+```{r, eval=F}
 hist(form_data$pets)
 ggplot(data=form_data, aes(x=pets))+geom_histogram()
 ```
 
 Play around with the code below. Is there a histogram that you like best?
 
-```{r}
+```{r, eval=F}
 ggplot(data=form_data, aes(x=pets))+geom_histogram(col="red", fill="pink", binwidth=1)+theme_bw()+
   xlab("Pets")+ylab("Frequency")+ggtitle("My favorite histogram")
 ```
@@ -276,7 +276,7 @@ ggplot(data=form_data, aes(x=pets))+geom_histogram(col="red", fill="pink", binwi
 
 Once again, we have a "base R" version and a ``tidyverse`` (``ggplot``) version. I highly recommend the ``ggplot()`` version: once we start comparing data across groups, it will be super useful.
 
-```{r}
+```{r, eval=F}
 boxplot(form_data$pets)
 ggplot(data=form_data, aes(y=pets))+geom_boxplot()
 ```
@@ -287,17 +287,17 @@ ggplot(data=form_data, aes(y=pets))+geom_boxplot()
 
 ### Report numerical summaries
 
-Everything that we discussed in lecture is easily computed in R. Usually, the name of the relevant ``R`` function is just the english name of the statistic we want to compute: how lucky are we!
+Everything that we discussed in lecture is easily computed in R. Usually, the name of the relevant ``R`` function is just the english name of the statistic we want to compute. 
 
 The following three lines of code all report the same number. Which do you prefer?
 
-```{r}
+```{r, eval=F}
 mean(form_data$pets)
 form_data %>% summarize(mean(pets))
 form_data %>% pull(pets) %>% mean()
 ```
 
-Try running the same lines of code as above, but change the word ``mean()`` to the word ``median()``. What happens? Explain how the mean and the median relate for this dataset.
+Try running the same lines of code as above, but change the word ``mean()`` to the word ``median()``. What happens? For this dataset, do you prefer the mean or the median? Why?
 
 ```{r}
 median(form_data$pets)
