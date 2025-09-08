@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.9.2)  4 SEP 2025 19:44
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.9.2)  8 SEP 2025 10:22
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -319,8 +319,17 @@ File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) (/Users/annaneufeld/Library/TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2025-06-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count314
+) (./day1.aux
+
+LaTeX Warning: Label `boxedtext' multiply defined.
+
+
+LaTeX Warning: Label `boxedtext' multiply defined.
+
+
+LaTeX Warning: Label `boxedtext' multiply defined.
+
 )
-No file day1.aux.
 \openout1 = `day1.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 112.
@@ -411,8 +420,14 @@ File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 LaTeX Font Info:    Trying to load font information for U+msb on input line 114.
 (/Users/annaneufeld/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+) (./day1.toc
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10> on input line 1.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 1.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 1.
 )
-No file day1.toc.
 \tf@toc=\write4
 \openout4 = `day1.toc'.
 
@@ -424,7 +439,7 @@ LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 12
 (/Users/annaneufeld/Library/TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-<R_interface.png, id=5, 1302.8675pt x 865.2325pt>
+<R_interface.png, id=15, 1302.8675pt x 865.2325pt>
 File: R_interface.png Graphic file (type png)
 <use R_interface.png>
 Package pdftex.def Info: R_interface.png  used on input line 160.
@@ -434,39 +449,109 @@ Package pdftex.def Info: R_interface.png  used on input line 160.
 [1
 
 {/Users/annaneufeld/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/Users/annaneufeld/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/Users/annaneufeld/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}]
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 165.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 165.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 165.
-
 
 [2{/Users/annaneufeld/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc} <./R_interface.png>]
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
 (Font)              Font shape `T1/lmtt/b/n' tried instead on input line 211.
+<more/rascalc.png, id=49, 486.81876pt x 196.735pt>
+File: more/rascalc.png Graphic file (type png)
+<use more/rascalc.png>
+Package pdftex.def Info: more/rascalc.png  used on input line 252.
+(pdftex.def)             Requested size: 526.96722pt x 212.95992pt.
 
-LaTeX Warning: File `more/rascalc.png' not found on input line 252.
+Overfull \hbox (57.2122pt too wide) in paragraph at lines 252--253
+[][] 
+ []
 
 
-! Package pdftex.def Error: File `more/rascalc.png' not found: using draft setting.
 
-See the pdftex.def package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.252 ...height,keepaspectratio]{more/rascalc.png}
-                                                  
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
+[3 <./more/rascalc.png>]
+<more/RScriptpractice.png, id=57, 670.505pt x 379.4175pt>
+File: more/RScriptpractice.png Graphic file (type png)
+<use more/RScriptpractice.png>
+Package pdftex.def Info: more/RScriptpractice.png  used on input line 274.
+(pdftex.def)             Requested size: 526.9717pt x 298.19655pt.
 
- 
+Overfull \hbox (57.21667pt too wide) in paragraph at lines 274--275
+[][] 
+ []
+
+
+
+[4 <./more/RScriptpractice.png>]
+<RMarkdown.png, id=63, 1044.90375pt x 374.39874pt>
+File: RMarkdown.png Graphic file (type png)
+<use RMarkdown.png>
+Package pdftex.def Info: RMarkdown.png  used on input line 299.
+(pdftex.def)             Requested size: 677.53717pt x 242.76787pt.
+
+Overfull \hbox (207.78215pt too wide) in paragraph at lines 299--300
+[][] 
+ []
+
+<RMarkdown2.png, id=64, 748.7975pt x 546.04pt>
+File: RMarkdown2.png Graphic file (type png)
+<use RMarkdown2.png>
+Package pdftex.def Info: RMarkdown2.png  used on input line 325.
+(pdftex.def)             Requested size: 677.56775pt x 494.09766pt.
+
+Overfull \hbox (207.81273pt too wide) in paragraph at lines 325--326
+[][] 
+ []
+
+
+
+[5 <./RMarkdown.png>]
+<example.png, id=70, 989.6975pt x 76.285pt>
+File: example.png Graphic file (type png)
+<use example.png>
+Package pdftex.def Info: example.png  used on input line 334.
+(pdftex.def)             Requested size: 989.69508pt x 76.2848pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 334--338
+[][]
+ []
+
+
+
+[6 <./RMarkdown2.png> <./example.png>]
+
+[7]
+<data_pic.png, id=82, 1105.12875pt x 309.155pt>
+File: data_pic.png Graphic file (type png)
+<use data_pic.png>
+Package pdftex.def Info: data_pic.png  used on input line 461.
+(pdftex.def)             Requested size: 1105.12607pt x 309.15424pt.
+
+
+[8 <./data_pic.png>]
+
+[9]
+
+[10]
+
+[11] (./day1.aux)
+ ***********
+LaTeX2e <2025-06-01> patch level 1
+L3 programming layer <2025-08-13>
+ ***********
+
+LaTeX Warning: There were multiply-defined labels.
+
+ ) 
 Here is how much of TeX's memory you used:
- 11587 strings out of 469781
- 178910 string characters out of 5480956
- 589492 words of memory out of 5000000
- 39793 multiletter control sequences out of 15000+600000
+ 11660 strings out of 469781
+ 179717 string characters out of 5480956
+ 594385 words of memory out of 5000000
+ 39835 multiletter control sequences out of 15000+600000
  678138 words of font info for 83 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 89i,6n,93p,347b,464s stack positions out of 10000i,1000n,20000p,200000b,200000s
-!  ==> Fatal error occurred, no output PDF file produced!
+ 89i,6n,93p,668b,466s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</Users/annaneufeld/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></Users/annaneufeld/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></Users/annaneufeld/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></Users/annaneufeld/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Users/annaneufeld/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></Users/annaneufeld/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb></Users/annaneufeld/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb></Users/annaneufeld/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></Users/annaneufeld/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
+Output written on day1.pdf (11 pages, 649313 bytes).
+PDF statistics:
+ 194 PDF objects out of 1000 (max. 8388607)
+ 146 compressed objects within 2 object streams
+ 34 named destinations out of 1000 (max. 500000)
+ 116 words of extra memory for PDF output out of 10000 (max. 10000000)
+

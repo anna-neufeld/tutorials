@@ -13,7 +13,7 @@ output:
 ---
 
 ```{r global_options, include=FALSE}
-knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(eval = TRUE)
 library(tidyverse)
 library(openintro)
 ```
@@ -130,7 +130,7 @@ When an R Markdown document is knitting, it only has access to the variables tha
 
 To illustrate this concept, delete the line ``x <- 5+7`` from your sample document. Can you still run the chunk locally? What happens if you try to knit your document? 
 
-```{r}
+```{r, eval=F}
 y <- 10-3
 x-y
 ```
@@ -150,11 +150,7 @@ While using R as a calculator was a fun warmup, in this class we are typically g
 
 At the start of the semester, we will always give you very clear instructions on how to load the required dataset. Eventually, for your projects, you will need to know how to troubleshoot and load the data yourself! 
 
-Over the weekend, most of you filled out the "getting to know you" survey. Google forms lets me export the survey responses into a google sheet / Excel spreadsheet. I removed the names, pronouns, and email addresses from the spreadsheet, and I also removed the answers to the "free response" questions (e.g. "Why are you taking this class"). I changed the column names for readability. Finally, I saved the resulting spreadsheet as a `.csv`. 
-
-\textcolor{red}{Data notes here.}
-
-I saved the anonymized data as a `.csv` file. I posted it both on GLOW and on my github website. There are two ways that you can load the data. The easiest is to run this code:
+Over the weekend, most of you filled out the "getting to know you" survey. Google forms lets me export the survey responses into a google sheet / Excel spreadsheet. I removed the names, pronouns, and email addresses from the spreadsheet, and I also removed the answers to the "free response" questions (e.g. "Why are you taking this class"). I changed the column names for readability. Finally, I saved the the anonymized spreadsheet as a `.csv` file. I posted it both on GLOW and on my github website. There are two ways that you can load the data. The easiest is to run this code:
 
 ```{r}
 form_data <- read.csv("https://anna-neufeld.github.io/tutorials/201_fall25/form_data_anonymous.csv")
@@ -173,16 +169,12 @@ Copy the code above into your RMarkdown document. Run the code, such that you ha
 
 - What are the basics of a dataset?
 - What "problems" should we look for in a dataset?
-- Get exposed to the following functions:
-  - `select()`
-  - `filter()`
+- Use the functions ``select()``, ``filter()``, and ``mutate()``.
 </div>
 
 Click on ``form_data`` in your *environment*. You should see something like this: 
 
-![](data.png)
-
-\textcolor{red}{Update for fall 2025}
+![](data_pic.png)
 
 <div id="boxedtext">
 **With a neighbor, discuss the following questions:**
@@ -194,20 +186,7 @@ Click on ``form_data`` in your *environment*. You should see something like this
 - Do you see any issues with the data?
 </div>
 
-We are really lucky that we don't have too many issues with our data this semester! 
-
-\textcolor{red}{Update for fall 2025}
-
-Last semester, many people added commentary to their numerical answers. For example, these were all answers that I got last semester for "How many pets have you had or have you lived with in your life?" on this survey last semester. 
-
-- "1! My dog Sammy is 8. He's a schnoodle." 
-- "more than 25 fish, but no more than 7 at a time."
-- "3 dogs. 2 dogs currently "                       
-- "2 cats!"
-
-This led to some issues! I wanted this to be a numerical variable, but `R` cannot figure out how to convert the sentence *1! My dog Sammy is 8. He's a schnoodle.* to a number automatically. This meant that we had to spend a lot of time *cleaning* our data. This semester, I specifically asked you to enter the answer as a number, and you all followed the instructions! This really reduced the number of things that we will need to clean, which serves as a nice reminder for me about the importance of survey design!
-
-To see if we have issues with added commentary this year, we can extract the ``pets`` variable from our dataset. There are a few ways to do this. See if you can figure out any differences between these.
+Let's extract the variable ``pets`` from our dataset. There are a few ways to do this. See if you can figure out any differences between these.
 
 ```{r}
 form_data$pets
@@ -242,26 +221,24 @@ And, as a harder question, why doesn't the following code work?
 form_data %>% select(pets) %>% filter(sports=="Yes")
 ```
 
-We do have one chance to do some data cleaning. Let's look at the variable ``favorite.coffee``.
+Note that `R` has correctly identified ``pets`` as a numerical variable. 
 
 ```{r}
-form_data$favorite.coffee
+class(form_data$pets)
 ```
 
-While it is completely fine that some people do not drink coffee, we probably do not want to treat "n/a", "", and "Don't Drink Coffee" as separate answers. Furthermore, categorical variables with only one category can be a bit hard to work with! Let's use the following code to simplify this variable. 
+On the other hand, `R` has not identified ``height`` as a numerical variable.
 
 ```{r}
-form_data <- form_data %>% mutate(favorite.coffee.clean = ifelse(favorite.coffee %in% c("Tunnel", "Goodrich"), favorite.coffee, "Other"))
+class(form_data$height)
 ```
 
-We used ``mutate`` to make a new variable called ``favorite.coffee.clean``. This variable is equal to ``favorite.coffee`` if ``favorite.coffee`` was equal to ``Tunnel`` or ``Goodrich``, but just stores ``Other`` otherwise. Because we *saved* our mutated dataset back into ``form_data`` (this step is very important!), we can now view our new variable:
+The fact that not everyone entered their height as a number on the survey is an example of a data quality issue. In order to make appropriate plots or summaries of the variable ``height``, we will need to *clean* our dataset. If you have time while your classmates finish the other exercises, try to see if you can figure out what the following code does. If you do not get to this, don't worry. We will go over an example of using ``mutate()`` to clean a dataset on Thursday.
 
 ```{r}
-form_data %>% select(favorite.coffee.clean)
+form_data <- form_data %>% mutate(height_numeric = as.numeric(height))
+form_data_subset <- form_data %>% filter(!is.na(height_numeric))
 ```
-
-I am sure that we will have many more chances to clean data later in the semester!
-
 
 # Explore and describe a single quantitative variable
 
