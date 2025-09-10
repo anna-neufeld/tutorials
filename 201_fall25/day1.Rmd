@@ -241,7 +241,7 @@ form_data_subset <- form_data %>% filter(!is.na(height_numeric))
 
 # Explore and describe a single quantitative variable
 
-Datasets are usually too big to understand just by looking at the raw data. We need to go one variable at a time and produce numerical and visual summaries. Luckily, R makes this all pretty straightforward. We will start by covering this process for numerical variables.
+Datasets are usually too big to understand just by looking at the raw data. We need to go one variable at a time and produce numerical and visual summaries. Luckily, R makes this all pretty straightforward. We will start by covering this process for numerical variables. 
 
 <div id="boxedtext">
 
@@ -304,6 +304,7 @@ median(form_data$pets)
 form_data %>% summarize(median(pets))
 form_data %>% pull(pets) %>% median()
 ```
+
 One of my favorite things about the ``summarize()`` function is that we can report multiple summary statistics at a time. We can also stratify our summaries into groups, which is really helpful. Check out the following lines of code.
 
 ```{r}

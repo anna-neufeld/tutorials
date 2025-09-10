@@ -1722,7 +1722,7 @@ convenience, and you can load it with the following code. If you are
 working in an RMarkdown file, make sure to load the tidyverse in this
 file as well.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>form_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;https://anna-neufeld.github.io/tutorials/Week1/201_fall25/form_data_anonymous.csv&quot;</span>)</span></code></pre></div>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>form_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;https://anna-neufeld.github.io/tutorials/201_fall25/form_data_anonymous.csv&quot;</span>)</span></code></pre></div>
 <p>Here are our goals for today.</p>
 <div id="boxedtext">
 <p><strong>Goals:</strong></p>
@@ -1855,7 +1855,9 @@ etc.)</li>
 </div>
 <p>Let’s use <code>pets,</code> which stores the recorded answers to the
 question “How many pets have you had or have you lived with in your
-life?”.</p>
+life?”. As a note, since we will not need the <code>height</code>
+variable at all today, I am going to work with <code>form_data</code>,
+not <code>form_data_subset</code>.</p>
 <div id="make-a-histogram" class="section level3">
 <h3>Make a histogram</h3>
 <p>Let’s first learn how to make a histogram in R. There are actually
@@ -1935,15 +1937,51 @@ features.</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>form_data, <span class="fu">aes</span>(<span class="at">x=</span>favorite.dining, <span class="at">fill=</span><span class="st">&quot;pink&quot;</span>))<span class="sc">+</span><span class="fu">geom_bar</span>()<span class="sc">+</span><span class="fu">xlab</span>(<span class="st">&quot;Favorite Dining Hall&quot;</span>)<span class="sc">+</span><span class="fu">ylab</span>(<span class="st">&quot;Number of Students&quot;</span>)<span class="sc">+</span><span class="fu">ggtitle</span>(<span class="st">&quot;My favorite plot&quot;</span>)</span></code></pre></div>
 </div>
 </div>
-<div id="wrap-up" class="section level1">
-<h1>Wrap up</h1>
+<div id="the-relationship-between-a-numerical-variable-and-a-categorical-variable" class="section level1">
+<h1>The relationship between a numerical variable and a categorical
+variable</h1>
+<p>Everything in statistics gets more interesting when we can explore
+relationships between variables.</p>
+<p>Suppose that you are interested in knowing if those who play a sport
+at Williams tend to be taller than those who do not play a sport. As
+long as you ran the code in the <code>cleaning</code> section of this
+document that creates <code>form_data_subset</code>, you should be able
+to run the following code to begin to explore this question.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>form_data_subset, <span class="fu">aes</span>(<span class="at">x=</span>sports, <span class="at">y=</span>height_numeric))<span class="sc">+</span><span class="fu">geom_boxplot</span>()</span></code></pre></div>
+<p>There is something a bit strange about the plot. Students were
+supposed to report their height in inches, and so it looks like the one
+low outlier may represent a student who accidentally reported their
+height in feet. This single outlier, which likely does not represent a
+true datapoint, makes it harder to see the rest of the distributions.
+The following code will “zoom in” on our plot, so as to ignore the
+single outlier. Can you tell what this code is doing?</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>form_data_subset, <span class="fu">aes</span>(<span class="at">x=</span>sports, <span class="at">y=</span>height_numeric))<span class="sc">+</span><span class="fu">geom_boxplot</span>()<span class="sc">+</span><span class="fu">ylim</span>(<span class="dv">59</span>, <span class="dv">77</span>)</span></code></pre></div>
+<p>Be sure that you can describe what you see in this plot.</p>
+<p>We may also want to report numerical summaries of the
+<code>height</code> variable across our two groups of the
+<code>sport</code> variable. The tidyverse makes this very seamless.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a>form_data_subset <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(sports) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="fu">mean</span>(height_numeric), <span class="fu">sd</span>(height_numeric), <span class="fu">median</span>(height_numeric))</span></code></pre></div>
+<p>In the table above, I realized that my low outlier datapoint is
+really affecting my mean. I can exclude this point in a single line of
+code: another benefit of tidyverse. This table shows a more accurate
+representation of our data.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>form_data_subset <span class="sc">%&gt;%</span> <span class="fu">filter</span>(height_numeric <span class="sc">&gt;</span> <span class="dv">10</span>) <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(sports) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="fu">mean</span>(height_numeric), <span class="fu">sd</span>(height_numeric), <span class="fu">median</span>(height_numeric))</span></code></pre></div>
+<p>I can see that, for both the non-sport group and the sport group, the
+mean and the median height are quite similar. How do you interpret this
+finding?</p>
+<p>Finally, if you have time, explore these alternate ways to report the
+same information.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a>form_data_subset <span class="sc">%&gt;%</span> <span class="fu">filter</span>(height_numeric <span class="sc">&gt;</span> <span class="dv">10</span>, sports<span class="sc">==</span><span class="st">&quot;No&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="fu">mean</span>(height_numeric), <span class="fu">sd</span>(height_numeric), <span class="fu">median</span>(height_numeric))</span>
+<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a>form_data_subset <span class="sc">%&gt;%</span> <span class="fu">filter</span>(height_numeric <span class="sc">&gt;</span> <span class="dv">10</span>, sports<span class="sc">==</span><span class="st">&quot;Yes&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="fu">mean</span>(height_numeric), <span class="fu">sd</span>(height_numeric), <span class="fu">median</span>(height_numeric))</span></code></pre></div>
+<div id="wrap-up" class="section level2">
+<h2>Wrap up</h2>
 <p>If you were lost in class today, please read through this tutorial
 again on your own time. Actually run each line of code in the tutorial,
 and try to think about what it is doing.</p>
 <p>Hopefully, when you work on HW1, you will find that I went over all
-of the R functions that you need for the homework in class (some are
-coming on Thursday). It is my goal that this will be the case for every
-homework throughout the semester!</p>
+of the R functions that you need for the homework in class. It is my
+goal that this will be the case for every homework throughout the
+semester!</p>
 <p>If you are already experienced in programming, I would encourage you
 to go above-and-beyond on the homework assignments in terms of making
 your code and your plots beautiful. If you are new to programming,
@@ -1956,6 +1994,7 @@ hours waiting for a TA session because you cannot find the source of an
 error: learn to google your error messages and problem solve for
 yourself!</p>
 <hr />
+</div>
 <div id="acknowledgements" class="section level2">
 <h2>Acknowledgements</h2>
 <p>The formatting and some of the introductory content in this tutorial

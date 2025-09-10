@@ -183,7 +183,7 @@ Datasets are usually too big to understand just by looking at the raw data. We n
 
 </div>
 
-Let's use ``pets,`` which stores the recorded answers to the question "How many pets have you had or have you lived with in your life?".
+Let's use ``pets,`` which stores the recorded answers to the question "How many pets have you had or have you lived with in your life?". As a note, since we will not need the ``height`` variable at all today, I am going to work with ``form_data``, not ``form_data_subset``. 
 
 ### Make a histogram
 
@@ -266,11 +266,52 @@ Again, a nice thing about learning ``ggplot()`` is that we can use exactly the s
 ggplot(data=form_data, aes(x=favorite.dining, fill="pink"))+geom_bar()+xlab("Favorite Dining Hall")+ylab("Number of Students")+ggtitle("My favorite plot")
 ```
 
-# Wrap up
+# The relationship between a numerical variable and a categorical variable
+
+Everything in statistics gets more interesting when we can explore relationships between variables.
+
+Suppose that you are interested in knowing if those who play a sport at Williams tend to be taller than those who do not play a sport. As long as you ran the code in the ``cleaning`` section of this document that creates ``form_data_subset``, you should be able to run the following code to begin to explore this question.
+
+```{r}
+ggplot(data=form_data_subset, aes(x=sports, y=height_numeric))+geom_boxplot()
+```
+
+There is something a bit strange about the plot. Students were supposed to report their height in inches, and so it looks like the one low outlier may represent a student who accidentally reported their height in feet. This single outlier, which likely does not represent a true datapoint, makes it harder to see the rest of the distributions. The following code will "zoom in" on our plot, so as to ignore the single outlier. Can you tell what this code is doing?
+
+```{r}
+ggplot(data=form_data_subset, aes(x=sports, y=height_numeric))+geom_boxplot()+ylim(59, 77)
+```
+
+Be sure that you can describe what you see in this plot.
+
+We may also want to report numerical summaries of the ``height`` variable across our two groups of the ``sport`` variable. The tidyverse makes this very seamless.
+
+```{r}
+form_data_subset %>% group_by(sports) %>% summarize(mean(height_numeric), sd(height_numeric), median(height_numeric))
+```
+
+In the table above, I realized that my low outlier datapoint is really affecting my mean. I can exclude this point in a single line of code: another benefit of tidyverse. This table shows a more accurate representation of our data.
+
+```{r}
+form_data_subset %>% filter(height_numeric > 10) %>% group_by(sports) %>% summarize(mean(height_numeric), sd(height_numeric), median(height_numeric))
+```
+
+I can see that, for both the non-sport group and the sport group, the mean and the median height are quite similar. How do you interpret this finding?
+
+Finally, if you have time, explore these alternate ways to report the same information.
+
+```{r}
+form_data_subset %>% filter(height_numeric > 10, sports=="No") %>% summarize(mean(height_numeric), sd(height_numeric), median(height_numeric))
+form_data_subset %>% filter(height_numeric > 10, sports=="Yes") %>% summarize(mean(height_numeric), sd(height_numeric), median(height_numeric))
+```
+
+
+
+## Wrap up
 
 If you were lost in class today, please read through this tutorial again on your own time. Actually run each line of code in the tutorial, and try to think about what it is doing. 
 
-Hopefully, when you work on HW1, you will find that I went over all of the R functions that you need for the homework in class (some are coming on Thursday). It is my goal that this will be the case for every homework throughout the semester! 
+Hopefully, when you work on HW1, you will find that I went over all of the R functions that you need for the homework in class. It is my goal that this will be the case for every homework throughout the semester! 
 
 If you are already experienced in programming, I would encourage you to go above-and-beyond on the homework assignments in terms of making your code and your plots beautiful. If you are new to programming, please let me know if the pacing seems too fast for you! I am happy to provide additional resources for learning R if needed!
 
