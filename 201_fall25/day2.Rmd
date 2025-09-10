@@ -24,177 +24,150 @@ library(openintro)
 **Learning Objectives**
 
 - Continue practicing with the RStudio interface.
-- Do some manipulating and cleaning of our datasets.
+- Do some manipulating and cleaning of our dataset.
+- Continue to explore numerical summaries of variables.
 - Start to explore relationships between variables.
 </div>
 
 ## Getting started
 
-Hopefully, you already worked through **tutorial 1**. So, there is not as much introductory material today- we are going to dive right in to working with our dataset. 
+I am hoping that everyone worked through at least part of **tutorial 1** (https://anna-neufeld.github.io/tutorials/201_fall25/day1.html), and so today's tutorial has less introductory material.
 
-To start, let's load the ``tidyverse`` package, and then load our dataset. If you are working in an RMarkdown document, you will want this code to appear *in* your RMarkdown document.
+Today, we are going to revisit the parts of tutorial 1 that we skipped or did not get to, and then we will move into new material.
 
+## Loading packages
+
+On Tuesday, I accidentally skipped a very important part of the tutorial that had to do with loading packages. One reason I skipped it is that it was covered in your pre-class installation instructions. However, I think it is worth going through once in class.
+
+R is an open-source programming language, meaning that users can contribute
+packages that make our lives easier, and we can use them for free. Here are three packages that you need for Homework 1. 
+
+- The suite of **tidyverse** packages: for data wrangling and data visualization
+- **openintro**: for data and custom functions with the OpenIntro resources
+- **tinytex**: you may need this in order to knit an RMarkdown document into a PDF. For example, you need this if you have a Mac and have never installed tex. 
+
+Hopefully you were able to install these packages using ``install.packages()`` using the pre-class instructions. Note that you can check to see which packages (and which versions) are installed by
+inspecting the *Packages* tab in the lower right panel of RStudio. If you do not see ``tidyverse``, ``openintro``, and ``tinytex`` in this panel, it means that you need to run the following code from the pre-class instructions. 
+
+```{r install-packages, message = FALSE, eval=FALSE}
+install.packages("tidyverse")
+install.packages("openintro")
+install.packages("tinytex")
+tinytex::install_tinytex()
+```
+
+Next, regardless of what you completed before class, you need to load these packages in your working environment. We do this with the `library` function. Note that you need to **load** the packages every time you restart RStudio, whereas you only need to **install** the packages once ever. Note that ``tinytex`` is a special case package that we do not need to load: we needed it to make sure we had a Tex installation on our computer, which RMarkdown will need in the background in order to knit to PDFs. 
 
 ```{r load-packages, message = FALSE, eval=TRUE}
 library(tidyverse)
-
+library(openintro)
 ```
 
-**Anna ntoe to self- pick a variable that needs to be cleaned for this day.**
+If anyone does not yet have these packages, you should let me know ASAP for Homework 1. You only need the ``openintro`` package to access the dataset, so I can always just post the dataset for you separately on GLOW. But the ``tidyverse`` package is really necessary for this course, and so I would love to troubleshoot ``tidyverse`` issues ASAP. 
 
-*Knitting* an RMarkdown document means turning the input file (`.Rmd`) into a nicely formatted output file (`.pdf` in this case). To knit your current template document, select ``knit`` from the buttons at the top of the RMarkdown file. A nicely formatted document will open up in a new window. 
+## Loading our data and continuing to explore the class survey data
 
-Modify your example document so that it looks something like this one: 
-
-![](RMarkdown2.png){width=900px}
-
-## Running code in RMarkdown files
-
-You will notice that just typing the code in the gray chunk did not produce any sort of answer for us. To see the answer to this math expression, we need to **run** this code. 
-
-![](example.png)
-First note that all code in your chunks is automatically run each time you knit your document. Knit your template document now to try this out! Did it print your answer? 
-
-You can knit your R Markdown file every time you write code, but sometimes the knitting process takes a few minutes and you just want to run a few lines at a time to make sure they are working. To run chunks without knitting, you can use either the Run button on the chunk 
-(green sideways triangle) or you can highlight the code and click Run on the top right corner of the R Markdown editor. While it is good to run individual chunks to test out ideas and explore, we also strongly recommend that you **knit your document** each time you finish an exercise. The knitting process can sometimes lead to errors. Students often run in to trouble if they wait to try knitting their document until right before the assignment deadline. Knitting after each exercise ensures that you catch errors as you go. 
-
-When an R Markdown document is knitting, it only has access to the variables that are created inside of the R Markdown document itself. The R Markdown document does not get to use the environment in the upper right hand corner of your screen while it is knitting. The R Markdown document only gets to see the variables that are defined inside of the document. 
-
-To illustrate this concept, delete the line ``x <- 5+7`` from your sample document. Can you still run the chunk locally? What happens if you try to knit your document? 
+Let's load the same class form dataset that we used on Tuesday. As a reminder, I posted this dataset on my github website for maximum convenience, and you can load it with the following code. If you are working in an RMarkdown file, make sure to load the tidyverse in this file as well. 
 
 ```{r}
-y <- 10-3
-x-y
+library(tidyverse)
+form_data <- read.csv("https://anna-neufeld.github.io/tutorials/201_fall25/form_data_anonymous.csv")
 ```
 
-It is also important in an R Markdown document that all variables are defined in order. You will notice that exercise 5 contains two code chunks in your template. What happens if you add ``x <- 5+7`` back into your sample document, but you add it to its own code chunk. Can you knit the document now? 
-
-* * *
-
-# Loading our first dataset
-
-While using R as a calculator was a fun warmup, in this class we are typically going to use R to analyze datasets. With this in mind, we need to learn how to load our dataset into R. There are several ways that we will do this in this class.
-
-+ Many datasets are built into packages. These are extremely easy to load. As long as you have the package installed, you just load the package and then access the relevant dataset with the ``data()`` function. This is what you will be doing on HW1! These are typically datasets that are meant for educational purposes. 
-+ We can also load data in from an Excel file or a .csv file. This is probably the way that many of you will load your data for your final projects. You can do this using the ``import dataset`` button, which you will find in the top right corner of your RStudio interface. 
-+ Today, we will load our dataset directly from a URL. I sometimes post the dataset on my github website for you to read directly, because this is easier and quicker than uploading/downloading files. But this is sort of contrived because I post it in a really special format: you won't typically be able to do this in the real world. 
-+ Sometimes (later in the semester) we will generate our own data! 
-
-At the start of the semester, we will always give you very clear instructions on how to load the required dataset. Eventually, for your projects, you will need to know how to troubleshoot and load the data yourself! 
-
-Over the weekend, most of you filled out the "getting to know you" survey. Google forms lets me export the survey responses into a google sheet / Excel spreadsheet. I removed the names, pronouns, and email addresses from the spreadsheet, and I also removed the answers to the "free response" questions (e.g. "Why are you taking this class"). I changed the column names for readability. Finally, I saved the resulting spreadsheet as a `.csv`. 
-
-\textcolor{red}{Data notes here.}
-
-I saved the anonymized data as a `.csv` file. I posted it both on GLOW and on my github website. There are two ways that you can load the data. The easiest is to run this code:
-
-```{r}
-form_data <- read.csv("https://anna-neufeld.github.io/tutorials/Week1/201_fall25/form_data_anonymous.csv")
-```
-
-The slightly more cumbersome (but useful!) way involves downloading the .csv document from GLOW and importing it using the ``import dataset`` button. We will go over this later in the semester.
-
-Copy the code above into your RMarkdown document. Run the code, such that you have an object called ``form_data`` in your environment? What happens if you click on this dataset? 
-
-# Cleaning our first dataset
+Here are our goals for today. 
 
 <div id="boxedtext">
 
 **Goals:**
 
-- What are the basics of a dataset?
-- What "problems" should we look for in a dataset?
-- What does it mean to "clean" a dataset"
-- Get exposed to the following functions:
-  - `select()`
-  - `filter()`
-  - `mutate()`
+- How do we extract individual elements from a dataset?
+- How do we "clean" a dataset?
+- How do we numerically and visually explore one numerical variable, one categorical variable, or the relationship between one numerical variable and one categorical variable?
 </div>
 
-Click on ``form_data`` in your *environment*. You should see something like this: 
+# Extracting elements from a dataset
 
-![](data.png)
+You should all now have something called ``form_data`` in your environment. If you double click on it, you should see something like this: 
 
-\textcolor{red}{Update for fall 2025}
+![](data_pic.png)
 
-<div id="boxedtext">
-**With a neighbor, discuss the following questions:**
+While this is a useful first look at our data (we diagnosed some problems with the data by looking at this on Tuesday), it is generally going to be overwhelming to try to look at an entire dataset at once. This means that it will be useful to learn how to *extract* individual elements in a dataset. 
 
-- What are the **observational units** in this dataset. How many are there?
-- What are some examples of **quantitative variables** in this dataset?
-- What are some examples of **categorical variables** in this dataset? 
-    - Bonus: are any of these **ordinal variables**? An ordinal variable is a categorical variable where the categories have a natural ordering. 
-- Do you see any issues with the data?
-</div>
-
-We are really lucky that we don't have too many issues with our data this semester! 
-
-\textcolor{red}{Update for fall 2025}
-
-Last semester, many people added commentary to their numerical answers. For example, these were all answers that I got last semester for "How many pets have you had or have you lived with in your life?" on this survey last semester. 
-
-- "1! My dog Sammy is 8. He's a schnoodle." 
-- "more than 25 fish, but no more than 7 at a time."
-- "3 dogs. 2 dogs currently "                       
-- "2 cats!"
-
-This led to some issues! I wanted this to be a numerical variable, but `R` cannot figure out how to convert the sentence *1! My dog Sammy is 8. He's a schnoodle.* to a number automatically. This meant that we had to spend a lot of time *cleaning* our data. This semester, I specifically asked you to enter the answer as a number, and you all followed the instructions! This really reduced the number of things that we will need to clean, which serves as a nice reminder for me about the importance of survey design!
-
-To see if we have issues with added commentary this year, we can extract the ``pets`` variable from our dataset. There are a few ways to do this. See if you can figure out any differences between these.
+There are generally many ways to do a single thing in R. You all saw last class that the following four lines of code all do essentially the same thing: they extract the ``pets`` variable from the ``form_data`` dataset for us. Note that the last two lines will not work unless you have already run ``library(tidyverse)`` (and included this line in your .Rmd document, if you hope to knit this document later). 
 
 ```{r}
 form_data$pets
-form_data[,4]
-form_data %>% select(pets)
+form_data[,2]
 form_data %>% pull(pets)
+form_data %>% select(pets)
 ```
 
-The function ``select()`` is a key function from the ``tidyverse()`` package that we will be using to extract a subset of *variables* (columns) from a dataset. 
+**Bonus:** Can you figure out which command above is not like the others? What makes it different?
+
+In general, we are going to prefer ``tidyverse`` methods in this class. So, when you want to extract a column from a dataset, it's nice to use ``select()`` or ``pull()``. We like ``tidyverse`` methods because they can easily be combined with one another, as we will see below. 
 
 When we want to select a subset of *observations* (rows) from a dataset, we use ``filter()``. The following code displays only the data for students who play a sport at Williams. 
 
-```{r}
+```{r, eval=F}
 form_data %>% filter(sports=="Yes")
 ```
 
-Suppose that we want to save the data subset above to a new dataset called ``athetes``. We can certainly do that!
+Suppose that we want to save the data subset above to a new dataset called ``athletes``. We can certainly do that!
 
-```{r}
+```{r, eval=F}
 athletes <- form_data %>% filter(sports=="Yes")
 ```
 
 One reason that the ``tidyverse()`` set of functions is so nice is because it becomes quite easy to combine functions together. What does the following code do?
 
-```{r}
+```{r, eval=F}
 form_data %>% filter(sports=="Yes") %>% select(pets)
 ```
 
 And, as a harder question, why doesn't the following code work? 
 
-```{r}
+```{r, eval=F}
 form_data %>% select(pets) %>% filter(sports=="Yes")
 ```
 
-We do have one chance to do some data cleaning. Let's look at the variable ``favorite.coffee``.
+Note that `R` has correctly identified ``pets`` as a numerical variable. 
 
-```{r}
-form_data$favorite.coffee
+```{r, eval=F}
+class(form_data$pets)
 ```
 
-While it is completely fine that some people do not drink coffee, we probably do not want to treat "n/a", "", and "Don't Drink Coffee" as separate answers. Furthermore, categorical variables with only one category can be a bit hard to work with! Let's use the following code to simplify this variable. 
+On the other hand, `R` has not identified ``height`` as a numerical variable.
 
-```{r}
-form_data <- form_data %>% mutate(favorite.coffee.clean = ifelse(favorite.coffee %in% c("Tunnel", "Goodrich"), favorite.coffee, "Other"))
+```{r, eval=F}
+class(form_data$height)
 ```
 
-We used ``mutate`` to make a new variable called ``favorite.coffee.clean``. This variable is equal to ``favorite.coffee`` if ``favorite.coffee`` was equal to ``Tunnel`` or ``Goodrich``, but just stores ``Other`` otherwise. Because we *saved* our mutated dataset back into ``form_data`` (this step is very important!), we can now view our new variable:
+The fact that not everyone entered their height as a number on the survey is an example of a data quality issue. In order to make appropriate plots or summaries of the variable ``height``, we will need to *clean* our dataset. The following code first makes a new variable called ``height_numeric``. In this step, `R` tries to convert each height in the dataset to a number. `R` is able to do this when the student correctly reported their height as a number, but `R` does not know how to do this for an answer like `6'3`. Therefore, some students end up getting ``height_numeric`` recorded as ``NA``. The second line of code removes individuals with ``NA`` from the dataset, and saves the new, smaller dataset as ``form_data_subset``. 
 
-```{r}
-form_data %>% select(favorite.coffee.clean)
+```{r, eval=F, warning=F}
+form_data <- form_data %>% mutate(height_numeric = as.numeric(height))
+form_data_subset <- form_data %>% filter(!is.na(height_numeric))
 ```
 
-I am sure that we will have many more chances to clean data later in the semester!
+**Bonus:** How many rows are in ``form_data_subset``?
 
+Early in the semester, I will not expect you to know how to clean a dataset on your own without hints. It is really hard! I still struggle with data cleaning, and have recently found ChatGPT to be a useful companion. However, for Homework 1, it will be useful to know the anatomy of a ``mutate()`` command. While this does not always fall under the category of "data cleaning", it definitely falls under the category of "data manipulation". Let's quickly do one more example. 
+
+The following code makes a variable that is called ``coffee``, which is equal to ``TRUE`` if a student reports drinking more than 0 cups of coffee per week, and is equal to ``FALSE`` otherwise. What do you notice about this code?
+
+```{r}
+form_data_subset <- form_data_subset %>% mutate(coffee = cups.coffee > 0)
+```
+
+Here are some things that I think you should take note of.
+
+First, note that I worked with ``form_data_subset``, not ``form_data``. While this command certainly didn't require our "clean" dataset with no ``NA`` values of ``height_numeric``, I was thinking that ``form_data_subset`` is our "current" or "working" version of our dataset, so I figured I should work with that one. Students sometimes correctly filter or mutate a dataset, but then down below they forget to work with the new dataset.
+
+Second, note that I saved the mutated dataset back into ``form_data_subset``, rather than giving the new dataset a new name. This is always an option, and I think tends to make sense when we are just adding a new column to a dataset. If you are filtering or subsetting a dataset, you want to be wary of *overwriting* the original data. 
+
+Third, note that, inside of my ``mutate`` statement, I use both ``=`` and ``>``. Here, they serve different purposes. The ``=`` is *assigning* a value to a new variable, called ``coffee``. On the other hand, the ``>`` is *asking a question* to the data. Later, we will see that if we want to *ask a question* about if two things are equal, we need to use ``==`` instead of ``=``. 
+
+I think that this has been enough about extracting, cleaning, and manipulating data to get you started on Homework 1. Let's move on!
 
 # Explore and describe a single quantitative variable
 
