@@ -29,13 +29,13 @@ library(openintro)
 - Start to explore relationships between variables.
 </div>
 
-## Getting started
+# Getting started
 
 I am hoping that everyone worked through at least part of **tutorial 1** (https://anna-neufeld.github.io/tutorials/201_fall25/day1.html), and so today's tutorial has less introductory material.
 
 Today, we are going to revisit the parts of tutorial 1 that we skipped or did not get to, and then we will move into new material.
 
-## Loading packages
+# Loading packages
 
 On Tuesday, I accidentally skipped a very important part of the tutorial that had to do with loading packages. One reason I skipped it is that it was covered in your pre-class installation instructions. However, I think it is worth going through once in class.
 
@@ -65,9 +65,9 @@ library(openintro)
 
 If anyone does not yet have these packages, you should let me know ASAP for Homework 1. You only need the ``openintro`` package to access the dataset, so I can always just post the dataset for you separately on GLOW. But the ``tidyverse`` package is really necessary for this course, and so I would love to troubleshoot ``tidyverse`` issues ASAP. 
 
-## Loading our data and continuing to explore the class survey data
+# Loading our data
 
-Let's load the same class form dataset that we used on Tuesday. As a reminder, I posted this dataset on my github website for maximum convenience, and you can load it with the following code. If you are working in an RMarkdown file, make sure to load the tidyverse in this file as well. 
+Let's load the same dataset that we used on Tuesday. As a reminder, I posted this dataset on my github website for maximum convenience, and you can load it with the following code. If you are working in an RMarkdown file, make sure to load the tidyverse in this file as well. 
 
 ```{r}
 library(tidyverse)
@@ -85,13 +85,15 @@ Here are our goals for today.
 - How do we numerically and visually explore one numerical variable, one categorical variable, or the relationship between one numerical variable and one categorical variable?
 </div>
 
-# Extracting elements from a dataset
+# Subsetting and manipulating a dataset
 
 You should all now have something called ``form_data`` in your environment. If you double click on it, you should see something like this: 
 
 ![](data_pic.png)
 
 While this is a useful first look at our data (we diagnosed some problems with the data by looking at this on Tuesday), it is generally going to be overwhelming to try to look at an entire dataset at once. This means that it will be useful to learn how to *extract* individual elements in a dataset. 
+
+### Extracting columns using ``select()``
 
 There are generally many ways to do a single thing in R. You all saw last class that the following four lines of code all do essentially the same thing: they extract the ``pets`` variable from the ``form_data`` dataset for us. Note that the last two lines will not work unless you have already run ``library(tidyverse)`` (and included this line in your .Rmd document, if you hope to knit this document later). 
 
@@ -105,6 +107,8 @@ form_data %>% select(pets)
 **Bonus:** Can you figure out which command above is not like the others? What makes it different?
 
 In general, we are going to prefer ``tidyverse`` methods in this class. So, when you want to extract a column from a dataset, it's nice to use ``select()`` or ``pull()``. We like ``tidyverse`` methods because they can easily be combined with one another, as we will see below. 
+
+### Extracting rows with ``filter()``
 
 When we want to select a subset of *observations* (rows) from a dataset, we use ``filter()``. The following code displays only the data for students who play a sport at Williams. 
 
@@ -129,6 +133,8 @@ And, as a harder question, why doesn't the following code work?
 ```{r, eval=F}
 form_data %>% select(pets) %>% filter(sports=="Yes")
 ```
+
+### Cleaning or manipulating a dataset with ``mutate()``
 
 Note that `R` has correctly identified ``pets`` as a numerical variable. 
 
@@ -242,7 +248,7 @@ form_data %>% group_by(sports) %>% summarize(mean(pets), median(pets), IQR(pets)
 form_data %>% filter(sports=="Yes") %>% summarize(mean(pets), median(pets), IQR(pets), sd(pets))
 ```
 
-### Explore and describe a single categorical variable
+# Explore and describe a single categorical variable
 
 Suppose that we want to explore the variable ``favorite.dining``. This is a categorical variable. 
 
@@ -268,9 +274,11 @@ ggplot(data=form_data, aes(x=favorite.dining, fill="pink"))+geom_bar()+xlab("Fav
 
 # The relationship between a numerical variable and a categorical variable
 
-Everything in statistics gets more interesting when we can explore relationships between variables.
+Everything in statistics gets more interesting when we can explore relationships between variables. Suppose that you are interested in knowing if those who play a sport at Williams tend to be taller than those who do not play a sport. 
 
-Suppose that you are interested in knowing if those who play a sport at Williams tend to be taller than those who do not play a sport. As long as you ran the code in the ``cleaning`` section of this document that creates ``form_data_subset``, you should be able to run the following code to begin to explore this question.
+### Visually exploring the relationship
+
+As long as you ran the code in the ``cleaning`` section of this document that creates ``form_data_subset``, you should be able to run the following code to begin to make side-by-side boxplots of the ``height_numeric`` variable, separated by categories of the ``sports`` variable. This is our favorite way to visually display the relationship between a numerical and a categorical variable.
 
 ```{r}
 ggplot(data=form_data_subset, aes(x=sports, y=height_numeric))+geom_boxplot()
@@ -283,6 +291,28 @@ ggplot(data=form_data_subset, aes(x=sports, y=height_numeric))+geom_boxplot()+yl
 ```
 
 Be sure that you can describe what you see in this plot.
+
+Side-by-side histograms are a bit less common for displaying the relationship between a categorical and a numerical variable. But there are still a bunch of ways that we could go about making side by side histograms. 
+
+By the way, I am quickly going to remove the person with a reported height of 6 inches from the dataset, so that I do not need to keep worrying about them.
+
+```{r}
+form_data_subset <- form_data_subset %>% filter(height_numeric > 10)
+ggplot(data=form_data_subset, aes(x=height_numeric))+geom_histogram(binwidth=3)+facet_grid(vars(sports))
+```
+
+What do you learn from this plot?
+
+What about trying to use colors to represent ``sports``? This is an option, but it is not my favorite option for histograms. If you have time, you can explore the code below.
+
+```{r}
+ggplot(data=form_data_subset, aes(x=height_numeric, fill=sports))+geom_histogram(binwidth=3, position="stack")
+ggplot(data=form_data_subset, aes(x=height_numeric, fill=sports))+geom_histogram(binwidth=3, position="dodge")
+```
+
+
+
+### Numerically summarizing the relationship
 
 We may also want to report numerical summaries of the ``height`` variable across our two groups of the ``sport`` variable. The tidyverse makes this very seamless.
 

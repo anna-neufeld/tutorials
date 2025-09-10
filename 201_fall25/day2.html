@@ -1657,16 +1657,16 @@ R</h1>
 <li>Start to explore relationships between variables.</li>
 </ul>
 </div>
-<div id="getting-started" class="section level2">
-<h2>Getting started</h2>
+<div id="getting-started" class="section level1">
+<h1>Getting started</h1>
 <p>I am hoping that everyone worked through at least part of
 <strong>tutorial 1</strong> (<a href="https://anna-neufeld.github.io/tutorials/201_fall25/day1.html" class="uri">https://anna-neufeld.github.io/tutorials/201_fall25/day1.html</a>),
 and so today’s tutorial has less introductory material.</p>
 <p>Today, we are going to revisit the parts of tutorial 1 that we
 skipped or did not get to, and then we will move into new material.</p>
 </div>
-<div id="loading-packages" class="section level2">
-<h2>Loading packages</h2>
+<div id="loading-packages" class="section level1">
+<h1>Loading packages</h1>
 <p>On Tuesday, I accidentally skipped a very important part of the
 tutorial that had to do with loading packages. One reason I skipped it
 is that it was covered in your pre-class installation instructions.
@@ -1713,14 +1713,13 @@ separately on GLOW. But the <code>tidyverse</code> package is really
 necessary for this course, and so I would love to troubleshoot
 <code>tidyverse</code> issues ASAP.</p>
 </div>
-<div id="loading-our-data-and-continuing-to-explore-the-class-survey-data" class="section level2">
-<h2>Loading our data and continuing to explore the class survey
-data</h2>
-<p>Let’s load the same class form dataset that we used on Tuesday. As a
-reminder, I posted this dataset on my github website for maximum
-convenience, and you can load it with the following code. If you are
-working in an RMarkdown file, make sure to load the tidyverse in this
-file as well.</p>
+<div id="loading-our-data" class="section level1">
+<h1>Loading our data</h1>
+<p>Let’s load the same dataset that we used on Tuesday. As a reminder, I
+posted this dataset on my github website for maximum convenience, and
+you can load it with the following code. If you are working in an
+RMarkdown file, make sure to load the tidyverse in this file as
+well.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>form_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;https://anna-neufeld.github.io/tutorials/201_fall25/form_data_anonymous.csv&quot;</span>)</span></code></pre></div>
 <p>Here are our goals for today.</p>
@@ -1735,8 +1734,8 @@ variable and one categorical variable?</li>
 </ul>
 </div>
 </div>
-<div id="extracting-elements-from-a-dataset" class="section level1">
-<h1>Extracting elements from a dataset</h1>
+<div id="subsetting-and-manipulating-a-dataset" class="section level1">
+<h1>Subsetting and manipulating a dataset</h1>
 <p>You should all now have something called <code>form_data</code> in
 your environment. If you double click on it, you should see something
 like this:</p>
@@ -1746,6 +1745,8 @@ problems with the data by looking at this on Tuesday), it is generally
 going to be overwhelming to try to look at an entire dataset at once.
 This means that it will be useful to learn how to <em>extract</em>
 individual elements in a dataset.</p>
+<div id="extracting-columns-using-select" class="section level3">
+<h3>Extracting columns using <code>select()</code></h3>
 <p>There are generally many ways to do a single thing in R. You all saw
 last class that the following four lines of code all do essentially the
 same thing: they extract the <code>pets</code> variable from the
@@ -1764,6 +1765,9 @@ this class. So, when you want to extract a column from a dataset, it’s
 nice to use <code>select()</code> or <code>pull()</code>. We like
 <code>tidyverse</code> methods because they can easily be combined with
 one another, as we will see below.</p>
+</div>
+<div id="extracting-rows-with-filter" class="section level3">
+<h3>Extracting rows with <code>filter()</code></h3>
 <p>When we want to select a subset of <em>observations</em> (rows) from
 a dataset, we use <code>filter()</code>. The following code displays
 only the data for students who play a sport at Williams.</p>
@@ -1777,6 +1781,9 @@ What does the following code do?</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>form_data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(sports<span class="sc">==</span><span class="st">&quot;Yes&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">select</span>(pets)</span></code></pre></div>
 <p>And, as a harder question, why doesn’t the following code work?</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>form_data <span class="sc">%&gt;%</span> <span class="fu">select</span>(pets) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(sports<span class="sc">==</span><span class="st">&quot;Yes&quot;</span>)</span></code></pre></div>
+</div>
+<div id="cleaning-or-manipulating-a-dataset-with-mutate" class="section level3">
+<h3>Cleaning or manipulating a dataset with <code>mutate()</code></h3>
 <p>Note that <code>R</code> has correctly identified <code>pets</code>
 as a numerical variable.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">class</span>(form_data<span class="sc">$</span>pets)</span></code></pre></div>
@@ -1837,6 +1844,7 @@ will see that if we want to <em>ask a question</em> about if two things
 are equal, we need to use <code>==</code> instead of <code>=</code>.</p>
 <p>I think that this has been enough about extracting, cleaning, and
 manipulating data to get you started on Homework 1. Let’s move on!</p>
+</div>
 </div>
 <div id="explore-and-describe-a-single-quantitative-variable" class="section level1">
 <h1>Explore and describe a single quantitative variable</h1>
@@ -1914,8 +1922,9 @@ the following lines of code.</p>
 <span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>form_data <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(sports) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="fu">mean</span>(pets), <span class="fu">median</span>(pets), <span class="fu">IQR</span>(pets), <span class="fu">sd</span>(pets))</span>
 <span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a>form_data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(sports<span class="sc">==</span><span class="st">&quot;Yes&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="fu">mean</span>(pets), <span class="fu">median</span>(pets), <span class="fu">IQR</span>(pets), <span class="fu">sd</span>(pets))</span></code></pre></div>
 </div>
-<div id="explore-and-describe-a-single-categorical-variable" class="section level3">
-<h3>Explore and describe a single categorical variable</h3>
+</div>
+<div id="explore-and-describe-a-single-categorical-variable" class="section level1">
+<h1>Explore and describe a single categorical variable</h1>
 <p>Suppose that we want to explore the variable
 <code>favorite.dining</code>. This is a categorical variable.</p>
 <p>Summarizing a single categorical variable is sort of boring! We don’t
@@ -1936,17 +1945,22 @@ beautiful- we can just use the plus sign to add on aesthetic
 features.</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>form_data, <span class="fu">aes</span>(<span class="at">x=</span>favorite.dining, <span class="at">fill=</span><span class="st">&quot;pink&quot;</span>))<span class="sc">+</span><span class="fu">geom_bar</span>()<span class="sc">+</span><span class="fu">xlab</span>(<span class="st">&quot;Favorite Dining Hall&quot;</span>)<span class="sc">+</span><span class="fu">ylab</span>(<span class="st">&quot;Number of Students&quot;</span>)<span class="sc">+</span><span class="fu">ggtitle</span>(<span class="st">&quot;My favorite plot&quot;</span>)</span></code></pre></div>
 </div>
-</div>
 <div id="the-relationship-between-a-numerical-variable-and-a-categorical-variable" class="section level1">
 <h1>The relationship between a numerical variable and a categorical
 variable</h1>
 <p>Everything in statistics gets more interesting when we can explore
-relationships between variables.</p>
-<p>Suppose that you are interested in knowing if those who play a sport
-at Williams tend to be taller than those who do not play a sport. As
-long as you ran the code in the <code>cleaning</code> section of this
-document that creates <code>form_data_subset</code>, you should be able
-to run the following code to begin to explore this question.</p>
+relationships between variables. Suppose that you are interested in
+knowing if those who play a sport at Williams tend to be taller than
+those who do not play a sport.</p>
+<div id="visually-exploring-the-relationship" class="section level3">
+<h3>Visually exploring the relationship</h3>
+<p>As long as you ran the code in the <code>cleaning</code> section of
+this document that creates <code>form_data_subset</code>, you should be
+able to run the following code to begin to make side-by-side boxplots of
+the <code>height_numeric</code> variable, separated by categories of the
+<code>sports</code> variable. This is our favorite way to visually
+display the relationship between a numerical and a categorical
+variable.</p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>form_data_subset, <span class="fu">aes</span>(<span class="at">x=</span>sports, <span class="at">y=</span>height_numeric))<span class="sc">+</span><span class="fu">geom_boxplot</span>()</span></code></pre></div>
 <p>There is something a bit strange about the plot. Students were
 supposed to report their height in inches, and so it looks like the one
@@ -1957,22 +1971,41 @@ The following code will “zoom in” on our plot, so as to ignore the
 single outlier. Can you tell what this code is doing?</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>form_data_subset, <span class="fu">aes</span>(<span class="at">x=</span>sports, <span class="at">y=</span>height_numeric))<span class="sc">+</span><span class="fu">geom_boxplot</span>()<span class="sc">+</span><span class="fu">ylim</span>(<span class="dv">59</span>, <span class="dv">77</span>)</span></code></pre></div>
 <p>Be sure that you can describe what you see in this plot.</p>
+<p>Side-by-side histograms are a bit less common for displaying the
+relationship between a categorical and a numerical variable. But there
+are still a bunch of ways that we could go about making side by side
+histograms.</p>
+<p>By the way, I am quickly going to remove the person with a reported
+height of 6 inches from the dataset, so that I do not need to keep
+worrying about them.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a>form_data_subset <span class="ot">&lt;-</span> form_data_subset <span class="sc">%&gt;%</span> <span class="fu">filter</span>(height_numeric <span class="sc">&gt;</span> <span class="dv">10</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>form_data_subset, <span class="fu">aes</span>(<span class="at">x=</span>height_numeric))<span class="sc">+</span><span class="fu">geom_histogram</span>(<span class="at">binwidth=</span><span class="dv">3</span>)<span class="sc">+</span><span class="fu">facet_grid</span>(<span class="fu">vars</span>(sports))</span></code></pre></div>
+<p>What do you learn from this plot?</p>
+<p>What about trying to use colors to represent <code>sports</code>?
+This is an option, but it is not my favorite option for histograms. If
+you have time, you can explore the code below.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>form_data_subset, <span class="fu">aes</span>(<span class="at">x=</span>height_numeric, <span class="at">fill=</span>sports))<span class="sc">+</span><span class="fu">geom_histogram</span>(<span class="at">binwidth=</span><span class="dv">3</span>, <span class="at">position=</span><span class="st">&quot;stack&quot;</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>form_data_subset, <span class="fu">aes</span>(<span class="at">x=</span>height_numeric, <span class="at">fill=</span>sports))<span class="sc">+</span><span class="fu">geom_histogram</span>(<span class="at">binwidth=</span><span class="dv">3</span>, <span class="at">position=</span><span class="st">&quot;dodge&quot;</span>)</span></code></pre></div>
+</div>
+<div id="numerically-summarizing-the-relationship" class="section level3">
+<h3>Numerically summarizing the relationship</h3>
 <p>We may also want to report numerical summaries of the
 <code>height</code> variable across our two groups of the
 <code>sport</code> variable. The tidyverse makes this very seamless.</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a>form_data_subset <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(sports) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="fu">mean</span>(height_numeric), <span class="fu">sd</span>(height_numeric), <span class="fu">median</span>(height_numeric))</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a>form_data_subset <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(sports) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="fu">mean</span>(height_numeric), <span class="fu">sd</span>(height_numeric), <span class="fu">median</span>(height_numeric))</span></code></pre></div>
 <p>In the table above, I realized that my low outlier datapoint is
 really affecting my mean. I can exclude this point in a single line of
 code: another benefit of tidyverse. This table shows a more accurate
 representation of our data.</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>form_data_subset <span class="sc">%&gt;%</span> <span class="fu">filter</span>(height_numeric <span class="sc">&gt;</span> <span class="dv">10</span>) <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(sports) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="fu">mean</span>(height_numeric), <span class="fu">sd</span>(height_numeric), <span class="fu">median</span>(height_numeric))</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a>form_data_subset <span class="sc">%&gt;%</span> <span class="fu">filter</span>(height_numeric <span class="sc">&gt;</span> <span class="dv">10</span>) <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(sports) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="fu">mean</span>(height_numeric), <span class="fu">sd</span>(height_numeric), <span class="fu">median</span>(height_numeric))</span></code></pre></div>
 <p>I can see that, for both the non-sport group and the sport group, the
 mean and the median height are quite similar. How do you interpret this
 finding?</p>
 <p>Finally, if you have time, explore these alternate ways to report the
 same information.</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a>form_data_subset <span class="sc">%&gt;%</span> <span class="fu">filter</span>(height_numeric <span class="sc">&gt;</span> <span class="dv">10</span>, sports<span class="sc">==</span><span class="st">&quot;No&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="fu">mean</span>(height_numeric), <span class="fu">sd</span>(height_numeric), <span class="fu">median</span>(height_numeric))</span>
-<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a>form_data_subset <span class="sc">%&gt;%</span> <span class="fu">filter</span>(height_numeric <span class="sc">&gt;</span> <span class="dv">10</span>, sports<span class="sc">==</span><span class="st">&quot;Yes&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="fu">mean</span>(height_numeric), <span class="fu">sd</span>(height_numeric), <span class="fu">median</span>(height_numeric))</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a>form_data_subset <span class="sc">%&gt;%</span> <span class="fu">filter</span>(height_numeric <span class="sc">&gt;</span> <span class="dv">10</span>, sports<span class="sc">==</span><span class="st">&quot;No&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="fu">mean</span>(height_numeric), <span class="fu">sd</span>(height_numeric), <span class="fu">median</span>(height_numeric))</span>
+<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a>form_data_subset <span class="sc">%&gt;%</span> <span class="fu">filter</span>(height_numeric <span class="sc">&gt;</span> <span class="dv">10</span>, sports<span class="sc">==</span><span class="st">&quot;Yes&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="fu">mean</span>(height_numeric), <span class="fu">sd</span>(height_numeric), <span class="fu">median</span>(height_numeric))</span></code></pre></div>
+</div>
 <div id="wrap-up" class="section level2">
 <h2>Wrap up</h2>
 <p>If you were lost in class today, please read through this tutorial
