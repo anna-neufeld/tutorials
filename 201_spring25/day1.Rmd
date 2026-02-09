@@ -232,6 +232,8 @@ On the other hand, `R` has not identified ``height`` as a numerical variable.
 class(form_data$height)
 ```
 
+**On your own:** go look through ``form_data``, and see if you can figure out why ``R`` cannot recognize ``height`` as a number. 
+
 The fact that not everyone entered their height as a number on the survey is an example of a data quality issue. In order to make appropriate plots or summaries of the variable ``height``, we will need to *clean* our dataset. If you have time while your classmates finish the other exercises, try to see if you can figure out what the following code does. If you do not get to this, don't worry. We will go over an example of using ``mutate()`` to clean a dataset on Thursday.
 
 ```{r, eval=F, warning=F}
