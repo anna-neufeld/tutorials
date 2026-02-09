@@ -153,7 +153,7 @@ At the start of the semester, we will always give you very clear instructions on
 Over the weekend, most of you filled out the "getting to know you" survey. Google forms lets me export the survey responses into a google sheet / Excel spreadsheet. I removed the names, pronouns, and email addresses from the spreadsheet, and I also removed the answers to the "free response" questions (e.g. "Why are you taking this class"). I changed the column names for readability. Finally, I saved the the anonymized spreadsheet as a `.csv` file. I posted it both on GLOW and on my github website. There are two ways that you can load the data. The easiest is to run this code:
 
 ```{r}
-form_data <- read.csv("https://anna-neufeld.github.io/tutorials/201_fall25/form_data_anonymous.csv")
+form_data <- read.csv("https://anna-neufeld.github.io/tutorials/201_spring25/form_data_anonymous.csv")
 ```
 
 The slightly more cumbersome (but useful!) way involves downloading the .csv document from GLOW and importing it using the ``import dataset`` button. We will go over this later in the semester.
@@ -234,7 +234,7 @@ class(form_data$height)
 
 **On your own:** go look through ``form_data``, and see if you can figure out why ``R`` cannot recognize ``height`` as a number. 
 
-The fact that not everyone entered their height as a number on the survey is an example of a data quality issue. In order to make appropriate plots or summaries of the variable ``height``, we will need to *clean* our dataset. If you have time while your classmates finish the other exercises, try to see if you can figure out what the following code does. If you do not get to this, don't worry. We will go over an example of using ``mutate()`` to clean a dataset on Thursday.
+The fact that not everyone entered their height as a number on the survey is an example of a data quality issue. In order to make appropriate plots or summaries of the variable ``height``, we will need to *clean* our dataset. If you have time while your classmates finish the other exercises, try to see if you can figure out what the following code does.
 
 ```{r, eval=F, warning=F}
 form_data <- form_data %>% mutate(height_numeric = as.numeric(height))
@@ -267,12 +267,14 @@ hist(form_data$pets)
 ggplot(data=form_data, aes(x=pets))+geom_histogram()
 ```
 
-Play around with the code below. Is there a histogram that you like best?
+Play around with the code below. Is there a histogram that you like best? Do you feel that ``binwidth`` matters for a histogram?
 
 ```{r, eval=F}
 ggplot(data=form_data, aes(x=pets))+geom_histogram(col="red", fill="pink", binwidth=1)+theme_bw()+
   xlab("Pets")+ylab("Frequency")+ggtitle("My favorite histogram")
 ```
+
+How would you describe this distribution?
 
 ### Make a boxplot
 
@@ -289,7 +291,7 @@ ggplot(data=form_data, aes(y=pets))+geom_boxplot()
 
 ### Report numerical summaries
 
-Everything that we discussed in lecture is easily computed in R. Usually, the name of the relevant ``R`` function is just the english name of the statistic we want to compute. 
+I am assuming that you are all familiar with the concepts of mean, median, and mode. We can compute these all easily in R! Usually, the name of the relevant ``R`` function is just the english name of the statistic we want to compute. If it is not, google can easily help you out.
 
 The following three lines of code all report the same number. Which do you prefer?
 
@@ -315,7 +317,9 @@ form_data %>% group_by(sports) %>% summarize(mean(pets), median(pets), IQR(pets)
 form_data %>% filter(sports=="Yes") %>% summarize(mean(pets), median(pets), IQR(pets), sd(pets))
 ```
 
-### Explore and describe a single categorical variable
+Are you familiar with these various measures of spread? If not, don't worry! We will revisit IQR and standard deviation next week!
+
+# Explore and describe a single categorical variable
 
 Suppose that we want to explore the variable ``favorite.dining``. This is a categorical variable. 
 
