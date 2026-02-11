@@ -31,47 +31,17 @@ library(openintro)
 
 # Getting started
 
-I am hoping that everyone worked through at least part of **tutorial 1** (https://anna-neufeld.github.io/tutorials/201_fall25/day1.html), and so today's tutorial has less introductory material.
+I am hoping that everyone worked through at least part of **tutorial 1** (https://anna-neufeld.github.io/tutorials/201_spring25/day1.html), and so today's tutorial has less introductory material.
 
 Today, we are going to revisit the parts of tutorial 1 that we skipped or did not get to, and then we will move into new material.
 
-# Loading packages
+# Loading our data and our packages
 
-On Tuesday, I accidentally skipped a very important part of the tutorial that had to do with loading packages. One reason I skipped it is that it was covered in your pre-class installation instructions. However, I think it is worth going through once in class.
-
-R is an open-source programming language, meaning that users can contribute
-packages that make our lives easier, and we can use them for free. Here are three packages that you need for Homework 1. 
-
-- The suite of **tidyverse** packages: for data wrangling and data visualization
-- **openintro**: for data and custom functions with the OpenIntro resources
-- **tinytex**: you may need this in order to knit an RMarkdown document into a PDF. For example, you need this if you have a Mac and have never installed tex. 
-
-Hopefully you were able to install these packages using ``install.packages()`` using the pre-class instructions. Note that you can check to see which packages (and which versions) are installed by
-inspecting the *Packages* tab in the lower right panel of RStudio. If you do not see ``tidyverse``, ``openintro``, and ``tinytex`` in this panel, it means that you need to run the following code from the pre-class instructions. 
-
-```{r install-packages, message = FALSE, eval=FALSE}
-install.packages("tidyverse")
-install.packages("openintro")
-install.packages("tinytex")
-tinytex::install_tinytex()
-```
-
-Next, regardless of what you completed before class, you need to load these packages in your working environment. We do this with the `library` function. Note that you need to **load** the packages every time you restart RStudio, whereas you only need to **install** the packages once ever. Note that ``tinytex`` is a special case package that we do not need to load: we needed it to make sure we had a Tex installation on our computer, which RMarkdown will need in the background in order to knit to PDFs. 
-
-```{r load-packages, message = FALSE, eval=TRUE}
-library(tidyverse)
-library(openintro)
-```
-
-If anyone does not yet have these packages, you should let me know ASAP for Homework 1. You only need the ``openintro`` package to access the dataset, so I can always just post the dataset for you separately on GLOW. But the ``tidyverse`` package is really necessary for this course, and so I would love to troubleshoot ``tidyverse`` issues ASAP. 
-
-# Loading our data
-
-Let's load the same dataset that we used on Tuesday. As a reminder, I posted this dataset on my github website for maximum convenience, and you can load it with the following code. If you are working in an RMarkdown file, make sure to load the tidyverse in this file as well. 
+Let's load the same dataset that we used on Tuesday. As a reminder, I posted this dataset on my github website for maximum convenience, and you can load it with the following code. If you are working in an RMarkdown file, make sure to load the tidyverse in this file as well. We will need this *package* for data wrangling and plotting!
 
 ```{r}
 library(tidyverse)
-form_data <- read.csv("https://anna-neufeld.github.io/tutorials/201_fall25/form_data_anonymous.csv")
+form_data <- read.csv("https://anna-neufeld.github.io/tutorials/201_spring25/form_data_anonymous.csv")
 ```
 
 Here are our goals for today. 
@@ -148,7 +118,7 @@ On the other hand, `R` has not identified ``height`` as a numerical variable.
 class(form_data$height)
 ```
 
-The fact that not everyone entered their height as a number on the survey is an example of a data quality issue. In order to make appropriate plots or summaries of the variable ``height``, we will need to *clean* our dataset. The following code first makes a new variable called ``height_numeric``. In this step, `R` tries to convert each height in the dataset to a number. `R` is able to do this when the student correctly reported their height as a number, but `R` does not know how to do this for an answer like `6'3`. Therefore, some students end up getting ``height_numeric`` recorded as ``NA``. The second line of code removes individuals with ``NA`` from the dataset, and saves the new, smaller dataset as ``form_data_subset``. 
+The fact that not everyone entered their height as a number on the survey is an example of a data quality issue. In order to make appropriate plots or summaries of the variable ``height``, we will need to *clean* our dataset. The following code first makes a new variable called ``height_numeric``. In this step, `R` tries to convert each height in the dataset to a number. `R` is able to do this when the student correctly reported their height as a number, but `R` does not know how to do this for an answer like `5'7`. Therefore, some students end up getting ``height_numeric`` recorded as ``NA``. The second line of code removes individuals with ``NA`` from the dataset, and saves the new, smaller dataset as ``form_data_subset``. 
 
 ```{r, eval=F, warning=F}
 form_data <- form_data %>% mutate(height_numeric = as.numeric(height))
@@ -169,7 +139,7 @@ Here are some things that I think you should take note of.
 
 First, note that I worked with ``form_data_subset``, not ``form_data``. While this command certainly didn't require our "clean" dataset with no ``NA`` values of ``height_numeric``, I was thinking that ``form_data_subset`` is our "current" or "working" version of our dataset, so I figured I should work with that one. Students sometimes correctly filter or mutate a dataset, but then down below they forget to work with the new dataset.
 
-Second, note that I saved the mutated dataset back into ``form_data_subset``, rather than giving the new dataset a new name. This is always an option, and I think tends to make sense when we are just adding a new column to a dataset. If you are filtering or subsetting a dataset, you want to be wary of *overwriting* the original data. 
+Second, note that I saved the mutated dataset back into ``form_data_subset``, rather than giving the new dataset a new name. This is always an option, and I think tends to make sense when we are just adding a new column to a dataset. If you are filtering or subsetting a dataset, you want to be wary of *overwriting* the original data. If you ever overwrite your data by accident, you may need to return to the start of your document and re-load the data. 
 
 Third, note that, inside of my ``mutate`` statement, I use both ``=`` and ``>``. Here, they serve different purposes. The ``=`` is *assigning* a value to a new variable, called ``coffee``. On the other hand, the ``>`` is *asking a question* to the data. Later, we will see that if we want to *ask a question* about if two things are equal, we need to use ``==`` instead of ``=``. 
 
@@ -208,6 +178,15 @@ ggplot(data=form_data, aes(x=pets))+geom_histogram(col="red", fill="pink", binwi
   xlab("Pets")+ylab("Frequency")+ggtitle("My favorite histogram")
 ```
 
+Suppose that, for some reason, you wanted to ignore the student with more than 20 pets. I wouldn't recommend ignoring this student in real data analysis, I just want to make a point about plotting.Try to figure out what the difference is between the two lines of code below:
+
+```{r}
+ggplot(data=form_data %>% filter(pets < 20), aes(x=pets))+geom_histogram()+ggtitle("One way to make this histogram")
+ggplot(data=form_data, aes(x=pets))+geom_histogram()+ggtitle("Another way to make this histogram")+xlim(0,20)
+```
+
+You can always change your axes limits manually in R. By default, R sets your axes limits to capture the entire dataset.
+
 ### Make a boxplot
 
 Once again, we have a "base R" version and a ``tidyverse`` (``ggplot``) version. I highly recommend the ``ggplot()`` version: once we start comparing data across groups, it will be super useful.
@@ -240,6 +219,7 @@ median(form_data$pets)
 form_data %>% summarize(median(pets))
 form_data %>% pull(pets) %>% median()
 ```
+
 One of my favorite things about the ``summarize()`` function is that we can report multiple summary statistics at a time. We can also stratify our summaries into groups, which is really helpful. Check out the following lines of code.
 
 ```{r}
@@ -283,21 +263,11 @@ As long as you ran the code in the ``cleaning`` section of this document that cr
 ```{r}
 ggplot(data=form_data_subset, aes(x=sports, y=height_numeric))+geom_boxplot()
 ```
-
-There is something a bit strange about the plot. Students were supposed to report their height in inches, and so it looks like the one low outlier may represent a student who accidentally reported their height in feet. This single outlier, which likely does not represent a true datapoint, makes it harder to see the rest of the distributions. The following code will "zoom in" on our plot, so as to ignore the single outlier. Can you tell what this code is doing?
-
-```{r}
-ggplot(data=form_data_subset, aes(x=sports, y=height_numeric))+geom_boxplot()+ylim(59, 77)
-```
-
 Be sure that you can describe what you see in this plot.
 
 Side-by-side histograms are a bit less common for displaying the relationship between a categorical and a numerical variable. But there are still a bunch of ways that we could go about making side by side histograms. 
 
-By the way, I am quickly going to remove the person with a reported height of 6 inches from the dataset, so that I do not need to keep worrying about them.
-
 ```{r}
-form_data_subset <- form_data_subset %>% filter(height_numeric > 10)
 ggplot(data=form_data_subset, aes(x=height_numeric))+geom_histogram(binwidth=3)+facet_grid(vars(sports))
 ```
 
@@ -311,7 +281,6 @@ ggplot(data=form_data_subset, aes(x=height_numeric, fill=sports))+geom_histogram
 ```
 
 
-
 ### Numerically summarizing the relationship
 
 We may also want to report numerical summaries of the ``height`` variable across our two groups of the ``sport`` variable. The tidyverse makes this very seamless.
@@ -320,13 +289,7 @@ We may also want to report numerical summaries of the ``height`` variable across
 form_data_subset %>% group_by(sports) %>% summarize(mean(height_numeric), sd(height_numeric), median(height_numeric))
 ```
 
-In the table above, I realized that my low outlier datapoint is really affecting my mean. I can exclude this point in a single line of code: another benefit of tidyverse. This table shows a more accurate representation of our data.
-
-```{r}
-form_data_subset %>% filter(height_numeric > 10) %>% group_by(sports) %>% summarize(mean(height_numeric), sd(height_numeric), median(height_numeric))
-```
-
-I can see that, for both the non-sport group and the sport group, the mean and the median height are quite similar. How do you interpret this finding?
+This variable is not particularly skewed, and so the means and the medians are very similar within each group. 
 
 Finally, if you have time, explore these alternate ways to report the same information.
 
@@ -334,8 +297,6 @@ Finally, if you have time, explore these alternate ways to report the same infor
 form_data_subset %>% filter(height_numeric > 10, sports=="No") %>% summarize(mean(height_numeric), sd(height_numeric), median(height_numeric))
 form_data_subset %>% filter(height_numeric > 10, sports=="Yes") %>% summarize(mean(height_numeric), sd(height_numeric), median(height_numeric))
 ```
-
-
 
 ## Wrap up
 
