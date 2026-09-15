@@ -32,10 +32,10 @@ library(openintro)
 
 ## Why R?
 
-R is an incredibly popular programming language for data analysis. It is used by statisticians but also by scientists in biology, psychology, economics, chemistry, etc. R is fully featured and very powerful, and unlike Stata or SaaS, it is *free and open source*.
+R is an incredibly popular programming language for data analysis. It is used by statisticians but also by scientists in biology, psychology, economics, chemistry, etc. R is fully featured and very powerful, and unlike Stata or SAS, it is *free and open source*.
 This means that you can continue to use it for free after you finish
 this class, and beyond. Additionally, R is *extensible*.
-When a statistician develops a new method, or when a scientist decides that they need a specific tool to analyze their specific data, they (or someone who wants to use it in R) will often implement the method as a collection of functions in R called a *package*. Other individuals who want to use the method or conduct a similar type of data analysis can download the package and use these functions without needing to rewrite all of the code themselves. The Comprehensive R Archive Network, or **CRAN**, contains over 13,000 [contributed packages](https://cran.r-project.org/web/packages/). 
+When a statistician develops a new method, or when a scientist decides that they need a specific tool to analyze their specific data, they (or someone who wants to use it in R) will often implement the method as a collection of functions in R called a *package*. Other individuals who want to use the method or conduct a similar type of data analysis can download the package and use these functions without needing to rewrite all of the code themselves. The Comprehensive R Archive Network, or **CRAN**, contains over 20,000 [contributed packages](https://cran.r-project.org/web/packages/). 
 
 # Getting Started
 
@@ -150,7 +150,7 @@ While using R as a calculator was a fun warmup, in this class we are typically g
 
 At the start of the semester, we will always give you very clear instructions on how to load the required dataset. Eventually, for your projects, you will need to know how to troubleshoot and load the data yourself! 
 
-Over the weekend, most of you filled out the "getting to know you" survey. Google forms lets me export the survey responses into a google sheet / Excel spreadsheet. I removed the names, pronouns, and email addresses from the spreadsheet, and I also removed the answers to the "free response" questions (e.g. "Why are you taking this class"). I changed the column names for readability. I edited the class years of one person who identified themselves as off-cycle to retain anonymity. Finally, I saved the the anonymized spreadsheet as a `.csv` file. I posted it both on GLOW and on my github website. There are two ways that you can load the data. The easiest is to run this code:
+Over the weekend, most of you filled out the "getting to know you" survey. Google forms lets me export the survey responses into a google sheet / Excel spreadsheet. I removed the names, pronouns, and email addresses from the spreadsheet, and I also removed the answers to the "free response" questions (e.g. "Why are you taking this class"). I changed the column names for readability. I edited the class years of one person who identified themselves as off-cycle to retain anonymity. Finally, I saved the anonymized spreadsheet as a `.csv` file. I posted it both on GLOW and on my github website. There are two ways that you can load the data. The easiest is to run this code:
 
 ```{r}
 form_data <- read.csv("https://anna-neufeld.github.io/tutorials/202_fall26/fall_response_anon.csv")
@@ -178,7 +178,7 @@ Click on ``form_data`` in your *environment*. You should see something like this
 <div id="boxedtext">
 **With a neighbor, discuss the following questions:**
 
-- What are the **observational units** in this dataset. How many are there?
+- What are the **observational units** in this dataset? How many are there?
 - What are some examples of **quantitative variables** in this dataset?
 - What are some examples of **categorical variables** in this dataset? 
     - Bonus: are any of these **ordinal variables**? An ordinal variable is a categorical variable where the categories have a natural ordering. 
@@ -189,12 +189,12 @@ Let's extract the variable ``pets`` from our dataset. There are a few ways to do
 
 ```{r, eval=F}
 form_data$pets
-form_data[,2]
+form_data[,4]
 form_data %>% select(pets)
 form_data %>% pull(pets)
 ```
 
-The function ``select()`` is a key function from the ``tidyverse()`` package that we will be using to extract a subset of *variables* (columns) from a dataset. 
+The function ``select()`` is a key function from the ``tidyverse`` package that we will be using to extract a subset of *variables* (columns) from a dataset. 
 
 When we want to select a subset of *observations* (rows) from a dataset, we use ``filter()``. The following code displays only the data for students who play a sport at Williams. 
 
@@ -208,7 +208,7 @@ Suppose that we want to save the data subset above to a new dataset called ``ath
 athletes <- form_data %>% filter(sports=="Yes")
 ```
 
-One reason that the ``tidyverse()`` set of functions is so nice is because it becomes quite easy to combine functions together. What does the following code do?
+One reason that the ``tidyverse`` set of functions is so nice is because it becomes quite easy to combine functions together. What does the following code do?
 
 ```{r, eval=F}
 form_data %>% filter(sports=="Yes") %>% select(pets)
@@ -272,7 +272,7 @@ Datasets are usually too big to understand just by looking at the raw data. We n
 
 </div>
 
-Let's use ``pets,`` which stores the recorded answers to the question "How many pets have you had or have you lived with in your life?".
+Let's use ``pets``, which stores the recorded answers to the question "How many pets have you had or have you lived with in your life?".
 
 ### Make a histogram
 
@@ -302,13 +302,13 @@ boxplot(form_data$pets)
 ggplot(data=form_data, aes(y=pets))+geom_boxplot()
 ```
 
-**Challenge:** Using what you learned in the histogram section, can you figure out how to add axes labels and a title to your ``ggplot`` boxplot?
+**Challenge:** Using what you learned in the histogram section, can you figure out how to add axis labels and a title to your ``ggplot`` boxplot?
 
 *Hint:* It really isn't that challenging, because it looks exactly the same as it did for histograms.
 
 ### Report numerical summaries
 
-I am assuming that you are all familiar with the concepts of mean, median, and mode. We can compute these all easily in R! Usually, the name of the relevant ``R`` function is just the english name of the statistic we want to compute. If it is not, google can easily help you out.
+I am assuming that you are all familiar with the concepts of mean, median, and mode. We can compute these all easily in R! Usually, the name of the relevant ``R`` function is often just the english name of the statistic we want to compute. If it is not, google can easily help you out.
 
 The following three lines of code all report the same number. Which do you prefer?
 
@@ -326,6 +326,13 @@ form_data %>% summarize(median(pets))
 form_data %>% pull(pets) %>% median()
 ```
 
+Confusingly, ``mode()`` does not give you the mode of a numerical variable. It tells you the *type* of variable that R thinks this variable is. We would need to do a bit of wrangling to obtain the mode: my favorite way is to look at a table of the variable, and just observe here that the mode is 2 pets.
+
+```{r}
+mode(form_data$pets)
+table(form_data$pets)
+```
+
 One of my favorite things about the ``summarize()`` function is that we can report multiple summary statistics at a time. We can also stratify our summaries into groups, which is really helpful. Check out the following lines of code.
 
 ```{r}
@@ -338,7 +345,7 @@ Are you familiar with these various measures of spread? If not, don't worry! We 
 
 # Explore and describe a single categorical variable
 
-Suppose that we want to explore the variable ``favorite.dining``. This is a categorical variable. 
+Suppose that we want to explore the variable ``dining``. This is a categorical variable. 
 
 Summarizing a single categorical variable is sort of boring! We don't have measures of center and spread. The main way that we numerically explore a single categorical variable is by making a table. Try out the following lines of code, which all give the same information. What did you learn about this variable?
 
@@ -357,7 +364,7 @@ ggplot(data=form_data, aes(x=dining))+geom_bar()
 Again, a nice thing about learning ``ggplot()`` is that we can use exactly the same methods as before to make this plot more beautiful- we can just use the plus sign to add on aesthetic features. 
 
 ```{r}
-ggplot(data=form_data, aes(x=dining, fill="pink"))+geom_bar()+xlab("Favorite Dining Hall")+ylab("Number of Students")+ggtitle("My favorite plot")
+ggplot(data=form_data, aes(x=dining))+geom_bar(fill="pink")+xlab("Favorite Dining Hall")+ylab("Number of Students")+ggtitle("My favorite plot")
 ```
 
 # Wrap up
@@ -374,7 +381,7 @@ Finally, when it comes to debugging, the internet is your friend! Learning to us
 *** 
 ## Acknowledgements
 
-The formatting and some of the introductory content in this tutorial was adopted from an OpenIntro lab.
+The formatting and some of the introductory content in this tutorial was adapted from an OpenIntro lab.
 
 <div id="license">
 This is a product of OpenIntro that is released under a 
