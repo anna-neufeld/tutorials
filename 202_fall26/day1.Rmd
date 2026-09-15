@@ -160,7 +160,7 @@ The slightly more cumbersome (but useful!) way involves downloading the .csv doc
 
 Copy the code above into your RMarkdown document. Run the code, such that you have an object called ``form_data`` in your environment? What happens if you click on this dataset? 
 
-# Cleaning our first dataset
+# Exploring our first dataset
 
 <div id="boxedtext">
 
@@ -202,7 +202,7 @@ When we want to select a subset of *observations* (rows) from a dataset, we use 
 form_data %>% filter(sports=="Yes")
 ```
 
-Suppose that we want to save the data subset above to a new dataset called ``athetes``. We can certainly do that!
+Suppose that we want to save the data subset above to a new dataset called ``athletes``. We can certainly do that!
 
 ```{r, eval=F}
 athletes <- form_data %>% filter(sports=="Yes")
@@ -220,28 +220,45 @@ And, as a harder question, why doesn't the following code work?
 form_data %>% select(pets) %>% filter(sports=="Yes")
 ```
 
-Note that `R` has correctly identified ``pets`` as a numerical variable. 
+# Cleaning our first dataset
+
+We have a problem, which is that R has not identified ``pets" as a numerical variable. 
 
 ```{r, eval=F}
 class(form_data$pets)
 ```
 
-On the other hand, `R` has not identified ``height`` as a numerical variable.
+The fact that not everyone entered their number of pets as a number on the survey is an example of a data quality issue. In order to make appropriate plots or summaries of the variable ``pets``, we will need to *clean* our dataset.
 
-```{r, eval=F}
-class(form_data$height)
-```
-
-**On your own:** go look through ``form_data``, and see if you can figure out why ``R`` cannot recognize ``height`` as a number. 
-
-The fact that not everyone entered their height as a number on the survey is an example of a data quality issue. In order to make appropriate plots or summaries of the variable ``height``, we will need to *clean* our dataset. If you have time while your classmates finish the other exercises, try to see if you can figure out what the following code does.
+If you have time, see if you can figure out what this code does on your own.
 
 ```{r, eval=F, warning=F}
-form_data <- form_data %>% mutate(height_numeric = as.numeric(height))
-form_data_subset <- form_data %>% filter(!is.na(height_numeric))
+form_data <- form_data %>% mutate(pets.numeric = as.numeric(pets))
+form_data_subset <- form_data %>% filter(!is.na(pets.numeric))
 ```
 
-# Explore and describe a single quantitative variable
+In this case, the data are small enough that we could also *manually* clean our dataset as follows. We first identify the observations that are causing us problems. 
+
+```{r}
+which(is.na(form_data$pets.numeric))
+form_data$pets[15]
+form_data$pets[36]
+```
+
+We then update their values manually.
+
+```{r}
+form_data$pets[15] <- 1
+form_data$pets[36] <- 2
+```
+
+Finally, we still have to *tell* R that we are sure that ``pets`` is a number now. This time, I will just override the original variable ``pets``, instead of making a new one called ``pets.numeric``.
+
+```{r, eval=F, warning=F}
+form_data <- form_data %>% mutate(pets = as.numeric(pets))
+```
+
+# Summarize a single quantitative variable
 
 Datasets are usually too big to understand just by looking at the raw data. We need to go one variable at a time and produce numerical and visual summaries. Luckily, R makes this all pretty straightforward. We will start by covering this process for numerical variables. 
 
@@ -326,21 +343,21 @@ Suppose that we want to explore the variable ``favorite.dining``. This is a cate
 Summarizing a single categorical variable is sort of boring! We don't have measures of center and spread. The main way that we numerically explore a single categorical variable is by making a table. Try out the following lines of code, which all give the same information. What did you learn about this variable?
 
 ```{r}
-form_data %>% group_by(favorite.dining) %>% summarize(n())
-table(form_data$favorite.dining)
-form_data %>% select(favorite.dining) %>% table()
+form_data %>% group_by(dining) %>% summarize(n())
+table(form_data$dining)
+form_data %>% select(dining) %>% table()
 ```
 
 If we wanted to visually explore a single categorical variable, we would typically use a bar chart. This displays the same information as the table.
 
 ```{r}
-ggplot(data=form_data, aes(x=favorite.dining))+geom_bar()
+ggplot(data=form_data, aes(x=dining))+geom_bar()
 ```
 
 Again, a nice thing about learning ``ggplot()`` is that we can use exactly the same methods as before to make this plot more beautiful- we can just use the plus sign to add on aesthetic features. 
 
 ```{r}
-ggplot(data=form_data, aes(x=favorite.dining, fill="pink"))+geom_bar()+xlab("Favorite Dining Hall")+ylab("Number of Students")+ggtitle("My favorite plot")
+ggplot(data=form_data, aes(x=dining, fill="pink"))+geom_bar()+xlab("Favorite Dining Hall")+ylab("Number of Students")+ggtitle("My favorite plot")
 ```
 
 # Wrap up
