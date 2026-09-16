@@ -24,8 +24,8 @@ library(openintro)
 **Learning Objectives**
 
 - Continue practicing with the RStudio interface.
-- Do some manipulating and cleaning of our dataset.
-- Continue to explore numerical summaries of variables.
+- Re-load and re-clean the data from Tuesday. 
+- Create numerical and graphical summaries of variables. 
 - Start to explore relationships between variables.
 </div>
 
@@ -44,26 +44,30 @@ library(tidyverse)
 form_data <- read.csv("https://anna-neufeld.github.io/tutorials/202_fall26/fall_response_anon.csv")
 ```
 
+Last class, we *cleaned* the ``pets`` variable in this dataset. But the version that I just loaded in from the URL above is not clean! I need to rerun the code from tutorial 1 to convert ``pets`` to a numerical variable.
+
+```{r}
+form_data$pets[15] <- 1
+form_data$pets[36] <- 2
+form_data <- form_data %>% mutate(pets = as.numeric(pets))
+```
+
+If you are not sure why we did the steps above, please see *tutorial 1*. For now, we will move on and feel confident that we can treat ``pets`` as a numerical variable.
+
 Here are our goals for today. 
 
 <div id="boxedtext">
 
 **Goals:**
 
-- How do we extract individual elements from a dataset?
-- How do we "clean" a dataset?
-- How do we numerically and visually explore one numerical variable, one categorical variable, or the relationship between one numerical variable and one categorical variable?
+- How do we numerically and visually summarize one numerical variable?
+- How do we numerically and visually summarize one categorical variable?
+- How do we explore relationships between variables? 
 </div>
 
-# Subsetting and manipulating a dataset
+# Some quick review from last class
 
-You should all now have something called ``form_data`` in your environment. If you double click on it, you should see something like this: 
-
-![](data_pic.png)
-
-While this is a useful first look at our data (we diagnosed some problems with the data by looking at this on Tuesday), it is generally going to be overwhelming to try to look at an entire dataset at once. This means that it will be useful to learn how to *extract* individual elements in a dataset. 
-
-### Extracting columns using ``select()``
+### Extracting columns with ``select()``
 
 There are generally many ways to do a single thing in R. You all saw last class that the following four lines of code all do essentially the same thing: they extract the ``pets`` variable from the ``form_data`` dataset for us. Note that the last two lines will not work unless you have already run ``library(tidyverse)`` (and included this line in your .Rmd document, if you hope to knit this document later). 
 
@@ -106,42 +110,25 @@ form_data %>% select(pets) %>% filter(sports=="Yes")
 
 ### Cleaning or manipulating a dataset with ``mutate()``
 
-Note that `R` has correctly identified ``pets`` as a numerical variable. 
+Suppose that you want to make a new variable called ``coffee_drinker`` that stores `TRUE` if a student reports drinking more than 0 cups of coffee per week, and stores `FALSE` otherwise. 
+
+This code will help us do that.
 
 ```{r, eval=F}
-class(form_data$pets)
+form_data <- form_data %>% mutate(coffee_drinker = coffee > 0)
 ```
 
-On the other hand, `R` has not identified ``height`` as a numerical variable.
+We interpret this command as follows, starting from the right hand side of the expression: take the dataset called ``form_data``, and change (``mutate``) it to add a new variable, named ``coffee_drinker``. This new variable will store the answer to the question: is ``coffee`` (an existing variable in ``form_data``) greater than $0$? Then, at the end, we take this whole mutated object and save it back to the dataset named ``form_data`` (this is handled by ``form_data <-`` at the start).
+
+Note that, inside of my ``mutate`` statement, I use both ``=`` and ``>``. Here, they serve different purposes. The ``=`` is *assigning* a value to a new variable, called ``coffee``. On the other hand, the ``>`` is *asking a question* to the data. Later, we will see that if we want to *ask a question* about if two things are equal, we need to use ``==`` instead of ``=``. 
+
+You will need to use the ``mutate`` command on HW1, so please ask questions if you are confused!
+
+We can see that our command worked by summarizing this new ``coffee_drinker`` variable.
 
 ```{r, eval=F}
-class(form_data$height)
+form_data %>% select(coffee_drinker) %>% table()
 ```
-
-The fact that not everyone entered their height as a number on the survey is an example of a data quality issue. In order to make appropriate plots or summaries of the variable ``height``, we will need to *clean* our dataset. The following code first makes a new variable called ``height_numeric``. In this step, `R` tries to convert each height in the dataset to a number. `R` is able to do this when the student correctly reported their height as a number, but `R` does not know how to do this for an answer like `5'7`. Therefore, some students end up getting ``height_numeric`` recorded as ``NA``. The second line of code removes individuals with ``NA`` from the dataset, and saves the new, smaller dataset as ``form_data_subset``. 
-
-```{r, eval=F, warning=F}
-form_data <- form_data %>% mutate(height_numeric = as.numeric(height))
-form_data_subset <- form_data %>% filter(!is.na(height_numeric))
-```
-
-**Bonus:** How many rows are in ``form_data_subset``?
-
-Early in the semester, I will not expect you to know how to clean a dataset on your own without hints. It is really hard! I still struggle with data cleaning, and have recently found ChatGPT to be a useful companion. However, for Homework 1, it will be useful to know the anatomy of a ``mutate()`` command. While this does not always fall under the category of "data cleaning", it definitely falls under the category of "data manipulation". Let's quickly do one more example. 
-
-The following code makes a variable that is called ``coffee``, which is equal to ``TRUE`` if a student reports drinking more than 0 cups of coffee per week, and is equal to ``FALSE`` otherwise. What do you notice about this code?
-
-```{r}
-form_data_subset <- form_data_subset %>% mutate(coffee = cups.coffee > 0)
-```
-
-Here are some things that I think you should take note of.
-
-First, note that I worked with ``form_data_subset``, not ``form_data``. While this command certainly didn't require our "clean" dataset with no ``NA`` values of ``height_numeric``, I was thinking that ``form_data_subset`` is our "current" or "working" version of our dataset, so I figured I should work with that one. Students sometimes correctly filter or mutate a dataset, but then down below they forget to work with the new dataset.
-
-Second, note that I saved the mutated dataset back into ``form_data_subset``, rather than giving the new dataset a new name. This is always an option, and I think tends to make sense when we are just adding a new column to a dataset. If you are filtering or subsetting a dataset, you want to be wary of *overwriting* the original data. If you ever overwrite your data by accident, you may need to return to the start of your document and re-load the data. 
-
-Third, note that, inside of my ``mutate`` statement, I use both ``=`` and ``>``. Here, they serve different purposes. The ``=`` is *assigning* a value to a new variable, called ``coffee``. On the other hand, the ``>`` is *asking a question* to the data. Later, we will see that if we want to *ask a question* about if two things are equal, we need to use ``==`` instead of ``=``. 
 
 I think that this has been enough about extracting, cleaning, and manipulating data to get you started on Homework 1. Let's move on!
 
@@ -178,13 +165,12 @@ ggplot(data=form_data, aes(x=pets))+geom_histogram(col="red", fill="pink", binwi
   xlab("Pets")+ylab("Frequency")+ggtitle("My favorite histogram")
 ```
 
-Suppose that, for some reason, you wanted to ignore the student with more than 20 pets. I wouldn't recommend ignoring this student in real data analysis, I just want to make a point about plotting.Try to figure out what the difference is between the two lines of code below:
+Suppose that, for some reason, you wanted to ignore the student with more than 8 pets. I wouldn't recommend ignoring this student in real data analysis, I just want to make a point about plotting.Try to figure out what the difference is between the two lines of code below:
 
 ```{r}
-ggplot(data=form_data %>% filter(pets < 20), aes(x=pets))+geom_histogram()+ggtitle("One way to make this histogram")
-ggplot(data=form_data, aes(x=pets))+geom_histogram()+ggtitle("Another way to make this histogram")+xlim(0,20)
+ggplot(data=form_data %>% filter(pets < 8), aes(x=pets))+geom_histogram()+ggtitle("One way to make this histogram")
+ggplot(data=form_data, aes(x=pets))+geom_histogram()+ggtitle("Another way to make this histogram")+xlim(0,8)
 ```
-
 You can always change your axes limits manually in R. By default, R sets your axes limits to capture the entire dataset.
 
 ### Make a boxplot
@@ -230,26 +216,26 @@ form_data %>% filter(sports=="Yes") %>% summarize(mean(pets), median(pets), IQR(
 
 # Explore and describe a single categorical variable
 
-Suppose that we want to explore the variable ``favorite.dining``. This is a categorical variable. 
+Suppose that we want to explore the variable ``dining``. This is a categorical variable. 
 
 Summarizing a single categorical variable is sort of boring! We don't have measures of center and spread. The main way that we numerically explore a single categorical variable is by making a table. Try out the following lines of code, which all give the same information. What did you learn about this variable?
 
 ```{r}
-form_data %>% group_by(favorite.dining) %>% summarize(n())
-table(form_data$favorite.dining)
-form_data %>% select(favorite.dining) %>% table()
+form_data %>% group_by(dining) %>% summarize(n())
+table(form_data$dining)
+form_data %>% select(dining) %>% table()
 ```
 
 If we wanted to visually explore a single categorical variable, we would typically use a bar chart. This displays the same information as the table.
 
 ```{r}
-ggplot(data=form_data, aes(x=favorite.dining))+geom_bar()
+ggplot(data=form_data, aes(x=dining))+geom_bar()
 ```
 
 Again, a nice thing about learning ``ggplot()`` is that we can use exactly the same methods as before to make this plot more beautiful- we can just use the plus sign to add on aesthetic features. 
 
 ```{r}
-ggplot(data=form_data, aes(x=favorite.dining, fill="pink"))+geom_bar()+xlab("Favorite Dining Hall")+ylab("Number of Students")+ggtitle("My favorite plot")
+ggplot(data=form_data, aes(x=dining, fill="pink"))+geom_bar()+xlab("Favorite Dining Hall")+ylab("Number of Students")+ggtitle("My favorite plot")
 ```
 
 # The relationship between a numerical variable and a categorical variable
@@ -258,7 +244,26 @@ Everything in statistics gets more interesting when we can explore relationships
 
 ### Visually exploring the relationship
 
-As long as you ran the code in the ``cleaning`` section of this document that creates ``form_data_subset``, you should be able to run the following code to begin to make side-by-side boxplots of the ``height_numeric`` variable, separated by categories of the ``sports`` variable. This is our favorite way to visually display the relationship between a numerical and a categorical variable.
+To start, we need to *clean* the ``height`` variable so that R recognizes it as a number. Be sure that you understand why this is needed in this case!
+
+```{r}
+form_data$height
+```
+Instead of manually fixing people's answers, I will take the lazy route. I will first see if R can automatically convert the heights to numbers, using ``as.numeric()``. 
+
+```{r}
+form_data <- form_data %>% mutate(height_numeric = as.numeric(height))
+```
+
+If R cannot figure out the correct number on its own, then ``height_numeric`` will be `NA`. We can remove these individuals from our dataset as follows. Note that I do not want to fully remove them from ``form_data``, so I make a new, smaller dataset that removes anyone with a `NA` value for ``height_numeric``.
+
+```{r}
+form_data_subset <- form_data %>% filter(!is.na(height_numeric))
+```
+
+**Challenge question:** Can you figure out what the `!` does here?
+
+We are now ready to run the following code to begin to make side-by-side boxplots of the ``height_numeric`` variable, separated by categories of the ``sports`` variable. This is our favorite way to visually display the relationship between a numerical and a categorical variable.
 
 ```{r}
 ggplot(data=form_data_subset, aes(x=sports, y=height_numeric))+geom_boxplot()
@@ -306,8 +311,7 @@ Hopefully, when you work on HW1, you will find that I went over all of the R fun
 
 If you are already experienced in programming, I would encourage you to go above-and-beyond on the homework assignments in terms of making your code and your plots beautiful. If you are new to programming, please let me know if the pacing seems too fast for you! I am happy to provide additional resources for learning R if needed!
 
-Finally, when it comes to debugging, the internet is your friend! Learning to use google, stack overflow, or ChatGPT to resolve R errors on your own is a key skill. Please do not stare at a piece of code for 8 hours waiting for a TA session because you cannot find the source of an error: learn to google your error messages and problem solve for yourself! 
-
+Finally, when it comes to debugging, the internet is your friend! Learning to use google, stack overflow, or ChatGPT to resolve R errors on your own is a key skill. Please do not stare at a piece of code for 8 hours waiting for a TA session because you cannot find the source of an error: learn to google your error messages and problem solve for yourself! **Caveat:** always try to write your code on your own first, and ask AI for help *only* with your error messages, not with the entire problem. You need to learn the principles for yourself!
 
 *** 
 ## Acknowledgements
