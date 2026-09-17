@@ -73,7 +73,7 @@ There are generally many ways to do a single thing in R. You all saw last class 
 
 ```{r}
 form_data$pets
-form_data[,2]
+form_data[,4]
 form_data %>% pull(pets)
 form_data %>% select(pets)
 ```
@@ -96,7 +96,7 @@ Suppose that we want to save the data subset above to a new dataset called ``ath
 athletes <- form_data %>% filter(sports=="Yes")
 ```
 
-One reason that the ``tidyverse()`` set of functions is so nice is because it becomes quite easy to combine functions together. What does the following code do?
+One reason that the ``tidyverse`` set of functions is so nice is because it becomes quite easy to combine functions together. What does the following code do?
 
 ```{r, eval=F}
 form_data %>% filter(sports=="Yes") %>% select(pets)
@@ -120,7 +120,7 @@ form_data <- form_data %>% mutate(coffee_drinker = coffee > 0)
 
 We interpret this command as follows, starting from the right hand side of the expression: take the dataset called ``form_data``, and change (``mutate``) it to add a new variable, named ``coffee_drinker``. This new variable will store the answer to the question: is ``coffee`` (an existing variable in ``form_data``) greater than $0$? Then, at the end, we take this whole mutated object and save it back to the dataset named ``form_data`` (this is handled by ``form_data <-`` at the start).
 
-Note that, inside of my ``mutate`` statement, I use both ``=`` and ``>``. Here, they serve different purposes. The ``=`` is *assigning* a value to a new variable, called ``coffee``. On the other hand, the ``>`` is *asking a question* to the data. Later, we will see that if we want to *ask a question* about if two things are equal, we need to use ``==`` instead of ``=``. 
+Note that, inside of my ``mutate`` statement, I use both ``=`` and ``>``. Here, they serve different purposes. The ``=`` is *assigning* a value to a new variable, called ``coffee_drinker``. On the other hand, the ``>`` is *asking a question* to the data. Later, we will see that if we want to *ask a question* about if two things are equal, we need to use ``==`` instead of ``=``. 
 
 You will need to use the ``mutate`` command on HW1, so please ask questions if you are confused!
 
@@ -146,7 +146,7 @@ Datasets are usually too big to understand just by looking at the raw data. We n
 
 </div>
 
-Let's use ``pets,`` which stores the recorded answers to the question "How many pets have you had or have you lived with in your life?". As a note, since we will not need the ``height`` variable at all today, I am going to work with ``form_data``, not ``form_data_subset``. 
+Let's use ``pets``, which stores the recorded answers to the question "How many pets have you had or have you lived with in your life?".  
 
 ### Make a histogram
 
@@ -165,13 +165,13 @@ ggplot(data=form_data, aes(x=pets))+geom_histogram(col="red", fill="pink", binwi
   xlab("Pets")+ylab("Frequency")+ggtitle("My favorite histogram")
 ```
 
-Suppose that, for some reason, you wanted to ignore the student with more than 8 pets. I wouldn't recommend ignoring this student in real data analysis, I just want to make a point about plotting.Try to figure out what the difference is between the two lines of code below:
+Suppose that, for some reason, you wanted to ignore the student with more than 8 pets. I wouldn't recommend ignoring this student in real data analysis, I just want to make a point about plotting. Try to figure out what the difference is between the two lines of code below:
 
 ```{r}
 ggplot(data=form_data %>% filter(pets < 8), aes(x=pets))+geom_histogram()+ggtitle("One way to make this histogram")
 ggplot(data=form_data, aes(x=pets))+geom_histogram()+ggtitle("Another way to make this histogram")+xlim(0,8)
 ```
-You can always change your axes limits manually in R. By default, R sets your axes limits to capture the entire dataset.
+You can always change your axis limits manually in R. By default, R sets your axis limits to capture the entire dataset.
 
 ### Make a boxplot
 
@@ -182,7 +182,7 @@ boxplot(form_data$pets)
 ggplot(data=form_data, aes(y=pets))+geom_boxplot()
 ```
 
-**Challenge:** Using what you learned in the histogram section, can you figure out how to add axes labels and a title to your ``ggplot`` boxplot?
+**Challenge:** Using what you learned in the histogram section, can you figure out how to add axis labels and a title to your ``ggplot`` boxplot?
 
 *Hint:* It really isn't that challenging, because it looks exactly the same as it did for histograms.
 
@@ -235,7 +235,7 @@ ggplot(data=form_data, aes(x=dining))+geom_bar()
 Again, a nice thing about learning ``ggplot()`` is that we can use exactly the same methods as before to make this plot more beautiful- we can just use the plus sign to add on aesthetic features. 
 
 ```{r}
-ggplot(data=form_data, aes(x=dining, fill="pink"))+geom_bar()+xlab("Favorite Dining Hall")+ylab("Number of Students")+ggtitle("My favorite plot")
+ggplot(data=form_data, aes(x=dining))+geom_bar(fill="pink")+xlab("Favorite Dining Hall")+ylab("Number of Students")+ggtitle("My favorite plot")
 ```
 
 # The relationship between a numerical variable and a categorical variable
@@ -288,7 +288,7 @@ ggplot(data=form_data_subset, aes(x=height_numeric, fill=sports))+geom_histogram
 
 ### Numerically summarizing the relationship
 
-We may also want to report numerical summaries of the ``height`` variable across our two groups of the ``sport`` variable. The tidyverse makes this very seamless.
+We may also want to report numerical summaries of the ``height_numeric`` variable across our two groups of the ``sports`` variable. The tidyverse makes this very seamless.
 
 ```{r}
 form_data_subset %>% group_by(sports) %>% summarize(mean(height_numeric), sd(height_numeric), median(height_numeric))
@@ -299,8 +299,8 @@ This variable is not particularly skewed, and so the means and the medians are v
 Finally, if you have time, explore these alternate ways to report the same information.
 
 ```{r}
-form_data_subset %>% filter(height_numeric > 10, sports=="No") %>% summarize(mean(height_numeric), sd(height_numeric), median(height_numeric))
-form_data_subset %>% filter(height_numeric > 10, sports=="Yes") %>% summarize(mean(height_numeric), sd(height_numeric), median(height_numeric))
+form_data_subset %>% filter( sports=="No") %>% summarize(mean(height_numeric), sd(height_numeric), median(height_numeric))
+form_data_subset %>% filter( sports=="Yes") %>% summarize(mean(height_numeric), sd(height_numeric), median(height_numeric))
 ```
 
 ## Wrap up
